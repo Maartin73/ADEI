@@ -1,0 +1,57 @@
+---
+title: "Data Quality Report"
+author: "Me"
+date: "14 de febrero de 2019"
+output:
+  word_document:
+    toc: yes
+    toc_depth: '3'
+  pdf_document:
+    number_sections: yes
+    toc: yes
+    toc_depth: '3'
+  html_document:
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+editor_options:
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Loading packages
+
+```{r, include=FALSE}
+# Load Required Packages: to be increased over the course
+library(car)  # Manual way, use for Boxplot()
+
+requiredPackages <- c("car","knitr","ggplot2")
+missingPackages <- requiredPackages[!(requiredPackages %in% installed.packages()[,"Package"])]
+
+if(length(missingPackages)) install.packages(missingPackages)
+lapply(requiredPackages, require, character.only = TRUE)
+
+```
+
+## Load sample of 5000 records
+
+```{r}
+rm(list=ls())
+# Load Required Packages: to be increased over the course
+
+#setwd("d:/Users/Usuari/Documents/ADEI/bank-additional")
+setwd("d:/Users/Usuari/Documents/ADEI/bank-additional")
+file_path <- "d:/Users/Usuari/Documents/ADEI/bank-additional/"
+load(paste0(file_path,"Bank5000_raw.RData"))
+summary(df)
+```
+
+
+#Data Quality Report
+##Per variable
+
+##Per individu
