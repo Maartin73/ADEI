@@ -338,6 +338,7 @@ abline(h=out.var[["mouts"]], col="magenta", lwd=2); out.var[["mouts"]]
 err<-which(df$age<=17)
 errors$age<-length(err);length(err)
 df[err, "age"]<-NA
+
 df[err, "num_errors"]<- df[err, "num_errors"]+1
 
 # But our outliers will be the ones above 80 years:
@@ -379,7 +380,7 @@ outliers$duration=length(out); length(out)
 
 df[out, "duration"]<-NA
 df<-df[-out,]
-df[out, "num_outliers"]<- df[out, "num_outliers"]+1
+#df[out, "num_outliers"]<- df[out, "num_outliers"]+1
 hist(df$duration, breaks=20, main="duration - histogram")
 
 # Final summary of duration variable:
@@ -410,7 +411,7 @@ outliers$campaign=length(out); length(out)
 
 df[out, "campaign"]<-NA
 df<-df[-out,]
-df[out, "num_outliers"]<- df[out, "num_outliers"]+1
+#df[out, "num_outliers"]<- df[out, "num_outliers"]+1
 
 # Final summary of campaign variable:
 summary(df$campaign)
@@ -448,7 +449,8 @@ abline(h=out.var[["mouts"]], col="red", lwd=2); out.var[["mouts"]]
 out<-which(df$pdays > out.var[["mouts"]])
 outliers$pdays=length(out); length(out)
 df[out, "pdays"]<-NA
-df[out, "num_outliers"]<- df[out, "num_outliers"]+1
+df<-df[-out,]
+#df[out, "num_outliers"]<- df[out, "num_outliers"]+1
 
 hist(df$pdays, breaks=10, main="pdays - histogram")
 
