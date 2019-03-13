@@ -101,6 +101,9 @@ df$num_missings <- 0
 df$num_outliers <- 0
 df$num_errors   <- 0
 
+
+removed <- data.frame(matrix(0, ncol = length(columnes), nrow = 1))
+colnames(removed)<-columnes
 ```
 
 
@@ -324,20 +327,29 @@ missings$age<-length(miss); length(miss)
 df[miss, "age"]<-NA
 df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
+par(mfrow=c(1,2))
 hist(df$age, breaks=10, main="age - histogram")
-
 Boxplot(df$age)
+
 out.var <- calcQ(df$age)
 abline(h=out.var[["mouts"]], col="magenta", lwd=2); out.var[["mouts"]]
 
-# But our outliers will be the ones above 75 years:
-abline(h=75, col="red", lwd=2)
-out<-which(df$age > 75)
+# Errors are values less or equal to 17 years:
+err<-which(df$age<=17)
+errors$age<-length(err);length(err)
+df[err, "age"]<-NA
+df[err, "num_errors"]<- df[err, "num_errors"]+1
+
+# But our outliers will be the ones above 80 years:
+abline(h=80, col="red", lwd=2)
+out<-which(df$age > 80)
 
 outliers$age=length(out); length(out)
 
 df[out, "age"]<-NA
-df[out, "num_outliers"]<- df[out, "num_outliers"]+1
+#removed<-df[out,]
+df<-df[-out,]
+#removed[out, "num_outliers"]<- removed[out, "num_outliers"]+1
 
 # Final summary of age variable:
 summary(df$age)
@@ -366,8 +378,8 @@ out<-which( (df$duration < 10) | (df$duration > 1600) )
 outliers$duration=length(out); length(out)
 
 df[out, "duration"]<-NA
+df<-df[-out,]
 df[out, "num_outliers"]<- df[out, "num_outliers"]+1
-
 hist(df$duration, breaks=20, main="duration - histogram")
 
 # Final summary of duration variable:
@@ -397,6 +409,7 @@ out<-which(df$campaign > 20)
 outliers$campaign=length(out); length(out)
 
 df[out, "campaign"]<-NA
+df<-df[-out,]
 df[out, "num_outliers"]<- df[out, "num_outliers"]+1
 
 # Final summary of campaign variable:
