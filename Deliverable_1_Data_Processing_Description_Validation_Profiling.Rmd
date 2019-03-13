@@ -82,7 +82,7 @@ summary(df)
 ```
 
 
-# Inicialitzaci? del control d'errors, missings i outliers
+# Inicialització del control d'errors, missings i outliers
 ```{r}
 columnes <- names(df) #list of column names
 
@@ -97,13 +97,7 @@ colnames(missings)<-columnes
 outliers <- data.frame(matrix(0, ncol = length(columnes), nrow = 1))
 colnames(outliers)<-columnes
 
-df$num_missings <- 0
-df$num_outliers <- 0
-df$num_errors   <- 0
 
-
-removed <- data.frame(matrix(0, ncol = length(columnes), nrow = 1))
-colnames(removed)<-columnes
 ```
 
 
@@ -118,8 +112,6 @@ table(df$job, useNA="always")
 # All missing data indicated as NA:
 miss<-which(is.na(df$job));
 missings$job<-length(miss); length(miss)
-df[miss, "job"]<-NA
-df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "job-":
 df$job<-factor(df$job)
@@ -137,8 +129,6 @@ df$marital[sel]<-NA
 # All missing data indicated as NA:
 miss<-which(is.na(df$marital));
 missings$marital<-length(miss); length(miss)
-df[miss, "marital"]<-NA
-df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "marital-":
 df$marital<-factor(df$marital)
@@ -156,8 +146,6 @@ table(df$education, useNA="always")
 # All missing data indicated as NA:
 miss<-which(is.na(df$education));
 missings$education<-length(miss); length(miss)
-df[miss, "education"]<-NA
-df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "education-":
 df$education<-factor(df$education)
@@ -174,13 +162,12 @@ table(df$default, useNA="always")
 # All missing data indicated as NA:
 miss<-which(is.na(df$default));
 missings$default<-length(miss); length(miss)
-df[miss, "default"]<-NA
-df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "default-":
 df$default<-factor(df$default)
 levels(df$default)<-paste0("default-",levels(df$default))
 
+par(mfrow=c(2,2))
 pie(summary(df$default))
 ```
 
@@ -192,8 +179,6 @@ table(df$housing, useNA="always")
 # All missing data indicated as NA:
 miss<-which(is.na(df$housing));
 missings$housing<-length(miss); length(miss)
-df[miss, "housing"]<-NA
-df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "housing-":
 df$housing<-factor(df$housing)
@@ -210,8 +195,6 @@ table(df$loan, useNA="always")
 # All missing data indicated as NA:
 miss<-which(is.na(df$loan));
 missings$loan<-length(miss); length(miss)
-df[miss, "loan"]<-NA
-df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "loan-":
 df$loan<-factor(df$loan)
@@ -226,8 +209,6 @@ summary(df$contact)
 
 miss<-which(is.na(df$contact));
 missings$contact<-length(miss); length(miss)
-df[miss, "contact"]<-NA
-df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "contact-":
 df$contact<-factor(df$contact)
@@ -240,13 +221,12 @@ pie(summary(df$contact))
 ```{r}
 miss<-which(is.na(df$month));
 missings$month<-length(miss); length(miss)
-df[miss, "month"]<-NA
-df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "month-":
 df$month<-factor(df$month)
 levels(df$month)<-paste0("month-",levels(df$month))
 
+par(mfrow=c(1,1))
 pie(summary(df$month))
 
 ```
@@ -255,8 +235,6 @@ pie(summary(df$month))
 ```{r}
 miss<-which(is.na(df$day_of_week));
 missings$day_of_week<-length(miss); length(miss)
-df[miss, "day_of_week"]<-NA
-df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "day_of_week-":
 df$day_of_week<-factor(df$day_of_week)
@@ -273,13 +251,12 @@ table(df$poutcome, useNA="always")
 # All missing data indicated as NA:
 miss<-which(is.na(df$poutcome));
 missings$poutcome<-length(miss); length(miss)
-df[miss, "poutcome"]<-NA
-df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "poutcome-":
 df$poutcome<-factor(df$poutcome)
 levels(df$poutcome)<-paste0("poutcome-",levels(df$poutcome))
 
+par(mfrow=c(2,1))
 pie(summary(df$poutcome))
 ```
 
@@ -287,8 +264,6 @@ pie(summary(df$poutcome))
 ```{r}
 miss<-which(is.na(df$y));
 missings$y<-length(miss); length(miss)
-df[miss, "y"]<-NA
-df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "y-":
 df$y<-factor(df$y)
@@ -322,37 +297,31 @@ calcQ <- function(x){
 ```{r}
 summary(df$age)
 # No tenim cap missing NA!
-miss<-which(is.na(df$age));
+miss<-which(is.na(df$age))
 missings$age<-length(miss); length(miss)
-df[miss, "age"]<-NA
-df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 par(mfrow=c(1,2))
 hist(df$age, breaks=10, main="age - histogram")
 Boxplot(df$age)
 
+# Errors are under aged people:
+err<-which(df$age < 18)
+errors$age<-length(err); length(err)
+df[err, "age"]<-NA
+if(length(err)>0) df<-df[-err,]
+
+# Outliers:
 out.var <- calcQ(df$age)
 abline(h=out.var[["mouts"]], col="magenta", lwd=2); out.var[["mouts"]]
-
-# Errors are values less or equal to 17 years:
-err<-which(df$age<=17)
-errors$age<-length(err);length(err)
-df[err, "age"]<-NA
-
-df[err, "num_errors"]<- df[err, "num_errors"]+1
-
 # But our outliers will be the ones above 80 years:
 abline(h=80, col="red", lwd=2)
 out<-which(df$age > 80)
-
-outliers$age=length(out); length(out)
-
+outliers$age<-length(out); length(out)
 df[out, "age"]<-NA
-#removed<-df[out,]
-df<-df[-out,]
-#removed[out, "num_outliers"]<- removed[out, "num_outliers"]+1
+if(length(out)>0) df<-df[-out,]
 
 # Final summary of age variable:
+par(mfrow=c(1,1))
 summary(df$age)
 Boxplot(df$age)
 
@@ -364,26 +333,24 @@ summary(df$duration)
 # No tenim cap missing NA!
 miss<-which(is.na(df$duration));
 missings$duration<-length(miss); length(miss)
-df[miss, "duration"]<-NA
-df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
+par(mfrow=c(1,2))
+hist(df$duration, breaks=20, main="duration - histogram")
 Boxplot(df$duration)
+
+# Outliers:
 out.var <- calcQ(df$duration)
 abline(h=out.var[["mouts"]], col="magenta", lwd=2); out.var[["mouts"]]
 abline(h=out.var[["souts"]], col="magenta", lwd=2); out.var[["souts"]]
-
 # But our outliers will be the ones above 1600 and below 10 seconds:
 abline(h=1600, col="red", lwd=2)
 out<-which( (df$duration < 10) | (df$duration > 1600) )
-
 outliers$duration=length(out); length(out)
-
 df[out, "duration"]<-NA
-df<-df[-out,]
-#df[out, "num_outliers"]<- df[out, "num_outliers"]+1
-hist(df$duration, breaks=20, main="duration - histogram")
+if(length(out)>0) df<-df[-out,]
 
 # Final summary of duration variable:
+par(mfrow=c(1,1))
 summary(df$duration)
 Boxplot(df$duration)
 ```
@@ -394,26 +361,27 @@ summary(df$campaign)
 # No tenim cap missing NA!
 miss<-which(is.na(df$campaign));
 missings$campaign<-length(miss); length(miss)
-df[miss, "campaign"]<-NA
-df[miss, "num_missings"]<- df[miss, "num_missings"]+1
+
+par(mfrow=c(1,2))
 
 hist(df$campaign, breaks=10, main="campaign - histogram")
-
 Boxplot(df$campaign)
+
+# Outliers:
 out.var <- calcQ(df$campaign)
 abline(h=out.var[["souts"]], col="magenta", lwd=2); out.var[["souts"]]
 
-# But our outliers will be the ones contacted more than 20 times:
-abline(h=20, col="red", lwd=2)
-out<-which(df$campaign > 20)
+# But our outliers will be the ones contacted more than 25 times:
+abline(h=25, col="red", lwd=2)
+out<-which(df$campaign > 25)
 
 outliers$campaign=length(out); length(out)
 
 df[out, "campaign"]<-NA
-df<-df[-out,]
-#df[out, "num_outliers"]<- df[out, "num_outliers"]+1
+if(length(out)>0) df<-df[-out,]
 
 # Final summary of campaign variable:
+par(mfrow=c(1,1))
 summary(df$campaign)
 Boxplot(df$campaign)
 
@@ -424,38 +392,16 @@ Boxplot(df$campaign)
 # No tenim cap missing NA!
 miss<-which(is.na(df$pdays));
 missings$pdays<-length(miss); length(miss)
-df[miss, "pdays"]<-NA
-df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
-summary(df$pdays)
+# Values that are 999 mean never contacted before:
+never<-which(df$pdays==999); length(never)/5000*100
 
-# Errors are values equal to 0 days:
-err<-which(df$pdays==0)
-errors$pdays<-length(err);length(err)
-df[out, "pdays"]<-NA
-df[out, "num_errors"]<- df[out, "num_errors"]+1
-
-# Values that are 999 mean never contacted before, we set them as missing NA:
-miss<-which(df$pdays==999)
-missings$pdays<-missings$pdays+length(miss); length(miss)
-df[miss, "pdays"]<-NA
-df[out, "num_missings"]<- df[out, "num_missings"]+1
-
-# Our outliers will be the ones above the medium superior limit:
-Boxplot(df$pdays)
-out.var <- calcQ(df$pdays)
-abline(h=out.var[["mouts"]], col="red", lwd=2); out.var[["mouts"]]
-
-out<-which(df$pdays > out.var[["mouts"]])
-outliers$pdays=length(out); length(out)
-df[out, "pdays"]<-NA
-df<-df[-out,]
-#df[out, "num_outliers"]<- df[out, "num_outliers"]+1
-
-hist(df$pdays, breaks=10, main="pdays - histogram")
+# No outliers!
 
 # Final summary of pdays variable:
 summary(df$pdays)
+par(mfrow=c(1,2))
+hist(df$pdays, breaks=10, main="pdays - histogram")
 Boxplot(df$pdays)
 
 ```
@@ -465,8 +411,8 @@ Boxplot(df$pdays)
 # No tenim cap missing NA!
 miss<-which(is.na(df$previous));
 missings$previous<-length(miss); length(miss)
-df[miss, "previous"]<-NA
-df[miss, "num_missings"]<- df[miss, "num_missings"]+1
+
+par(mfrow=c(1,2))
 
 hist(df$previous,  main="previous - histogram")
 
@@ -478,6 +424,8 @@ Boxplot(df$previous)
 ### emp.var.rate
 ```{r}
 # Neither missing, outliers nor error values.
+par(mfrow=c(1,2))
+
 hist(df$emp.var.rate,  main="emp.var.rate - histogram")
 summary(df$emp.var.rate)
 Boxplot(df$emp.var.rate)
@@ -487,6 +435,8 @@ Boxplot(df$emp.var.rate)
 ### cons.price.idx
 ```{r}
 # Neither missing, outliers nor error values.
+par(mfrow=c(1,2))
+
 hist(df$cons.price.idx,  main="cons.price.idx - histogram")
 summary(df$cons.price.idx)
 Boxplot(df$cons.price.idx)
@@ -495,6 +445,8 @@ Boxplot(df$cons.price.idx)
 ### cons.conf.idx
 ```{r}
 # Neither missing, outliers nor error values.
+par(mfrow=c(1,2))
+
 hist(df$cons.conf.idx,  main="cons.conf.idx - histogram")
 summary(df$cons.conf.idx)
 Boxplot(df$cons.conf.idx)
@@ -503,6 +455,8 @@ Boxplot(df$cons.conf.idx)
 ### euribor3m
 ```{r}
 # Neither missing, outliers nor error values.
+par(mfrow=c(1,2))
+
 hist(df$euribor3m,  main="euribor3m - histogram")
 summary(df$euribor3m)
 Boxplot(df$euribor3m)
@@ -511,6 +465,8 @@ Boxplot(df$euribor3m)
 ### nr.employed
 ```{r}
 # Neither missing, outliers nor error values.
+par(mfrow=c(1,2))
+
 hist(df$nr.employed,  main="nr.employed - histogram")
 summary(df$nr.employed)
 Boxplot(df$nr.employed)
@@ -520,16 +476,15 @@ Boxplot(df$nr.employed)
 # Missings, outliers and errors
 ```{r}
 # Per variables.
+par(mfrow=c(3,1))
+
 barplot( t(c(missings[, 3])), main="total missings per variable", xlab="marital")
 barplot( t(c(outliers[, c(1, 11, 12, 13)])), main="total outliers per variable")
-barplot( t(c(errors[, 13])), main="total errors per variable", xlab="pdays")
+barplot( t(c(errors[, 13])), main="total errors per variable")
 
-# Per individus. Podem veure com com a m?xim un individu t?:
-# 2 variables faltants, 1 ?nica outlier, 1 ?nic error.
-summary(df$num_missings)
-summary(df$num_outliers)
-summary(df$num_errors)
+par(mfrow=c(1,1))
 
+# Els outliers i errors en individus han estat eliminats prèviament!
 ```
 
 
@@ -556,7 +511,7 @@ summary(df$f.season);pie(summary(df$f.season))
 ```
 
 
-````{r}
+```{r}
 # CREATE NEW DURATION VARIABLE IN MINUTES:
 df$minutes<-df$duration/60
 summary(df$minutes)
@@ -564,7 +519,7 @@ summary(df$minutes)
 ```
 
 
-# Discretitzaci? de variables num?riques:
+# Discretització de variables numèriques:
 ```{r}
 # AGE
 qulist<-quantile(df$age, seq(0,1,0.25), na.rm=TRUE)
@@ -572,7 +527,7 @@ qulist<-quantile(df$age, seq(0,1,0.25), na.rm=TRUE)
 df$f.age<-factor( cut(df$age, breaks=qulist, include.lowest=T) )
 levels(df$f.age)<-paste0("f.age-", levels(df$f.age) )
 
-# Es mostra una distribuci? d'edats equitativa amb aquesta factoritzaci?:
+# Es mostra una distribució d'edats equitativa amb aquesta factorització:
 barplot(table(df$f.age), ylab="frequency")
 summary(df$f.age)
 
@@ -584,7 +539,7 @@ qulist<-quantile(df$duration, seq(0,1,0.125), na.rm=TRUE)
 df$f.duration<-factor( cut(df$duration, breaks=qulist, include.lowest=T) )
 levels(df$f.duration)<-paste0("f.duration-", levels(df$f.duration) )
 
-# Es mostra una distribuci? de duracions de la trucada equitativa amb aquesta factoritzaci?:
+# Es mostra una distribució de duracions de la trucada equitativa amb aquesta factorització:
 barplot(table(df$f.duration), ylab="frequency")
 summary(df$f.duration)
 
@@ -593,29 +548,37 @@ summary(df$f.duration)
 # CAMPAIGN
 qulist<-quantile(df$campaign, seq(0,1,0.5), na.rm=TRUE)
 
-df$f.campaign<-factor( cut(df$campaign, breaks=qulist, include.lowest=T) )
+df$f.campaign<-factor( cut(df$campaign, breaks=c(0,2,5,25), include.lowest=T) )
 levels(df$f.campaign)<-paste0("f.campaign-", levels(df$f.campaign) )
 
-# Resultat de la factoritzaci? de cops que s'ha contactat al client en la campanya actual:
+# Resultat de la factorització de cops que s'ha contactat al client en la campanya actual:
 barplot(table(df$f.campaign), ylab="frequency")
 summary(df$f.campaign)
 
 
 
 # PDAYS
-qulist<-quantile(df$pdays, seq(0,1,0.5), na.rm=TRUE)
-
-df$f.pdays<-factor( cut(df$pdays, breaks=qulist, include.lowest=T) )
+df$f.pdays<-factor( cut(df$pdays, breaks=c(0, 7, 998, 999), include.lowest=T) )
 levels(df$f.pdays)<-paste0("f.pdays-", levels(df$f.pdays) )
 
-# Resultat de la factoritzaci? dels dies que fa que s'ha contactat al client en una altra campanya:
+
+levels(df$f.pdays)<-c("f.pdays-[0,7]", "f.pdays-(>7)", "f.pdays-never")
+
+# Resultat de la factorització? dels dies que fa que s'ha contactat al client en una altra campanya:
 barplot(table(df$f.pdays), ylab="frequency")
 summary(df$f.pdays)
 
 
 
 # PREVIOUS
-
+# df$f.previous<-factor( cut(df$previous, breaks=c(1, 2, 4), include.lowest=T) )
+# levels(df$f.previous)<-paste0("f.previous-", levels(df$f.previous) )
+# 
+# #levels(df$f.previous)<-c("f.previous-never", "f.previous-1", "f.previous-(>1)")
+# 
+# # Resultat de la factorització de number of contacts performed before this campaign and for this client:
+# barplot(table(df$f.previous), ylab="frequency")
+# summary(df$f.previous)
 
 
 # EMP.VAR.RATE
@@ -651,10 +614,10 @@ vars_dis<-names(df)[c(2:10,15,21,25,27:30)]; vars_dis
 ```
 
 
-# Imputaci? de valors:
+# Imputació de valors:
 ```{r}
-# De totes les variables que hem analitzat, hem vist que el "marital" status es podria imputar f?cilment, 
-# ja que nom?s una petita part de la mostra est? com a NA:
+# De totes les variables que hem analitzat, hem vist que el "marital" status es podria imputar fàcilment, 
+# ja que només una petita part de la mostra està com a NA:
 
 res.impf<-imputeMCA(df[,vars_dis], ncp=10)
 
