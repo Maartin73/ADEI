@@ -52,7 +52,7 @@ lapply(requiredPackages, require, character.only = TRUE)
 
 # Loading data
 ```{r}
-dirwd<-"D:\Documents\GitHub\ADEI"
+dirwd<-"D:/Documents/GitHub/ADEI"
 setwd(dirwd)
 
 df<-read.table( paste0(dirwd, "/bank-additional/bank-additional-full.csv"),  header=TRUE, sep=";")
