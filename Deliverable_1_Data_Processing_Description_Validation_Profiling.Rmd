@@ -11,10 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Bank client data
-
-## Description 
-
-*Input variables:*
+## Description of in input variables:
 
   1. age (numeric)
   2. job : type of job (categorical: 'admin', 'blue-collar', 'entrepreneur', 'housemaid', 'management', 'retired', 'self-employed', 'services', 'student', 'technician', 'unemployed', 'unknown')
@@ -49,7 +46,6 @@ lapply(requiredPackages, require, character.only = TRUE)
 
 ```
 
-
 # Loading data
 ```{r}
 dirwd<-"D:/Documents/GitHub/ADEI"
@@ -81,7 +77,6 @@ save.image( paste0(dirwd, "/bank-additional/Bank5000_raw.RData") )
 summary(df)
 ```
 
-
 # Inicialització del control d'errors, missings i outliers
 ```{r}
 columnes <- names(df) #list of column names
@@ -96,13 +91,14 @@ colnames(missings)<-columnes
 
 outliers <- data.frame(matrix(0, ncol = length(columnes), nrow = 1))
 colnames(outliers)<-columnes
-
-
 ```
 
 
-# Univariate Descriptive Analysis and Data Quality Report
-## Qualitative Variables. Original numeric variables corresponding to qualitative concepts have to be converted to factors.
+# UNIVARIATE DESCRIPTIVE ANALYSIS (to be included for each variable):
+Aquí estudiem cada variable buscant missing values, outliers i possibles errors. En el cas que en trobem, els transformem en NAs i procedim a una imputació manual o els eliminem, o una imputació automàtica (en un chunck posterior d'Imputation).
+
+## QUALITATIVE VARIABLES.
+També factoritzem les categories (levels) de les variables qualitatives (discretes).
 
 ### Job
 ```{r}
@@ -231,6 +227,29 @@ pie(summary(df$month))
 
 ```
 
+#### Month -> definim noves factor categories per Season.
+New factors grouping original levels will be considered very positively.
+```{r}
+# CREATE SEASON COLUMN FROM MONTH:
+# Define new factor categories: 1- Spring 2-Summer 3-Autumn, 4-Winter
+df$f.season <- 4
+# 1 level - spring 
+sel<-which(df$month %in% c("month-mar","month-apr","month-may"))
+df$f.season[sel] <-1
+
+# 2 level - summer 
+sel<-which(df$month %in% c("month-jun","month-jul","month-aug"))
+df$f.season[sel] <-2
+
+# 3 level - autumn 
+sel<-which(df$month %in% c("month-sep","month-oct","month-nov"))
+df$f.season[sel] <-3
+
+df$f.season<-factor(df$f.season, levels=1:4, labels=c("season-spring","season-summer","season-autumn", "season-winter"))
+
+summary(df$f.season);pie(summary(df$f.season))
+```
+
 ### Day_of_week
 ```{r}
 miss<-which(is.na(df$day_of_week));
@@ -273,7 +292,7 @@ pie(summary(df$y))
 ```
 
 
-## Quantitative Variables.
+## QUANTITATIVES VARIABLES.
 
 ### Defining some useful functions for outliers detection
 ```{r}
@@ -307,17 +326,15 @@ Boxplot(df$age)
 # Errors are under aged people:
 err<-which(df$age < 18)
 errors$age<-length(err); length(err)
-df[err, "age"]<-NA
 if(length(err)>0) df<-df[-err,]
 
 # Outliers:
 out.var <- calcQ(df$age)
 abline(h=out.var[["mouts"]], col="magenta", lwd=2); out.var[["mouts"]]
-# But our outliers will be the ones above 80 years:
-abline(h=80, col="red", lwd=2)
-out<-which(df$age > 80)
+# But our outliers will be the ones above 100 years:
+abline(h=100, col="red", lwd=2)
+out<-which(df$age > 100)
 outliers$age<-length(out); length(out)
-df[out, "age"]<-NA
 if(length(out)>0) df<-df[-out,]
 
 # Final summary of age variable:
@@ -346,13 +363,20 @@ abline(h=out.var[["souts"]], col="magenta", lwd=2); out.var[["souts"]]
 abline(h=1600, col="red", lwd=2)
 out<-which( (df$duration < 10) | (df$duration > 1600) )
 outliers$duration=length(out); length(out)
-df[out, "duration"]<-NA
 if(length(out)>0) df<-df[-out,]
 
 # Final summary of duration variable:
 par(mfrow=c(1,1))
 summary(df$duration)
 Boxplot(df$duration)
+```
+
+#### Duration -> creem una columna de duració en minuts:
+```{r}
+# CREATE NEW DURATION VARIABLE IN MINUTES:
+df$minutes<-df$duration/60
+summary(df$minutes)
+
 ```
 
 ### Campaign
@@ -473,53 +497,8 @@ Boxplot(df$nr.employed)
 ```
 
 
-# Missings, outliers and errors
-```{r}
-# Per variables.
-par(mfrow=c(3,1))
-
-barplot( t(c(missings[, 3])), main="total missings per variable", xlab="marital")
-barplot( t(c(outliers[, c(1, 11, 12, 13)])), main="total outliers per variable")
-barplot( t(c(errors[, 13])), main="total errors per variable")
-
-par(mfrow=c(1,1))
-
-# Els outliers i errors en individus han estat eliminats prèviament!
-```
-
-
-# Factors:
-```{r}
-# CREATE SEASON COLUMN FROM MONTH:
-# Define new factor categories: 1- Spring 2-Summer 3-Autumn, 4-Winter
-df$f.season <- 4
-# 1 level - spring 
-sel<-which(df$month %in% c("month-mar","month-apr","month-may"))
-df$f.season[sel] <-1
-
-# 2 level - summer 
-sel<-which(df$month %in% c("month-jun","month-jul","month-aug"))
-df$f.season[sel] <-2
-
-# 3 level - autumn 
-sel<-which(df$month %in% c("month-sep","month-oct","month-nov"))
-df$f.season[sel] <-3
-
-df$f.season<-factor(df$f.season, levels=1:4, labels=c("season-spring","season-summer","season-autumn", "season-winter"))
-
-summary(df$f.season);pie(summary(df$f.season))
-```
-
-
-```{r}
-# CREATE NEW DURATION VARIABLE IN MINUTES:
-df$minutes<-df$duration/60
-summary(df$minutes)
-
-```
-
-
-# Discretització de variables numèriques:
+## DISCRETITZACIÓ DE VARIABLES NUMÈRIQUES:
+Original numeric variables corresponding to real quantitative concepts are kept as numeric but additional factors should also be created as a discretization of each numeric variable.
 ```{r}
 # AGE
 qulist<-quantile(df$age, seq(0,1,0.25), na.rm=TRUE)
@@ -530,7 +509,6 @@ levels(df$f.age)<-paste0("f.age-", levels(df$f.age) )
 # Es mostra una distribució d'edats equitativa amb aquesta factorització:
 barplot(table(df$f.age), ylab="frequency")
 summary(df$f.age)
-
 
 
 # DURATION
@@ -544,7 +522,6 @@ barplot(table(df$f.duration), ylab="frequency")
 summary(df$f.duration)
 
 
-
 # CAMPAIGN
 qulist<-quantile(df$campaign, seq(0,1,0.5), na.rm=TRUE)
 
@@ -556,18 +533,15 @@ barplot(table(df$f.campaign), ylab="frequency")
 summary(df$f.campaign)
 
 
-
 # PDAYS
 df$f.pdays<-factor( cut(df$pdays, breaks=c(0, 7, 998, 999), include.lowest=T) )
 levels(df$f.pdays)<-paste0("f.pdays-", levels(df$f.pdays) )
-
 
 levels(df$f.pdays)<-c("f.pdays-[0,7]", "f.pdays-(>7)", "f.pdays-never")
 
 # Resultat de la factorització? dels dies que fa que s'ha contactat al client en una altra campanya:
 barplot(table(df$f.pdays), ylab="frequency")
 summary(df$f.pdays)
-
 
 
 # PREVIOUS
@@ -633,7 +607,7 @@ summary(df$f.nr.employed)
 
 ```
 
-
+## Llistat de variables contínues i discretes:
 ```{r}
 # Llista de variables continues
 vars_con<-names(df)[c(1,11:14,16:20,23)]; vars_con
@@ -641,36 +615,120 @@ vars_con<-names(df)[c(1,11:14,16:20,23)]; vars_con
 # Llista de variables discretes
 vars_dis<-names(df)[c(2:10,15,21:22,24:33)]; vars_dis
 
+#revisar si s'han afegit columnes!
+
 ```
 
 
-# Imputació de valors:
+# DATA QUALITY REPORT:
+## Per variable:
 ```{r}
-# De totes les variables que hem analitzat, hem vist que el "marital" status es podria imputar fàcilment, 
-# ja que només una petita part de la mostra està com a NA:
+# Per variables.
+par(mfrow=c(3,1))
 
+barplot( t(c(missings[, 3])), main="total missings per variable", xlab="marital")
+barplot( t(c(outliers[, c(1, 11, 12, 13)])), main="total outliers per variable")
+barplot( t(c(errors[, 13])), main="total errors per variable")
+
+par(mfrow=c(1,1))
+
+# Els outliers i errors en individus han estat eliminats prèviament!
+```
+
+## Per individu:
+```{r}
+
+```
+
+### Outliers Multivariants:
+```{r}
+# Consider subset of numeric variables
+summary(df[,vars_con])
+vars_con_sub<-vars_con[c(1,2,3,6:10)]
+x<-df[,vars_con_sub]
+aq.plot(x, delta=qchisq(0.95, df=ncol(x)) )
+
+```
+
+
+
+# IMPUTATION
+## Factors:
+De totes les variables discretes que hem analitzat, hem vist que el "marital" status es podria imputar fàcilment amb imputeMCA(), ja que els unknown (passats prèviament a NA) corresponen només una petita part de la mostra. Com hem vist prèviament, els unknowns han estat considerats categoria pròpia en altres variables.
+```{r}
 res.impf<-imputeMCA(df[,vars_dis], ncp=10)
 
 # Original:
 summary(df$marital)
+
 # Amb dades imputades:
 summary(res.impf$completeObs$marital)
 
+# Acceptem la imputació:
 df$marital<-res.impf$completeObs[,"marital"]
 summary(df[,vars_dis])
 
 ```
 
-
-
+## Numeric Variables:
+La variable numèrica campaign té certs valors que han estat considerats outliers prèviament. Aquí els imputem mitjaçant la imputació automàtica imputePCA().
 ```{r}
+
+```
+
+
+```{r, include=FALSE}
 # Save our validated data as RData
 save.image( paste0(dirwd, "/bank-additional/Bank5000_validated.RData") )
 ```
 
 
-```{r}
 
+# PROFILING:
+## CONTINOUS DESCRIPTION - Numeric Target (Duration):
+```{r}
+vars<-names(df); vars
+pos_duration<-which(names(df)=="duration"); pos_duration
+
+condes(df, num.var=pos_duration, proba = 0.05)
+
+#crea un llistat de les quantitatives-> assossiació global:
+#     les variables que dóna estan relacionades amb duration.
+#     llista les variables que tinguin un p-value per sota del 5%
+
+#crea un llistat de les qualitatives->
+
+##crea un llistat de les categories->
+#     #Estimate: unitats que està per sobre la duració global quan el registre pertany a la categoria en qüestió
+
+# el p-valor ens diu si l'estimació que f.duration-(484,1.58e+03] sigui 494 per sobre la mitja és per una aleatorietat de les dades o és que és així i és significatiu; com és a dir, com més petit és el p-valor, més lluny de ser veritat està la hipòtesi nula (que diu que no la diferència no està relacionada).
+
+tapply(df$duration, df$f.duration, mean) #mitjana de la duració per categoria de la duració
+summary(df$duration) #duració global
+
+tapply(df$duration, df$y, mean) #mitjana de la duració per categoria de la y
+
+oneway.test(df$duration~df$y)
+```
+
+## CATEGORICAL DESCRIPTION - Factor (Y, Final Decision):
+```{r}
+pos_y<-which(names(df)=="y"); pos_y
+
+catdes(df, num.var=pos_y, proba = 0.05)
+
+# $`y-yes`
+#                                          Cla/Mod    Mod/Cla Global      p.value     v.test
+# f.duration=f.duration-(483,1.58e+03]  40.8064516 44.7787611  12.40 2.180784e-97  20.942837
+# poutcome=poutcome-success             62.2641509 17.5221239   3.18 5.331532e-56  15.766007
+# f.pdays=f.pdays-[0,6]                 62.2222222 14.8672566   2.70 2.653287e-47  14.446089
+# contact=contact-cellular              14.5686901 80.7079646  62.60 6.688527e-23   9.852462
+
+# df: degrees of freedom, #categories - 1
+
+# Dins el cluster que s'ha acceptat el producte financer, la "durada(483 a 1580]" és el 44,778% dels valors, el que és una sobrerepresentació en el cluster y-yes, ja que el global ?s del 12,40%. També hi ha mesos que estan més representats!
+
+# Es donen per ordre d'importància (p-value), per cal interpretar les diferències a ull i veure quines poden donar informació interessant.
 
 ```
 
