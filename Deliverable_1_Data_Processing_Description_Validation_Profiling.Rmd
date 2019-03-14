@@ -48,7 +48,7 @@ lapply(requiredPackages, require, character.only = TRUE)
 
 # Loading data
 ```{r}
-dirwd<-"D:/Documents/GitHub/ADEI"
+dirwd<-"d:/Users/Usuari/Documents/ADEI"
 setwd(dirwd)
 
 df<-read.table( paste0(dirwd, "/bank-additional/bank-additional-full.csv"),  header=TRUE, sep=";")
@@ -682,6 +682,7 @@ La variable numèrica campaign té certs valors que han estat considerats outlie
 save.image( paste0(dirwd, "/bank-additional/Bank5000_validated.RData") )
 ```
 
+<<<<<<< HEAD
 
 
 # PROFILING:
@@ -729,7 +730,23 @@ catdes(df, num.var=pos_y, proba = 0.05)
 # Dins el cluster que s'ha acceptat el producte financer, la "durada(483 a 1580]" és el 44,778% dels valors, el que és una sobrerepresentació en el cluster y-yes, ja que el global ?s del 12,40%. També hi ha mesos que estan més representats!
 
 # Es donen per ordre d'importància (p-value), per cal interpretar les diferències a ull i veure quines poden donar informació interessant.
+=======
+#Profiling
+##Duration
+```{r}
+condes(df,11)
 
+tapply(df$duration,df$f.dur,mean)
+summary(df$duration)
+
+tapply(df$duration,df$y,mean)
+>>>>>>> origin/master
+
+```
+
+##Y
+```{r}
+condes(df,21)
 ```
 
 
