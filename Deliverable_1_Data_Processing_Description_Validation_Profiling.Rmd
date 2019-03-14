@@ -52,7 +52,7 @@ lapply(requiredPackages, require, character.only = TRUE)
 
 # Loading data
 ```{r}
-dirwd<-"D:/Documents/GitHub/ADEI"
+dirwd<-"d:/Users/Usuari/Documents/ADEI"
 setwd(dirwd)
 
 df<-read.table( paste0(dirwd, "/bank-additional/bank-additional-full.csv"),  header=TRUE, sep=";")
@@ -638,10 +638,21 @@ summary(df[,vars_dis])
 save.image( paste0(dirwd, "/bank-additional/Bank5000_validated.RData") )
 ```
 
-
+#Profiling
+##Duration
 ```{r}
+condes(df,11)
 
+tapply(df$duration,df$f.dur,mean)
+summary(df$duration)
 
+tapply(df$duration,df$y,mean)
+
+```
+
+##Y
+```{r}
+condes(df,21)
 ```
 
 
