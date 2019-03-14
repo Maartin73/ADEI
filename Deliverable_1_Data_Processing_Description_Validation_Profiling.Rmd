@@ -10,8 +10,8 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Course Practical Assignment
-## *Josep Clotet Ginovar*
+# Course Practical Assignment - 1st Delivery (17 de març del 2019)
+## *Josep Clotet Ginovart*
 ## *Èric Martín Obispo*
 
 # Bank client data
@@ -639,8 +639,8 @@ summary(df$f.nr.employed)
 ```{r}
 vars<-names(df); vars
 
-# Variables conínues
-vars_con<-names(df)[c(1, 11:14, 16:20, 22:24, 26)]; vars_con
+# Variables contínues
+vars_con<-names(df)[c(1, 11:14, 16:20)]; vars_con
 
 # Variables discretes
 vars_dis<-names(df)[c(2:10, 15, 21, 25, 27:36)]; vars_dis
@@ -676,7 +676,7 @@ No hem aconseguit trobar una configuració del aq.plot que ens doni una bona gr�
 summary(df[,vars_con])
 vars_con_sub<-vars_con[c(1,2,3,6:10)]
 x<-df[,vars_con_sub]
-aq.plot(x, delta=qchisq(0.95, df=ncol(x)) )
+#aq.plot(x, delta=qchisq(0.995, df=ncol(x)) )
 
 ```
 
@@ -705,15 +705,14 @@ summary(df[,vars_dis])
 ```
 
 ## Numeric Variables:
-La variable numèrica campaign té certs valors que han estat considerats outliers prèviament. Aquí els imputem mitjaçant la imputació automàtica imputePCA().
+La variable numèrica campaign té certs individus que han estat considerats outliers prèviament. Aquí els imputem mitjaçant la imputació automàtica imputePCA().
 ```{r}
-res.imp<-imputePCA(df[,vars_con], ncp=10)
+res.imp<-imputePCA(df[,vars_con], ncp=8)
 
 # Original:
 summary(df$campaign)
 
 # Amb dades imputades:
-summary(res.imp$completeObs$campaign)
 
 # Acceptem la imputació:
 df$campaign<-res.imp$completeObs[,"campaign"]
