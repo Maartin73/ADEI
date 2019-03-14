@@ -571,34 +571,64 @@ summary(df$f.pdays)
 
 
 # PREVIOUS
-# df$f.previous<-factor( cut(df$previous, breaks=c(1, 2, 4), include.lowest=T) )
-# levels(df$f.previous)<-paste0("f.previous-", levels(df$f.previous) )
-# 
-# #levels(df$f.previous)<-c("f.previous-never", "f.previous-1", "f.previous-(>1)")
-# 
-# # Resultat de la factorització de number of contacts performed before this campaign and for this client:
-# barplot(table(df$f.previous), ylab="frequency")
-# summary(df$f.previous)
+df$f.previous<-factor( cut(df$previous, breaks=c(-Inf, 0, 1, +Inf), include.lowest=T) )
+levels(df$f.previous)<-paste0("f.previous-", levels(df$f.previous) )
+
+levels(df$f.previous)<-c("f.previous-never", "f.previous-1", "f.previous-(>1)")
+
+# Resultat de la factorització de number of contacts performed before this campaign and for this client:
+barplot(table(df$f.previous), ylab="frequency")
+summary(df$f.previous)
 
 
 # EMP.VAR.RATE
+qulist<-quantile(df$emp.var.rate, seq(0,1,0.125), na.rm=TRUE)
 
+df$f.emp.var.rate <-factor( cut(df$emp.var.rate  , breaks=unique(qulist), include.lowest=T) )
+levels(df$f.emp.var.rate)<-paste0("f.emp.var.rate-", levels(df$f.emp.var.rate) )
+
+barplot(table(df$f.emp.var.rate), ylab="frequency")
+summary(df$f.emp.var.rate)
 
 
 # CONS.PRICE.IDX
+qulist<-quantile(df$cons.price.idx, seq(0,1,0.25), na.rm=TRUE)
 
+df$f.cons.price.idx <-factor( cut(df$cons.price.idx  , breaks=unique(qulist), include.lowest=T) )
+levels(df$f.cons.price.idx)<-paste0("f.cons.price.idx-", levels(df$f.cons.price.idx) )
+
+barplot(table(df$f.cons.price.idx), ylab="frequency")
+summary(df$f.cons.price.idx)
 
 
 # CONS.CONF.IDX
+qulist<-quantile(df$cons.conf.idx, seq(0,1,0.25), na.rm=TRUE)
 
+df$f.cons.conf.idx <-factor( cut(df$cons.conf.idx  , breaks=unique(qulist), include.lowest=T) )
+levels(df$f.cons.conf.idx)<-paste0("f.cons.conf.idx-", levels(df$f.cons.conf.idx) )
+
+barplot(table(df$f.cons.conf.idx), ylab="frequency")
+summary(df$f.cons.conf.idx)
 
 
 # EURIBOR3M
+qulist<-quantile(df$euribor3m, seq(0,1,0.25), na.rm=TRUE)
 
+df$f.euribor3m <-factor( cut(df$euribor3m  , breaks=unique(qulist), include.lowest=T) )
+levels(df$f.euribor3m)<-paste0("f.euribor3m-", levels(df$f.euribor3m) )
+
+barplot(table(df$f.euribor3m), ylab="frequency")
+summary(df$f.euribor3m)
 
 
 # NR.EMPLOYED
+qulist<-quantile(df$nr.employed, seq(0,1,0.25), na.rm=TRUE)
 
+df$f.nr.employed <-factor( cut(df$nr.employed  , breaks=unique(qulist), include.lowest=T) )
+levels(df$f.nr.employed)<-paste0("f.nr.employed-", levels(df$f.nr.employed) )
+
+barplot(table(df$f.nr.employed), ylab="frequency")
+summary(df$f.nr.employed)
 
 
 ```
@@ -606,10 +636,10 @@ summary(df$f.pdays)
 
 ```{r}
 # Llista de variables continues
-vars_con<-names(df)[c(1,11:14,16:20,22:24,26)]; vars_con
+vars_con<-names(df)[c(1,11:14,16:20,23)]; vars_con
 
 # Llista de variables discretes
-vars_dis<-names(df)[c(2:10,15,21,25,27:30)]; vars_dis
+vars_dis<-names(df)[c(2:10,15,21:22,24:33)]; vars_dis
 
 ```
 
