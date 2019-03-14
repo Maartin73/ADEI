@@ -106,7 +106,7 @@ df$num_errors   <- 0
 # UNIVARIATE DESCRIPTIVE ANALYSIS (to be included for each variable):
 Aquí estudiem cada variable buscant missing values, outliers i possibles errors. En el cas que en trobem, els transformem en NAs i procedim a una imputació manual o els eliminem, o una imputació automàtica (en un chunck posterior d'Imputation).
 
-## QUALITATIVE VARIABLES.
+## QUALITATIVE VARIABLES:
 També factoritzem aquí les categories (levels) de les variables qualitatives (discretes).
 
 ### Job
@@ -320,7 +320,7 @@ pie(summary(df$y))
 ```
 
 
-## QUANTITATIVES VARIABLES.
+## QUANTITATIVES VARIABLES:
 
 ### Defining some useful function for outliers detection:
 ```{r}
@@ -402,10 +402,8 @@ Boxplot(df$duration)
 
 #### Duration -> creem una columna de duració en minuts:
 ```{r}
-# CREATE NEW DURATION VARIABLE IN MINUTES:
 df$minutes<-df$duration/60
 summary(df$minutes)
-
 ```
 
 ### Campaign
