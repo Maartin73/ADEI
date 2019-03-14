@@ -91,6 +91,13 @@ colnames(missings)<-columnes
 
 outliers <- data.frame(matrix(0, ncol = length(columnes), nrow = 1))
 colnames(outliers)<-columnes
+<<<<<<< HEAD
+=======
+
+df$num_missings <- 0
+df$num_outliers <- 0
+df$num_errors   <- 0
+>>>>>>> origin/master
 ```
 
 
@@ -108,6 +115,7 @@ table(df$job, useNA="always")
 # All missing data indicated as NA:
 miss<-which(is.na(df$job));
 missings$job<-length(miss); length(miss)
+df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "job-":
 df$job<-factor(df$job)
@@ -125,6 +133,7 @@ df$marital[sel]<-NA
 # All missing data indicated as NA:
 miss<-which(is.na(df$marital));
 missings$marital<-length(miss); length(miss)
+df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "marital-":
 df$marital<-factor(df$marital)
@@ -139,9 +148,14 @@ pie(summary(df$marital))
 # Education "unknown" will be considered a category, not a missing value.
 table(df$education, useNA="always")
 
+# Illiterates are consired as basic.4y.educated
+sel<-which(df$education=="illiterate");length(sel)
+df[sel, "education"]<-"basic.4y"
+
 # All missing data indicated as NA:
 miss<-which(is.na(df$education));
 missings$education<-length(miss); length(miss)
+df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "education-":
 df$education<-factor(df$education)
@@ -158,6 +172,7 @@ table(df$default, useNA="always")
 # All missing data indicated as NA:
 miss<-which(is.na(df$default));
 missings$default<-length(miss); length(miss)
+df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "default-":
 df$default<-factor(df$default)
@@ -175,6 +190,7 @@ table(df$housing, useNA="always")
 # All missing data indicated as NA:
 miss<-which(is.na(df$housing));
 missings$housing<-length(miss); length(miss)
+df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "housing-":
 df$housing<-factor(df$housing)
@@ -191,6 +207,7 @@ table(df$loan, useNA="always")
 # All missing data indicated as NA:
 miss<-which(is.na(df$loan));
 missings$loan<-length(miss); length(miss)
+df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "loan-":
 df$loan<-factor(df$loan)
@@ -205,6 +222,7 @@ summary(df$contact)
 
 miss<-which(is.na(df$contact));
 missings$contact<-length(miss); length(miss)
+df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "contact-":
 df$contact<-factor(df$contact)
@@ -217,6 +235,7 @@ pie(summary(df$contact))
 ```{r}
 miss<-which(is.na(df$month));
 missings$month<-length(miss); length(miss)
+df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "month-":
 df$month<-factor(df$month)
@@ -254,6 +273,7 @@ summary(df$f.season);pie(summary(df$f.season))
 ```{r}
 miss<-which(is.na(df$day_of_week));
 missings$day_of_week<-length(miss); length(miss)
+df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "day_of_week-":
 df$day_of_week<-factor(df$day_of_week)
@@ -270,6 +290,7 @@ table(df$poutcome, useNA="always")
 # All missing data indicated as NA:
 miss<-which(is.na(df$poutcome));
 missings$poutcome<-length(miss); length(miss)
+df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "poutcome-":
 df$poutcome<-factor(df$poutcome)
@@ -283,6 +304,7 @@ pie(summary(df$poutcome))
 ```{r}
 miss<-which(is.na(df$y));
 missings$y<-length(miss); length(miss)
+df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "y-":
 df$y<-factor(df$y)
@@ -318,6 +340,7 @@ summary(df$age)
 # No tenim cap missing NA!
 miss<-which(is.na(df$age))
 missings$age<-length(miss); length(miss)
+df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 par(mfrow=c(1,2))
 hist(df$age, breaks=10, main="age - histogram")
@@ -330,12 +353,18 @@ if(length(err)>0) df<-df[-err,]
 
 # Outliers:
 out.var <- calcQ(df$age)
+<<<<<<< HEAD
 abline(h=out.var[["mouts"]], col="magenta", lwd=2); out.var[["mouts"]]
 # But our outliers will be the ones above 100 years:
 abline(h=100, col="red", lwd=2)
 out<-which(df$age > 100)
 outliers$age<-length(out); length(out)
 if(length(out)>0) df<-df[-out,]
+=======
+out.var$souts
+# Our outliers will be the ones above 100 years, we don't have any sample with this characteristic
+
+>>>>>>> origin/master
 
 # Final summary of age variable:
 par(mfrow=c(1,1))
@@ -350,6 +379,7 @@ summary(df$duration)
 # No tenim cap missing NA!
 miss<-which(is.na(df$duration));
 missings$duration<-length(miss); length(miss)
+df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 par(mfrow=c(1,2))
 hist(df$duration, breaks=20, main="duration - histogram")
@@ -363,7 +393,13 @@ abline(h=out.var[["souts"]], col="magenta", lwd=2); out.var[["souts"]]
 abline(h=1600, col="red", lwd=2)
 out<-which( (df$duration < 10) | (df$duration > 1600) )
 outliers$duration=length(out); length(out)
+<<<<<<< HEAD
+=======
+df[out, "num_outliers"]<- df[out, "num_outliers"]+1
+df[out, "duration"]<-NA
+>>>>>>> origin/master
 if(length(out)>0) df<-df[-out,]
+
 
 # Final summary of duration variable:
 par(mfrow=c(1,1))
@@ -385,6 +421,7 @@ summary(df$campaign)
 # No tenim cap missing NA!
 miss<-which(is.na(df$campaign));
 missings$campaign<-length(miss); length(miss)
+df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 par(mfrow=c(1,2))
 
@@ -398,11 +435,12 @@ abline(h=out.var[["souts"]], col="magenta", lwd=2); out.var[["souts"]]
 # But our outliers will be the ones contacted more than 25 times:
 abline(h=25, col="red", lwd=2)
 out<-which(df$campaign > 25)
+df[out, "num_outliers"]<- df[out, "num_outliers"]+1
 
 outliers$campaign=length(out); length(out)
 
 df[out, "campaign"]<-NA
-if(length(out)>0) df<-df[-out,]
+#if(length(out)>0) df<-df[-out,]
 
 # Final summary of campaign variable:
 par(mfrow=c(1,1))
@@ -416,6 +454,7 @@ Boxplot(df$campaign)
 # No tenim cap missing NA!
 miss<-which(is.na(df$pdays));
 missings$pdays<-length(miss); length(miss)
+df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Values that are 999 mean never contacted before:
 never<-which(df$pdays==999); length(never)/5000*100
@@ -435,6 +474,7 @@ Boxplot(df$pdays)
 # No tenim cap missing NA!
 miss<-which(is.na(df$previous));
 missings$previous<-length(miss); length(miss)
+df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 par(mfrow=c(1,2))
 
@@ -497,8 +537,60 @@ Boxplot(df$nr.employed)
 ```
 
 
+<<<<<<< HEAD
 ## DISCRETITZACIÓ DE VARIABLES NUMÈRIQUES:
 Original numeric variables corresponding to real quantitative concepts are kept as numeric but additional factors should also be created as a discretization of each numeric variable.
+=======
+# Missings, outliers and errors
+```{r}
+# Per variables.
+par(mfrow=c(3,1))
+
+barplot( t(c(missings[, 3])), main="total missings per variable", xlab="marital")
+barplot( t(c(outliers[, c(11, 12)])), main="total outliers per variable")
+barplot( t(c(errors[, 13])), main="total errors per variable")
+
+par(mfrow=c(1,1))
+
+# Els outliers i errors en individus:
+table(df$num_missings)
+table(df$num_errors)
+table(df$num_outliers)
+```
+
+# Factors:
+```{r}
+# CREATE SEASON COLUMN FROM MONTH:
+# Define new factor categories: 1- Spring 2-Summer 3-Autumn, 4-Winter
+df$f.season <- 4
+# 1 level - spring 
+sel<-which(df$month %in% c("month-mar","month-apr","month-may"))
+df$f.season[sel] <-1
+
+# 2 level - summer 
+sel<-which(df$month %in% c("month-jun","month-jul","month-aug"))
+df$f.season[sel] <-2
+
+# 3 level - autumn 
+sel<-which(df$month %in% c("month-sep","month-oct","month-nov"))
+df$f.season[sel] <-3
+
+df$f.season<-factor(df$f.season, levels=1:4, labels=c("season-spring","season-summer","season-autumn", "season-winter"))
+
+summary(df$f.season);pie(summary(df$f.season))
+```
+
+
+```{r}
+# CREATE NEW DURATION VARIABLE IN MINUTES:
+df$minutes<-df$duration/60
+summary(df$minutes)
+
+```
+
+
+# Discretització de variables numèriques:
+>>>>>>> origin/master
 ```{r}
 # AGE
 qulist<-quantile(df$age, seq(0,1,0.25), na.rm=TRUE)
@@ -640,7 +732,12 @@ par(mfrow=c(1,1))
 
 ```
 
+<<<<<<< HEAD
 ### Outliers Multivariants:
+=======
+# Imputació de valors:
+#Variables discretes
+>>>>>>> origin/master
 ```{r}
 # Consider subset of numeric variables
 summary(df[,vars_con])
@@ -670,11 +767,31 @@ summary(df[,vars_dis])
 
 ```
 
+<<<<<<< HEAD
 ## Numeric Variables:
 La variable numèrica campaign té certs valors que han estat considerats outliers prèviament. Aquí els imputem mitjaçant la imputació automàtica imputePCA().
 ```{r}
 
 ```
+=======
+#Variables continues
+```{r}
+# Campaign
+
+res.imp<-imputePCA(df[,vars_con], ncp=10)
+
+# Original:
+summary(df$campaign)
+# Amb dades imputades:
+summary(res.imp$completeObs[,"campaign"])
+
+df$campaign<-res.imp$completeObs[,"campaign"]
+
+summary(df[,vars_con])
+
+```
+
+>>>>>>> origin/master
 
 
 ```{r, include=FALSE}
