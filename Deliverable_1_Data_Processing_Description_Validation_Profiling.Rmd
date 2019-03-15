@@ -59,7 +59,7 @@ setwd(dirwd)
 df<-read.table( paste0(dirwd, "/bank-additional/bank-additional-full.csv"),  header=TRUE, sep=";")
 
 # General description of the bank data
-head(df)
+#head(df)
 nrow(df)
 ncol(df)
 dim(df)
@@ -183,7 +183,6 @@ df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 df$default<-factor(df$default)
 levels(df$default)<-paste0("default-",levels(df$default))
 
-par(mfrow=c(2,2))
 pie(summary(df$default))
 ```
 
@@ -248,7 +247,6 @@ df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 df$month<-factor(df$month)
 levels(df$month)<-paste0("month-",levels(df$month))
 
-par(mfrow=c(1,1))
 pie(summary(df$month))
 
 ```
@@ -270,7 +268,8 @@ df$f.season[sel] <-2
 sel<-which(df$month %in% c("month-sep","month-oct","month-nov"))
 df$f.season[sel] <-3
 
-df$f.season<-factor(df$f.season, levels=1:4, labels=c("season-spring","season-summer","season-autumn", "season-winter"))
+df$f.season<-factor(df$f.season, levels=1:4, labels=c("season-spring","season-summer", 
+                                                      "season-autumn", "season-winter"))
 
 summary(df$f.season);pie(summary(df$f.season))
 ```
@@ -302,7 +301,6 @@ df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 df$poutcome<-factor(df$poutcome)
 levels(df$poutcome)<-paste0("poutcome-",levels(df$poutcome))
 
-par(mfrow=c(2,1))
 pie(summary(df$poutcome))
 ```
 
@@ -319,17 +317,11 @@ levels(df$y)<-paste0("y-",levels(df$y))
 pie(summary(df$y))
 ```
 
-
 ## QUANTITATIVES VARIABLES:
 
 ### Defining some useful function for outliers detection:
 ```{r}
 calcQ <- function(x){
-  
-  # summary(df$duration)
-  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  #   0.0   102.0   180.0   258.3   319.0  4918.0 
-  
   s.x <- summary(x)
   
   iqr <- s.x[5]-s.x[2] # IQR = Q3([5]) -  Q1([2])
@@ -395,9 +387,9 @@ df[out, "duration"]<-NA
 if(length(out)>0) df<-df[-out,]
 
 # Final summary of duration variable:
-par(mfrow=c(1,1))
-summary(df$duration)
-Boxplot(df$duration)
+# par(mfrow=c(1,1))
+# summary(df$duration)
+# Boxplot(df$duration)
 ```
 
 #### Duration -> creem una columna de duració en minuts:
@@ -408,7 +400,7 @@ summary(df$minutes)
 
 ### Campaign
 ```{r}
-summary(df$campaign)
+# summary(df$campaign)
 # No tenim cap missing NA!
 miss<-which(is.na(df$campaign));
 missings$campaign<-length(miss); length(miss)
@@ -430,9 +422,9 @@ outliers$campaign=length(out); length(out)
 df[out, "campaign"]<-NA
 
 # Final summary of campaign variable:
-par(mfrow=c(1,1))
-summary(df$campaign)
-Boxplot(df$campaign)
+# par(mfrow=c(1,1))
+# summary(df$campaign)
+# Boxplot(df$campaign)
 
 ```
 
@@ -444,7 +436,10 @@ missings$pdays<-length(miss); length(miss)
 df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Values that are 999 mean never contacted before:
-never<-which(df$pdays==999); length(never)/5000*100
+never<-which(df$pdays==999)
+
+# They correspond to this percentage of rows:
+length(never)/5000*100
 
 # No outliers!
 
@@ -535,7 +530,7 @@ df$f.age<-factor( cut(df$age, breaks=qulist, include.lowest=T) )
 levels(df$f.age)<-paste0("f.age-", levels(df$f.age) )
 
 # Es mostra una distribució d'edats equitativa amb aquesta factorització:
-barplot(table(df$f.age), main="f.age - additional factors", ylab="frequency")
+barplot(table(df$f.age), main="f.age - additional factors", ylab="frequency", las=2, cex.names=0.8)
 summary(df$f.age)
 
 
@@ -546,9 +541,10 @@ df$f.duration<-factor( cut(df$duration, breaks=qulist, include.lowest=T) )
 levels(df$f.duration)<-paste0("f.duration-", levels(df$f.duration) )
 
 # Es mostra una distribució de duracions de la trucada equitativa amb aquesta factorització:
-barplot(table(df$f.duration), main="f.duration - additional factors", ylab="frequency")
+barplot(table(df$f.duration), main="f.duration - additional factors", ylab="frequency", las=2, cex.names=0.8)
 summary(df$f.duration)
 
+par(mfrow=c(2,1))
 
 # CAMPAIGN
 qulist<-quantile(df$campaign, seq(0,1,0.5), na.rm=TRUE)
@@ -557,7 +553,7 @@ df$f.campaign<-factor( cut(df$campaign, breaks=c(0,2,5,25), include.lowest=T) )
 levels(df$f.campaign)<-paste0("f.campaign-", levels(df$f.campaign) )
 
 # Resultat de la factorització de cops que s'ha contactat al client en la campanya actual:
-barplot(table(df$f.campaign), main="f.campaign - additional factors", ylab="frequency")
+barplot(table(df$f.campaign), main="f.campaign - additional factors", ylab="frequency", las=2, cex.names=0.8)
 summary(df$f.campaign)
 
 
@@ -567,8 +563,9 @@ levels(df$f.pdays)<-paste0("f.pdays-", levels(df$f.pdays) )
 
 levels(df$f.pdays)<-c("f.pdays-[0,7]", "f.pdays-(>7)", "f.pdays-never")
 
-# Resultat de la factorització? dels dies que fa que s'ha contactat al client en una altra campanya:
-barplot(table(df$f.pdays), main="f.pdays - additional factors", ylab="frequency")
+# Resultat de la factorització dels dies que fa
+# que s'ha contactat al client en una altra campanya:
+barplot(table(df$f.pdays), main="f.pdays - additional factors", ylab="frequency", las=2, cex.names=0.8)
 summary(df$f.pdays)
 
 
@@ -578,8 +575,9 @@ levels(df$f.previous)<-paste0("f.previous-", levels(df$f.previous) )
 
 levels(df$f.previous)<-c("f.previous-never", "f.previous-1", "f.previous-(>1)")
 
-# Resultat de la factorització de number of contacts performed before this campaign and for this client:
-barplot(table(df$f.previous), main="f.previous - additional factors", ylab="frequency")
+# Resultat de la factorització de number of contacts performed 
+# before this campaign and for this client:
+barplot(table(df$f.previous), main="f.previous - additional factors", ylab="frequency", las=2, cex.names=0.8)
 summary(df$f.previous)
 
 
@@ -589,7 +587,7 @@ qulist<-quantile(df$emp.var.rate, seq(0,1,0.125), na.rm=TRUE)
 df$f.emp.var.rate <-factor( cut(df$emp.var.rate  , breaks=unique(qulist), include.lowest=T) )
 levels(df$f.emp.var.rate)<-paste0("f.emp.var.rate-", levels(df$f.emp.var.rate) )
 
-barplot(table(df$f.emp.var.rate), main="f.emp.var.rate - additional factors", ylab="frequency")
+barplot(table(df$f.emp.var.rate), main="f.emp.var.rate - additional factors", ylab="frequency", las=2, cex.names=0.8)
 summary(df$f.emp.var.rate)
 
 
@@ -599,7 +597,7 @@ qulist<-quantile(df$cons.price.idx, seq(0,1,0.25), na.rm=TRUE)
 df$f.cons.price.idx <-factor( cut(df$cons.price.idx  , breaks=unique(qulist), include.lowest=T) )
 levels(df$f.cons.price.idx)<-paste0("f.cons.price.idx-", levels(df$f.cons.price.idx) )
 
-barplot(table(df$f.cons.price.idx), main="f.cons.price.idx - additional factors", ylab="frequency")
+barplot(table(df$f.cons.price.idx), main="f.cons.price.idx - additional factors", ylab="frequency", las=2, cex.names=0.8)
 summary(df$f.cons.price.idx)
 
 
@@ -609,7 +607,7 @@ qulist<-quantile(df$cons.conf.idx, seq(0,1,0.25), na.rm=TRUE)
 df$f.cons.conf.idx <-factor( cut(df$cons.conf.idx  , breaks=unique(qulist), include.lowest=T) )
 levels(df$f.cons.conf.idx)<-paste0("f.cons.conf.idx-", levels(df$f.cons.conf.idx) )
 
-barplot(table(df$f.cons.conf.idx), main="f.cons.conf.idx - additional factors", ylab="frequency")
+barplot(table(df$f.cons.conf.idx), main="f.cons.conf.idx - additional factors", ylab="frequency", las=2, cex.names=0.8)
 summary(df$f.cons.conf.idx)
 
 
@@ -619,7 +617,7 @@ qulist<-quantile(df$euribor3m, seq(0,1,0.25), na.rm=TRUE)
 df$f.euribor3m <-factor( cut(df$euribor3m  , breaks=unique(qulist), include.lowest=T) )
 levels(df$f.euribor3m)<-paste0("f.euribor3m-", levels(df$f.euribor3m) )
 
-barplot(table(df$f.euribor3m), main="f.euribor3m - additional factors", ylab="frequency")
+barplot(table(df$f.euribor3m), main="f.euribor3m - additional factors", ylab="frequency", las=2, cex.names=0.8)
 summary(df$f.euribor3m)
 
 
@@ -629,7 +627,7 @@ qulist<-quantile(df$nr.employed, seq(0,1,0.25), na.rm=TRUE)
 df$f.nr.employed <-factor( cut(df$nr.employed  , breaks=unique(qulist), include.lowest=T) )
 levels(df$f.nr.employed)<-paste0("f.nr.employed-", levels(df$f.nr.employed) )
 
-barplot(table(df$f.nr.employed), main="f.nr.employed - additional factors", ylab="frequency")
+barplot(table(df$f.nr.employed), main="f.nr.employed - additional factors", ylab="frequency", las=2, cex.names=0.8)
 summary(df$f.nr.employed)
 ```
 
@@ -645,7 +643,6 @@ vars_dis<-names(df)[c(2:10, 15, 21, 25, 27:36)]; vars_dis
 ```
 
 
-
 # DATA QUALITY REPORT:
 
 ## Per variable:
@@ -657,27 +654,26 @@ barplot( t(c(errors[, 13])), main="total errors per variable")
 ```
 
 ## Per individu:
-Cap individu en té més d'un. Es mostra en format taula el número d'individus que tenen 0 i/o 1(o més) missings, errors i outliers. Per últim, es mostren els individus que han tingut algun outlier i que aquest ha estat imputat.
+Cap individu en té més d'un. Es mostra en format taula el número d'individus que tenen 0 i/o 1(o més) missings, errors i outliers. Per últim, es mostren alguns dels individus que han tingut algun outlier i que aquest ha estat imputat.
 ```{r}
 par(mfrow=c(1,1))
 table(df$num_missings)
 table(df$num_errors)
 table(df$num_outliers)
 
-df[which(df$num_outliers>0), ] #individus amb algun outlier
+head(df[which(df$num_outliers>0), ], 2) #individus amb algun outlier
 ```
 
 ## Outliers Multivariants:
 No hem aconseguit trobar una configuració del aq.plot que ens doni una bona gràfica per a veure les distàncies de Mahalanobis i detecter outliers multivariants.
 ```{r}
 # Consider subset of numeric variables:
-summary(df[,vars_con])
+# summary(df[,vars_con])
 vars_con_sub<-vars_con[c(1,2,3,6:10)]
 x<-df[,vars_con_sub]
-#aq.plot(x, delta=qchisq(0.995, df=ncol(x)) )
+# aq.plot(x, delta=qchisq(0.995, df=ncol(x)) )
 
 ```
-
 
 
 # IMPUTATION:
@@ -698,7 +694,7 @@ summary(res.impf$completeObs$loan)
 # Acceptem la imputació:
 df$loan<-res.impf$completeObs[,"marital"]
 df$loan<-res.impf$completeObs[,"loan"]
-summary(df[,vars_dis])
+#summary(df[,vars_dis])
 
 ```
 
@@ -714,7 +710,7 @@ summary(df$campaign)
 
 # Acceptem la imputació:
 df$campaign<-res.imp$completeObs[,"campaign"]
-summary(df[,vars_con])
+#summary(df[,vars_con])
 ```
 
 
@@ -724,38 +720,45 @@ save.image( paste0(dirwd, "/bank-additional/Bank5000_validated.RData") )
 ```
 
 
-
 # PROFILING:
 ## CONTINOUS DESCRIPTION - Numeric Target (Duration):
+La funció d'R "condes" ens descriu la variable contínua "duration" a partir d'altres variables quantitatives o de les variables categòriques. Això ho fa mitjançant els tres outputs diferenciats més avall; etiquetats con a "$quanti", "$quali" i "$category".
+
+El primer dels quals ($quanti) ens mostra la correlació de la variable estudiada "duration" amb altres variables numèriques, mostrant només les correlacions que tenen un p-value per sota del llindar o nivell de significació del 5% (en aquest cas). Com més petit és el p-valor, menys evidència hi ha de que la hipòtesi nul.la sigui certa i més segurs estem del rebuig de la hipòtesi nul.la. Aquesta hipòtesi nul.la H0 afirma que la correlació o resultat obtingut és fruit d'una aleatorietat de les dades i no pot ser atribuible a una causa específica. Per tant, a partir d'ara, direm que quan el p-valor està per sota del nivell de significació establert, els resultats són significatius.
+
+Comentar que ens apareix el valor NA eperò no tenim cap valor en la nostra mostra (ho vam estar mirant a classe), tot i així no afecta al resultat obtingut, simplement l'obviem. De la mateixa manera obviem la correlació d'1 entre la duració de la trucada en segons i en minuts, ja que és una correlació perfecta deguda a una conversió d'unitats. Dit això, observem lleugeres correlacions negatives significatives (ordenades de més correlació positiva a no correlació i després a més correlació negativa) entre la duració de la trucada i la variable pdays, euribor3m, nr.employed i campaign. Es pot veure com la duració de la trucada augmenta com menys cops s'ha contactat al client en aquesta campanya (campaign), el quals és lògic perquè un client molt contactat estarà cansat ja de rebre trucades. També es pot veure com la duració de la trucada augmenta com menys dies fa que s'ha contactat a un client en relació a una campanya anterior (pdays), el que pot estar relacionat amb l'interès del client per les diferents campanyes actuals que se li han exposat. Finalment tenim dos indicados socioecònomics que tenen una lleugera correlació negativa amb la duració de la trucada.
+
+El segon output ($quali) ens mostra els factors (variables categòriques) que estan més relacionades amb la variable target "duration". Ens mostra els resultats significatius ordenats per factors de més a menys relacionats la duració. Obviant la discretització de la duració (f.duration) que òbviament està molt relacionada, observem com la la decisió final (y) del client a contractar un servei està força relacionada amb la duració d'una trucada. Molt menys relacionades (però llegurament) ho estan les variables "f.campaign", "month", així com altres indicadors socioeconòmics.
+
+El tercer output ($category) ens indica una estimació de les unitats que la durada de la trucada està per sobre (+) o per sota (-) de la mitja global quan el registre pertany a la categoria en qüestió; ordenades per p-valor. Deixant de banda les categories de f.duration que són fruit de la discretització, pot veure com quan el producte és contractat (y-yes), la duració de la trucada està 148 segons per sobre, com era d'esperar en una contractació per telèfon. Altres resultats obtinguts interessants són que la duració de la trucada està 72 segons per sobre quan s'ha contactat amb el client en aquesta campanya 1 o 2 cops (f-campaign-[0,2]) i que també augmenta en 38 segons quan el resultat de la campanya anterior va ser positiu pel mateix client (poutcome-success). També podem destacar el mes d'abril (month-apr), en el qual les duracions de les trucades estan 28 segons per sobre de la mitja, o la primavera (season-spring) amb 18 segons per sobre de la mitja. D'altra banda podem veure com en el mes d'agost (month-aug) la duració de les trucades està 28 segons per sota la mitja, en el novembre (month-nov) 20 segons per sota, i que els clients que mai han estat contactats abans (f.pdays-never) estan 28 segons menys al telèfon que la mitja.
+
+El oneway.test d'R ens compara si dues o més mostres de variables amb distribució normal tenen o no la mateixa mitjana (no cal assumir igualtat de variàncies pels grups implicats que es comparen). En aquest cas ens permet concluore que la mitjana de la durada de la trucada en els casos que s'ha contractat el servei és significativament diferent a la dels casos en els quals no s'ha contractat el servei. L'estadístic de contrast segueix una distribució F de Fisher i pren el valor 447.7, que és molt significatiu (p-value < 1e-16).
 ```{r}
 pos_duration<-which(names(df)=="duration"); pos_duration
 
 condes(df, num.var=pos_duration, proba = 0.05)
 
-#crea un llistat de les quantitatives-> assossiació global:
-#     les variables que dóna estan relacionades amb duration.
-#     llista les variables que tinguin un p-value per sota del 5%
+# mitjana de la duració per categoria de la duració
+# tapply(df$duration, df$f.duration, mean)
 
-#crea un llistat de les qualitatives->
-
-##crea un llistat de les categories->
-#     #Estimate: unitats que està per sobre la duració global quan el registre pertany a la categoria en qüestió
-
-# el p-valor ens diu si l'estimació que f.duration-(484,1.58e+03] sigui 494 per sobre la mitja és per una aleatorietat de les dades o és que és així i és significatiu; com és a dir, com més petit és el p-valor, més lluny de ser veritat està la hipòtesi nula (que diu que no la diferència no està relacionada).
-
-tapply(df$duration, df$f.duration, mean) #mitjana de la duració per categoria de la duració
-summary(df$duration) #duració global
-
-tapply(df$duration, df$y, mean) #mitjana de la duració per categoria de la y
+# duració global
+summary(df$duration) 
+# mitjana de la duració per categoria de la y
+tapply(df$duration, df$y, mean) 
 
 oneway.test(df$duration~df$y)
 ```
 
 ## CATEGORICAL DESCRIPTION - Factor (Y, Final Decision):
+La funció d'R "catdes" ens descriu la variable categòrica "y" a partir d'altres variables categòriques o de les variables quantitatives. Això ho fa mitjançant outputs diferenciats més avall. Notem que el nostre llindar de signifiació en aquest cas és del 0.025 per tal de limitar una mica la gran quantitat de resultats mostrats.
+
+L'apartat "Link between the cluster variable and the categorical variables (chi-square test)" ens mostra les variables categòriques que han caracteritzat al factor "y" ordenades de més a menys caracterització del factor (de menys a més p-value). La columna "df" mostra els Degrees of Freedom, que corresponen amb el nombre de categories del factor menys 1. Les variables categòriques que han influenciat més en la decisió final (y) són la f.duration (però és una dada que s'obté a posteriori de la trucada, no ens serveix per a generar un perfil de client), f.pdays (nombre de dies des de l'últim contacte), poutcome (si la última campanya va ser acceptada per aquest client o no), el mes (month), previous (si havia estat contactat o no abans d'aquesta campanya), diferents indicadors socioeconòmics, contact (via de contacte), el job (feina), etc.
+
+L'apartat "Description of each cluster by the categories" ens mostra per a cada categoria de la "y" (y-yes, y-no), una descripció de les variables categòriques. 
 ```{r}
 pos_y<-which(names(df)=="y"); pos_y
 
-catdes(df, num.var=pos_y, proba = 0.05)
+catdes(df, num.var=pos_y, proba = 0.025)
 
 # $`y-yes`
 #                                          Cla/Mod    Mod/Cla Global      p.value     v.test
@@ -764,11 +767,9 @@ catdes(df, num.var=pos_y, proba = 0.05)
 # f.pdays=f.pdays-[0,6]                 62.2222222 14.8672566   2.70 2.653287e-47  14.446089
 # contact=contact-cellular              14.5686901 80.7079646  62.60 6.688527e-23   9.852462
 
-# df: degrees of freedom, #categories - 1
 
 # Dins el cluster que s'ha acceptat el producte financer, la "durada(483 a 1580]" és el 44,778% dels valors, el que és una sobrerepresentació en el cluster y-yes, ja que el global ?s del 12,40%. També hi ha mesos que estan més representats!
 
-# Es donen per ordre d'importància (p-value), per cal interpretar les diferències a ull i veure quines poden donar informació interessant.
 ```
 
 
