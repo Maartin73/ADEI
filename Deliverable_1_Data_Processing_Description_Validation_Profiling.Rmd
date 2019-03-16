@@ -84,7 +84,7 @@ save.image( paste0(dirwd, "/bank-additional/Bank5000_raw.RData") )
 summary(df)
 ```
 
-# Inicialització del control d'errors, missings i outliers:
+# Inicialitzacio del control d'errors, missings i outliers:
 ```{r}
 columnes <- names(df) #list of column names
 
@@ -107,13 +107,13 @@ df$num_errors   <- 0
 
 
 # UNIVARIATE DESCRIPTIVE ANALYSIS (to be included for each variable):
-Aqui estudiem cada variable buscant missing values, outliers i possibles errors. En el cas que en trobem, els transformem en NAs i procedim a una imputacio manual o els eliminem, o una imputació automatica (en un chunck posterior d'Imputation).
+Aqui estudiem cada variable buscant missing values, outliers i possibles errors. En el cas que en trobem, els transformem en NAs i procedim a una imputacio manual o els eliminem, o una imputacio automatica (en un chunck posterior d'Imputation).
 
-## QUALITATIVE VARIABLES:
-També factoritzem aqui les categories (levels) de les variables qualitatives (discretes).
+## VARIABLES QUALITATIVE:
+També factoritzem aqui les categories (levels) de les variables qualitatives (discretes). Les etiquetes adicionals als factors s'afegeixen posteriorment als grafics per una questio estetica, es redueix la mida de les etiquetes i es poden veure amb mes claredad cada una de les variables.
 
 ### Job
-Jobs "unknown" són considerats com a categoria.
+Jobs "unknown" son considerats com a categoria.
 ```{r}
 # Jobs "unknown" will be considered a category, not a missing value.
 table(df$job, useNA="always")
@@ -125,13 +125,12 @@ df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "job-":
 df$job<-factor(df$job)
-levels(df$job)<-paste0("job-",levels(df$job))
-
 pie(summary(df$job))
+levels(df$job)<-paste0("job-",levels(df$job))
 ```
 
 ### Marital
-Els "unknowns" seran imputats més endavant automiticament.
+Els "unknowns" seran imputats mes endavant automaticament.
 ```{r}
 # Marital "unknown" will be a missing value (set to NA):
 sel<-which(df$marital=="unknown");length(sel)
@@ -145,13 +144,12 @@ df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "marital-":
 df$marital<-factor(df$marital)
 levels(df$marital)<-paste0("marital-",levels(df$marital))
-summary(df$marital)
-
 pie(summary(df$marital))
+summary(df$marital)
 ```
 
 ### Education
-Education "unknown" és considerada com a categoria. La categoria "illiterate" és inclosa manualment a "basic.4y".
+Education "unknown" es considerada com a categoria. La categoria "illiterate" és inclosa manualment a "basic.4y".
 ```{r}
 # Education "unknown" will be considered a category, not a missing value.
 table(df$education, useNA="always")
@@ -167,13 +165,12 @@ df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "education-":
 df$education<-factor(df$education)
-levels(df$education)<-paste0("education-",levels(df$education))
-
 pie(summary(df$education))
+levels(df$education)<-paste0("education-",levels(df$education))
 ```
 
 ### Default (has credit in default?)
-Default (owes credit) "unknown" will be considered a category, not a missing value.
+Default "unknown" sera considerada com a una categoria, no com a missing value.
 ```{r}
 table(df$default, useNA="always")
 
@@ -184,13 +181,12 @@ df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "default-":
 df$default<-factor(df$default)
-levels(df$default)<-paste0("default-",levels(df$default))
-
 summary(df$default)
+levels(df$default)<-paste0("default-",levels(df$default))
 ```
 
 ### Housing
-Housing "unknown" will be considered a category, not a missing value.
+Housing "unknown" sera considerada com a una categoria, no com a missing value.
 ```{r}
 table(df$housing, useNA="always")
 
@@ -201,13 +197,12 @@ df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "housing-":
 df$housing<-factor(df$housing)
-levels(df$housing)<-paste0("housing-",levels(df$housing))
-
 pie(summary(df$housing))
+levels(df$housing)<-paste0("housing-",levels(df$housing))
 ```
 
 ### Loan (has personal loan?)
-Loan "unknown" will be a missing value (set to NA) i sera imputat més endavant automaticament.
+Loan "unknown" sera considerat com a missing value (NA) sera imputat mes endavant automaticament.
 ```{r}
 sel<-which(df$loan=="unknown");length(sel)
 df$loan[sel]<-NA
@@ -219,9 +214,8 @@ df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "loan-":
 df$loan<-factor(df$loan)
-levels(df$loan)<-paste0("loan-",levels(df$loan))
-
 pie(summary(df$loan))
+levels(df$loan)<-paste0("loan-",levels(df$loan))
 ```
 
 ### Contact
@@ -235,9 +229,8 @@ df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "contact-":
 df$contact<-factor(df$contact)
-levels(df$contact)<-paste0("contact-",levels(df$contact))
-
 summary(df$contact)
+levels(df$contact)<-paste0("contact-",levels(df$contact))
 ```
 
 ### Month
@@ -248,13 +241,12 @@ df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "month-":
 df$month<-factor(df$month)
-levels(df$month)<-paste0("month-",levels(df$month))
-
 pie(summary(df$month))
+levels(df$month)<-paste0("month-",levels(df$month))
 ```
 
 #### Month -> definim noves factor categories per Season.
-New factors grouping original levels will be considered very positively.
+(New factors grouping original levels will be considered very positively.)
 ```{r}
 # Define new factor categories: 1- Spring 2-Summer 3-Autumn, 4-Winter
 df$f.season <- 4
@@ -284,9 +276,8 @@ df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "day_of_week-":
 df$day_of_week<-factor(df$day_of_week)
-levels(df$day_of_week)<-paste0("day_of_week-",levels(df$day_of_week))
-
 summary(df$day_of_week)
+levels(df$day_of_week)<-paste0("day_of_week-",levels(df$day_of_week))
 ```
 
 ### Poutcome (outcome of previous marketing campaign)
@@ -301,9 +292,8 @@ df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "poutcome-":
 df$poutcome<-factor(df$poutcome)
-levels(df$poutcome)<-paste0("poutcome-",levels(df$poutcome))
-
 pie(summary(df$poutcome))
+levels(df$poutcome)<-paste0("poutcome-",levels(df$poutcome))
 ```
 
 ### y (has the client subscribed a term deposit?)
@@ -314,14 +304,13 @@ df[miss, "num_missings"]<- df[miss, "num_missings"]+1
 
 # Factoritzem les categories (levels) de la columna i afegim l'etiqueta "y-":
 df$y<-factor(df$y)
-levels(df$y)<-paste0("y-",levels(df$y))
-
 summary(df$y)
+levels(df$y)<-paste0("y-",levels(df$y))
 ```
 
-## QUANTITATIVES VARIABLES:
+##  VARIABLES QUANTITATIVES:
 
-### Defining useful function for outliers detection:
+### Funcio de gran utilitat per a la deteccio d'outliers:
 ```{r}
 calcQ <- function(x){
   s.x <- summary(x)
@@ -362,7 +351,7 @@ if(length(out)>0) df<-df[-out,]
 ```
 
 ### Duration
-Els outliers en la variable duració han estat eliminats. Corresponen a duracions per sota els 5 segons (trucada massa curta a un client que potser no podia parlar en aquell moment o penja per error) i per sobre dels 1600 segon s (26 minuts).
+Els outliers en la variable duracio han estat eliminats. Corresponen a duracions per sota els 5 segons (trucada massa curta a un client que potser no podia parlar en aquell moment o penja per error) i per sobre dels 1600 segons (26 minuts).
 ```{r}
 summary(df$duration)
 # No tenim cap missing NA!
@@ -521,7 +510,7 @@ Boxplot(df$nr.employed)
 
 
 ## DISCRETITZACIO DE VARIABLES NUMERIQUES:
-Les variables numeriques originals que corresponen a conceptes quantitatius reals es mantenen com a numeriques, pero tambe s'han de crear factors addicionals com a discretitzacio de cada variable numerica. Les etiquetes adicionals als factors s'afegeixen posterior als grafics per una questio estetica, es redueix la mida de les etiquetes i es poden veure amb m�s claredad cada una de les variables. 
+Les variables numeriques originals que corresponen a conceptes quantitatius reals es mantenen com a numeriques, pero tambe s'han de crear factors addicionals com a discretitzacio de cada variable numerica. Les etiquetes adicionals als factors s'afegeixen posterior als grafics per una questio estetica, es redueix la mida de les etiquetes i es poden veure amb mes claredad cada una de les variables. 
 ```{r}
 par(mfrow=c(1,1))
 
@@ -530,7 +519,7 @@ qulist<-quantile(df$age, seq(0,1,0.25), na.rm=TRUE)
 
 df$f.age<-factor( cut(df$age, breaks=qulist, include.lowest=T) )
 
-# Es mostra una distribució d'edats equitativa amb aquesta factorització:
+# Es mostra una distribucio d'edats equitativa amb aquesta factoritzacio:
 barplot(table(df$f.age), main="f.age - additional factors", ylab="frequency", las=1, cex.names=0.8)
 summary(df$f.age)
 
@@ -542,7 +531,7 @@ qulist<-quantile(df$duration, seq(0,1,0.125), na.rm=TRUE)
 
 df$f.duration<-factor( cut(df$duration, breaks=qulist, include.lowest=T) )
 
-# Es mostra una distribució de duracions de la trucada equitativa amb aquesta factorització:
+# Es mostra una distribucio de duracions de la trucada equitativa amb aquesta factoritzacio:
 barplot(table(df$f.duration), main="f.duration - additional factors", ylab="frequency", las=1, cex.names=0.8)
 
 levels(df$f.duration)<-paste0("f.duration-", levels(df$f.duration) )
@@ -553,7 +542,7 @@ qulist<-quantile(df$campaign, seq(0,1,0.5), na.rm=TRUE)
 
 df$f.campaign<-factor( cut(df$campaign, breaks=c(0,2,5,25), include.lowest=T) )
 
-# Resultat de la factorització de cops que s'ha contactat al client en la campanya actual:
+# Resultat de la factoritzacio de cops que s'ha contactat al client en la campanya actual:
 barplot(table(df$f.campaign), main="f.campaign - additional factors", ylab="frequency", las=1, cex.names=0.8)
 
 levels(df$f.campaign)<-paste0("f.campaign-", levels(df$f.campaign) )
@@ -565,7 +554,7 @@ summary(df$f.campaign)
 df$f.pdays<-factor( cut(df$pdays, breaks=c(0, 7, 998, 999), include.lowest=T) )
 
 
-# Resultat de la factorització dels dies que fa
+# Resultat de la factoritzacio dels dies que fa
 # que s'ha contactat al client en una altra campanya:
 levels(df$f.pdays)<-c("[0,7]", "(>7)", "never")
 barplot(table(df$f.pdays), main="f.pdays - additional factors", ylab="frequency", las=1, cex.names=0.8)
@@ -579,7 +568,7 @@ df$f.previous<-factor( cut(df$previous, breaks=c(-Inf, 0, 1, +Inf), include.lowe
 
 levels(df$f.previous)<-c("never", "1", "(>1)")
 
-# Resultat de la factorització de number of contacts performed 
+# Resultat de la factoritzacio de number of contacts performed 
 # before this campaign and for this client:
 barplot(table(df$f.previous), main="f.previous - additional factors", ylab="frequency", las=1, cex.names=0.8)
 
@@ -657,15 +646,16 @@ vars_dis<-names(df)[c(2:10, 15, 21, 25, 27:36)]; vars_dis
 # DATA QUALITY REPORT:
 
 ## Per variable:
+Nomes es mostren aquelles variables que tenen un valor diferent a 0 en el camp que expresa la grafica en concret.
 ```{r}
-par(mfrow=c(3,1))
+par(mfrow=c(1,3))
 barplot( t(c(missings[, 3])), main="total missings per variable", xlab="marital")
-barplot( t(c(outliers[, c(1, 11, 12, 13)])), main="total outliers per variable")
+barplot( t(c(outliers[, c(11, 12)])), main="total outliers per variable")
 barplot( t(c(errors[, 13])), main="total errors per variable")
 ```
 
 ## Per individu:
-Cap individu en té més d'un. Es mostra en format taula el número d'individus que tenen 0 i/o 1(o més) missings, errors i outliers. Per últim, es mostren alguns dels individus que han tingut algun outlier i que aquest ha estat imputat.
+Cap individu en te mes d'un. Es mostra en format taula el numero d'individus que tenen 0 i/o 1 (o mes) missings, errors i outliers. Per ultim, es mostren alguns dels individus que han tingut algun outlier i que aquest ha estat imputat.
 ```{r}
 par(mfrow=c(1,1))
 table(df$num_missings)
@@ -676,14 +666,15 @@ head(df[which(df$num_outliers>0), ], 2) #individus amb algun outlier
 ```
 
 ## Outliers Multivariants:
-No hem aconseguit trobar una configuració del aq.plot que ens doni una bona grafica per a veure les distancies de Mahalanobis i detecter outliers multivariants.
+No hem aconseguit trobar una configuracio del aq.plot que ens doni una bona grafica per a veure les distancies de Mahalanobis i detectar outliers multivariants.
 ```{r}
 # Consider subset of numeric variables:
 # summary(df[,vars_con])
-vars_con_sub<-vars_con[c(1,2,3,6:10)]
+vars_con_sub<-vars_con[c(1,2)]
 x<-df[,vars_con_sub]
 # aq.plot(x, delta=qchisq(0.995, df=ncol(x)) )
-
+index <- data.frame(aq.plot(x, delta=qchisq(0.975, df=ncol(x)), quan=0.5, alpha=0.05))
+table(index$outliers)
 ```
 
 
@@ -710,7 +701,7 @@ df$loan<-res.impf$completeObs[,"loan"]
 ```
 
 ## Numeric Variables:
-La variable numèrica campaign té certs individus que han estat considerats outliers prèviament. Aqui els imputem mitjaçant la imputació automatica imputePCA().
+La variable numerica campaign te certs individus que han estat considerats outliers previament. Aqui els imputem mitjaçant la imputacio automatica imputePCA().
 ```{r}
 res.imp<-imputePCA(df[,vars_con], ncp=8)
 
@@ -733,17 +724,17 @@ save.image( paste0(dirwd, "/bank-additional/Bank5000_validated.RData") )
 
 # PROFILING:
 ## CONTINOUS DESCRIPTION - Numeric Target (Duration):
-La funció d'R "condes" ens descriu la variable continua "duration" a partir d'altres variables quantitatives o de les variables categòriques. Això ho fa mitjançant els tres outputs diferenciats més avall; etiquetats con a "$quanti", "$quali" i "$category".
+La funcio d'R "condes" ens descriu la variable continua "duration" a partir d'altres variables quantitatives o de les variables categoriques. Aixo ho fa mitjançant els tres outputs diferenciats mes avall; etiquetats con a "$quanti", "$quali" i "$category".
 
-El primer dels quals ($quanti) ens mostra la correlació de la variable estudiada "duration" amb altres variables numèriques, mostrant només les correlacions que tenen un p-value per sota del llindar o nivell de significació del 5% (en aquest cas). Com més petit és el p-valor, menys evidència hi ha de que la hipòtesi nul.la sigui certa i més segurs estem del rebuig de la hipòtesi nul.la. Aquesta hipòtesi nul.la H0 afirma que la correlació o resultat obtingut és fruit d'una aleatorietat de les dades i no pot ser atribuible a una causa especifica. Per tant, a partir d'ara, direm que quan el p-valor esta per sota del nivell de significació establert, els resultats són significatius.
+El primer dels quals ($quanti) ens mostra la correlacio de la variable estudiada "duration" amb altres variables numeriques, mostrant nomes les correlacions que tenen un p-value per sota del llindar o nivell de significacio del 5% (en aquest cas). Com mes petit es el p-valor, menys evidencia hi ha de que la hipotesi nul.la sigui certa i mes segurs estem del rebuig de la hipotesi nul.la. Aquesta hipotesi nul.la H0 afirma que la correlacio o resultat obtingut es fruit d'una aleatorietat de les dades i no pot ser atribuible a una causa especifica. Per tant, a partir d'ara, direm que quan el p-valor esta per sota del nivell de significacio establert, els resultats son significatius.
 
 Comentar que ens apareix el valor NA però no tenim cap valor en la nostra mostra (ho vam estar mirant a classe), tot i aixi no afecta al resultat obtingut, simplement l'obviem. De la mateixa manera obviem la correlació d'1 entre la duració de la trucada en segons i en minuts, ja que és una correlació perfecta deguda a una conversió d'unitats. Dit això, observem lleugeres correlacions negatives significatives (ordenades de més correlació positiva a no correlació i després a més correlació negativa) entre la duració de la trucada i la variable pdays, euribor3m, nr.employed i campaign. Es pot veure com la duració de la trucada augmenta com menys cops s'ha contactat al client en aquesta campanya (campaign), el quals és lògic perquè un client molt contactat estara cansat ja de rebre trucades. També es pot veure com la duració de la trucada augmenta com menys dies fa que s'ha contactat a un client en relació a una campanya anterior (pdays), el que pot estar relacionat amb l'interès del client per les diferents campanyes actuals que se li han exposat. Finalment tenim dos indicados socioecònomics que tenen una lleugera correlació negativa amb la duració de la trucada.
 
-El segon output ($quali) ens mostra els factors (variables categòriques) que estan més relacionades amb la variable target "duration". Ens mostra els resultats significatius ordenats per factors de més a menys relacionats la duració. Obviant la discretització de la duració (f.duration) que òbviament esta molt relacionada, observem com la la decisió final (y) del client a contractar un servei esta força relacionada amb la duració d'una trucada. Molt menys relacionades (però llegurament) ho estan les variables "f.campaign", "month", aixi com altres indicadors socioeconòmics.
+El segon output ($quali) ens mostra els factors (variables categoriques) que estan mes relacionades amb la variable target "duration". Ens mostra els resultats significatius ordenats per factors de mes a menys relacionats la duracio. Obviant la discretitzacio de la duracio (f.duration) que obviament esta molt relacionada, observem com la la decisio final (y) del client a contractar un servei esta forca relacionada amb la duracio d'una trucada. Molt menys relacionades (pero llegurament) ho estan les variables "f.campaign", "month", aixi com altres indicadors socioeconomics.
 
-El tercer output ($category) ens indica una estimació de les unitats que la durada de la trucada esta per sobre (+) o per sota (-) de la mitja global quan el registre pertany a la categoria en qüestió; ordenades per p-valor. Deixant de banda les categories de f.duration que són fruit de la discretització, pot veure com quan el producte és contractat (y-yes), la duració de la trucada esta 148 segons per sobre, com era d'esperar en una contractació per telèfon. Altres resultats obtinguts interessants són que la duració de la trucada esta 72 segons per sobre quan s'ha contactat amb el client en aquesta campanya 1 o 2 cops (f-campaign-[0,2]) i que també augmenta en 38 segons quan el resultat de la campanya anterior va ser positiu pel mateix client (poutcome-success). També podem destacar el mes d'abril (month-apr), en el qual les duracions de les trucades estan 28 segons per sobre de la mitja, o la primavera (season-spring) amb 18 segons per sobre de la mitja. D'altra banda podem veure com en el mes d'agost (month-aug) la duració de les trucades esta 28 segons per sota la mitja, en el novembre (month-nov) 20 segons per sota, i que els clients que mai han estat contactats abans (f.pdays-never) estan 28 segons menys al telèfon que la mitja.
+El tercer output ($category) ens indica una estimacio de les unitats que la durada de la trucada esta per sobre (+) o per sota (-) de la mitja global quan el registre pertany a la categoria en questio; ordenades per p-valor. Deixant de banda les categories de f.duration que son fruit de la discretitzacio, pot veure com quan el producte es contractat (y-yes), la duracio de la trucada esta 148 segons per sobre, com era d'esperar en una contractacio per telefon. Altres resultats obtinguts interessants son que la duracio de la trucada esta 72 segons per sobre quan s'ha contactat amb el client en aquesta campanya 1 o 2 cops (f-campaign-[0,2]) i que tambe augmenta en 38 segons quan el resultat de la campanya anterior va ser positiu pel mateix client (poutcome-success). Tambe podem destacar el mes d'abril (month-apr), en el qual les duracions de les trucades estan 28 segons per sobre de la mitja, o la primavera (season-spring) amb 18 segons per sobre de la mitja. D'altra banda podem veure com en el mes d'agost (month-aug) la duracio de les trucades esta 28 segons per sota la mitja, en el novembre (month-nov) 20 segons per sota, i que els clients que mai han estat contactats abans (f.pdays-never) estan 28 segons menys al telefon que la mitja.
 
-El oneway.test d'R ens compara si dues o més mostres de variables amb distribució normal tenen o no la mateixa mitjana (no cal assumir igualtat de variancies pels grups implicats que es comparen). En aquest cas ens permet concluore que la mitjana de la durada de la trucada en els casos que s'ha contractat el servei és significativament diferent a la dels casos en els quals no s'ha contractat el servei. L'estadadistic de contrast segueix una distribució F de Fisher i pren el valor 447.7, que és molt significatiu (p-value < 1e-16).
+El oneway.test d'R ens compara si dues o mes mostres de variables amb distribucio normal tenen o no la mateixa mitjana (no cal assumir igualtat de variancies pels grups implicats que es comparen). En aquest cas ens permet concluore que la mitjana de la durada de la trucada en els casos que s'ha contractat el servei es significativament diferent a la dels casos en els quals no s'ha contractat el servei. L'estadadistic de contrast segueix una distribucio F de Fisher i pren el valor 447.7, que es molt significatiu (p-value < 1e-16).
 ```{r}
 pos_duration<-which(names(df)=="duration"); pos_duration
 
@@ -761,15 +752,15 @@ oneway.test(df$duration~df$y)
 ```
 
 ## CATEGORICAL DESCRIPTION - Factor (Y, Final Decision):
-La funció d'R "catdes" ens descriu la variable categòrica "y" a partir d'altres variables categòriques o de les variables quantitatives. Això ho fa mitjançant outputs diferenciats més avall. Notem que el nostre llindar de signifiació en aquest cas és del 0.025 per tal de limitar una mica la gran quantitat de resultats mostrats.
+La funcio d'R "catdes" ens descriu la variable categorica "y" a partir d'altres variables categoriques o de les variables quantitatives. Aixo ho fa mitjancant outputs diferenciats mes avall. Notem que el nostre llindar de signifiacio en aquest cas es del 0.025 per tal de limitar una mica la gran quantitat de resultats mostrats.
 
-L'apartat "Link between the cluster variable and the categorical variables (chi-square test)" ens mostra les variables categòriques que han caracteritzat al factor "y" ordenades de més a menys caracterització del factor (de menys a més p-value). La columna "df" mostra els Degrees of Freedom, que corresponen amb el nombre de categories del factor menys 1. Les variables categòriques que han influenciat més en la decisió final (y) són la f.duration (però és una dada que s'obté a posteriori de la trucada, no ens serveix per a generar un perfil de client), f.pdays (nombre de dies des de l'últim contacte), poutcome (si la última campanya va ser acceptada per aquest client o no), el mes (month), previous (si havia estat contactat o no abans d'aquesta campanya), diferents indicadors socioeconòmics, contact (via de contacte), el job (feina), etc.
+L'apartat "Link between the cluster variable and the categorical variables (chi-square test)" ens mostra les variables categoriques que han caracteritzat al factor "y" ordenades de mes a menys caracteritzacio del factor (de menys a mes p-value). La columna "df" mostra els Degrees of Freedom, que corresponen amb el nombre de categories del factor menys 1. Les variables categoriques que han influenciat mes en la decisio final (y) son la f.duration (pero es una dada que s'obte a posteriori de la trucada, no ens serveix per a generar un perfil de client), f.pdays (nombre de dies des de l'ultim contacte), poutcome (si la ultima campanya va ser acceptada per aquest client o no), el mes (month), previous (si havia estat contactat o no abans d'aquesta campanya), diferents indicadors socioeconomics, contact (via de contacte), el job (feina), etc.
 
-L'apartat "Description of each cluster by the categories" ens mostra per a cada categoria de la "y" (y-yes, y-no), una descripció de les variables categòriques per tal de poder estudiar-ne el seu enllaç. La primera columna, Cla/Mod, en mostra el tant percent d'individus corresponents a la categoria de la fila que pertanyen també al cluster. Per altra banda, la segona columna (Mod/Cla) mostra la operació inversa, es a dir, dels individus que pertanyen al cluster quin tant percent pertany també a la categoria de la fila en questio. La columna Global ens mostra quin tant percent de la població total posseix la caracteristica de la fila. Per acabar, v.test  ens indica si la categoria de la fila es troba sobre representada (v.test>0) o menys representada (v.test<0) entre els individus que conformen el cluster. Per al cluster "y-no" podem deduir que el fet de la haver realitzat un contacte previ i que es realitzin menys de 2 contactes en l'actual campanya té un gran pes en la decisió final. A més, per a valors positius del euribor (desfavorables per al client) hi a una tendencia a l'alça a refusar el producte. El mateix succeix amb valor elevats del IPC i quan es redueix la taxa d'ocupació. En relació al cluster "y-yes" les presones que van ser contactades fa menys de 7 dies per altres campanyes i aquelles que el resultat en la campanya anterior va ser exitós tendeixen a donar un si com a resposta. També quan els valors socioeconomics es mostren favorables al client aquest tendeix a adquirir el producte amb una major probabilitat. 
+L'apartat "Description of each cluster by the categories" ens mostra per a cada categoria de la "y" (y-yes, y-no), una descripcio de les variables categoriques per tal de poder estudiar-ne el seu enllac. La primera columna, Cla/Mod, en mostra el tant percent d'individus corresponents a la categoria de la fila que pertanyen tambe al cluster. Per altra banda, la segona columna (Mod/Cla) mostra la operacio inversa, es a dir, dels individus que pertanyen al cluster quin tant percent pertany tambe a la categoria de la fila en questio. La columna Global ens mostra quin tant percent de la poblacio total posseix la caracteristica de la fila. Per acabar, v.test  ens indica si la categoria de la fila es troba sobre representada (v.test>0) o menys representada (v.test<0) entre els individus que conformen el cluster. Per al cluster "y-no" podem deduir que el fet de la haver realitzat un contacte previ i que es realitzin menys de 2 contactes en l'actual campanya te un gran pes en la decisio final. A mes, per a valors positius del euribor (desfavorables per al client) hi a una tendencia a l'alca a refusar el producte. El mateix succeix amb valor elevats del IPC i quan es redueix la taxa d'ocupacio. En relacio al cluster "y-yes" les presones que van ser contactades fa menys de 7 dies per altres campanyes i aquelles que el resultat en la campanya anterior va ser exitos tendeixen a donar un si com a resposta. Tambe quan els valors socioeconomics es mostren favorables al client aquest tendeix a adquirir el producte amb una major probabilitat. 
 
-L'apartat "Link between the cluster variable and the quantitative variables" ens mostra les variables quantitatives que han caracteritzat al factor "y" ordenades de més a menys caracterització del factor (de menys a més correlació). Les variables quantitatives que han influenciat més en la decisió final (y) són la duration i minutes (però son dades que s'obtenen a posteriori de la trucada, no ens serveixen per a generar un perfil de client), pdays (nombre de dies des de l'últim contacte), previous (si havia estat contactat o no abans d'aquesta campanya), diferents indicadors socioeconòmics, etc.
+L'apartat "Link between the cluster variable and the quantitative variables" ens mostra les variables quantitatives que han caracteritzat al factor "y" ordenades de mes a menys caracteritzacio del factor (de menys a mes correlacio). Les variables quantitatives que han influenciat mes en la decisio final (y) son la duration i minutes (pero son dades que s'obtenen a posteriori de la trucada, no ens serveixen per a generar un perfil de client), pdays (nombre de dies des de l'ultim contacte), previous (si havia estat contactat o no abans d'aquesta campanya), diferents indicadors socioeconomics, etc.
 
-L'apartat "Description of each cluster by quantitative variables". D'aquesta part de l'analisi no en podem extreure informació dels individus que conformen el cluster "y-no", donat que els valors que es presenten de les categories dins el cluster i de manera general no presenten una diversificació notable. Per altra banda del cluster "y-yes" si que en poden extreure informació, podem veure que la mitjana de la duracio de les trucades dels individus del cluster duplica la mitjana global (tot i que la duració no ens pot servir com a indicador, donat que aquelles persones no interesades en el producte refusen la trucada més rapidament o el fet de contractar el proucte pot repercutir en un increment de la durada). Altres factors con l'euribor o la taxa de variacio de la ocupació també tenen un impacte en la decisió final. 
+L'apartat "Description of each cluster by quantitative variables". D'aquesta part de l'analisi no en podem extreure informacio dels individus que conformen el cluster "y-no", donat que els valors que es presenten de les categories dins el cluster i de manera general no presenten una diversificacio notable. Per altra banda del cluster "y-yes" si que en poden extreure informacio, podem veure que la mitjana de la duracio de les trucades dels individus del cluster duplica la mitjana global (tot i que la duracio no ens pot servir com a indicador, donat que aquelles persones no interesades en el producte refusen la trucada mes rapidament o el fet de contractar el proucte pot repercutir en un increment de la durada). Altres factors con l'euribor o la taxa de variacio de la ocupacio tambe tenen un impacte en la decisio final. 
 
 
 ```{r}
