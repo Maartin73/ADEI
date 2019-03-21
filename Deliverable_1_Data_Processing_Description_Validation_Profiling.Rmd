@@ -767,4 +767,3 @@ pos_y<-which(names(df)=="y"); pos_y
 catdes(df, num.var=pos_y, proba = 0.025)
 ```
 
-
