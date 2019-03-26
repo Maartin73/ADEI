@@ -1,0 +1,40 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(FactoMineR)
+data(decathlon)
+names(decathlon)
+row.names(decathlon)
+summary(decathlon)
+
+#suplementaries:
+#   ->quantitatives: rank, points
+#   ->qualitatives: competition
+res.pca<-PCA(decathlon, quanti.sup = 11:12, quali.sup = 13)
+
+#Correlació perfecta de -1 entre punts i posició a la classificació, com més baix rank (primeres posicions), més putns obtinguts!
+
+#Eigenvalues:
+res.pca$eig[,1]
+plot(res.pca$eig[,1], type='o')
+#les 4 primeres dimensions poden representar un 75% de la inercia totaL:
+sum(res.pca$eig[1:4,1]) / sum(res.pca$eig[,1])
+
+#Coordenades dels individus:
+res.pca$ind$coord[,1:2]
+#Contribució dels diferents individus:
+res.pca$ind$contrib[,1:2]
+which(res.pca$ind$contrib[,1]>10)
+sort(res.pca$ind$contrib[,1:2])
+
+#Cos2, dues formes de fer-ho:
+(res.pca$var$coord[,1:2])^2
+res.pca$var$cos2[,1:2]
+
+
+```
+
