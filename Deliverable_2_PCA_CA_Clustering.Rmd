@@ -55,8 +55,86 @@ dirwd<-"D:/Documents/GitHub/ADEI"
 setwd(dirwd)
 
 #acabar de corregir revisió del delivery 1!!
-load( paste0(dirwd, "/bank-additional/Bank5000_raw.RData") )
+load( paste0(dirwd, "/bank-additional/Bank5000_validated.RData") )
 summary(df)
+```
+
+
+# CA analysis:
+```{r}
+# Contingency tables - complex:
+names(df)
+
+
+#Target f.duration vs variable f.age
+table( df$f.age, df$f.duration )
+# H0: f.duration no té cap relació amb variable f.age
+chisq.test( table( df$f.age, df$f.duration) )
+  #Resultat --> X-squared = 17.871, df = 21, p-value = 0.6572 --> no es pot rejectar la H0 amb aquest p-value!, no tenen relació!
+
+
+#Target f.duration vs variable job
+table( df$job, df$f.duration )
+#Row/Column profile
+prop.table( table(df$job, df$f.duration), 1 ) #1->per files
+prop.table( table(df$job, df$f.duration), 2 ) #2->per columnes
+#Marginal Row/Column profile
+prop.table( table(df$f.duration)) #1->per files
+prop.table( table(df$job)) #2->per columnes
+# H0: f.duration no té cap relació amb variable job
+chisq.test( table( df$job, df$f.duration) )
+  #Resultat --> s'hauria de poder rejectar la H0 amb el p-value!, podrem ajudar-nos del job per a predir la duration! Al fer-ho al lab no ens ha donat bé però ens avisa amb un warning pq per a poder fer el test chisq ha d'haver almenys 5 individus a cada cel.la de la taula i com no hem imputat els job-unknown encara no surt bé!!!
+#job-unknown         4         8         5         5
+
+
+
+# CA - f.duration vs variable f.age
+res.ca<-CA( table( df$f.age, df$f.duration ) )
+
+attributes(res.ca)
+res.ca$eig #valors eig no normalitzats!
+mean(res.ca$eig[,1])
+
+#Kaiser: take as many dimensions as eigenvalue > mean of eigenvalues
+#En una taula de correspondencies simples podem tenir màxim tantes dimensions com categories d'una variable menys 1! -> f.age té 4 cateories -> -1 -> 3 dimensions!!
+
+#La inercia total ens indica com de relacionades estan les dues variables, com més pròxim a 0, menys relacionades estan!
+sum(res.ca$eig[,1])
+
+#Coordenades:
+res.ca$row #files son l'edat!
+res.ca$col #columnes son la duracio!
+
+#Link levels in rows:
+plot.CA(res.ca)
+#Com hem vist abans amb el chisq test, no tenen res a veure l'una amb l'altra:
+lines(res.ca$row$coord[,1], res.ca$row$coord[,2], col="darkblue")
+lines(res.ca$col$coord[,1], res.ca$col$coord[,2], col="darkred")
+
+#Phi2 = Intensity of the association Chisq/nobservations
+sum(res.ca$eig[,1]) #Total inertia = Phi2
+17.871/4999 #formula de teoria de total inertia dona el mateix (chisq value/(mostres-1))
+
+
+
+# CA - f.duration vs variable job
+res.ca<-CA( table( df$job, df$f.duration ) )
+res.ca$eig
+mean(res.ca$eig[,1]) #agafem 3 dimensions
+
+#Link levels in rows:
+#Com mes aprop surten al grafic les categories d'ambdues variables analitzades, mes relacionades estan. Per exemple, en un cas ben fet sortiria job-unemployed aprop de la categoria de menor duracio (penjen rapidament).
+plot.CA(res.ca)
+#Com hem vist abans amb el chisq test, tenen a veure:
+lines(res.ca$row$coord[,1], res.ca$row$coord[,2], col="darkblue")
+lines(res.ca$col$coord[,1], res.ca$col$coord[,2], col="darkred")
+
+#A vegades va be eliminar algunes categories amb pocs individus d'una variable per a poder veure millor les possibles relacions!
+
+#Traditional analysis y vs duration:
+chisq.test( table(df$y, df$f.duration) )
+table(df$y, df$f.duration)
+
 ```
 
 
@@ -126,10 +204,13 @@ fviz_contrib(res.pca, choice="var", axes=1:2)+theme_bw()
 
 summary(res.pca, nb.dec=2, ncp=4, nbelements=9, nbind=0)
 
+#valors v.test >1,96 ens indiquen que la categoria ens aporta alguna cosa!
+#   --> son les que ens podriem quedar en un subconjunt i que fos l'utlitzat a l'hora de representar graficament i triar els eixos (pels deliverables no cal això!).
+
 ```
 
 
-# K-Means Classification:
+# K-Means Classification (Partitioning - Supervised learning)
 ```{r}
 
 #fixed number of groups/clusters:
@@ -165,7 +246,7 @@ kcla$betweenss/kcla$totss #nomes amb els centres de gravetat estariem obtenint u
 
 ```
 
-# Hierarchical Clustering:
+# Hierarchical Clustering (Unsupervised learning)
 ```{r}
 
 #PCA calculat amb 4 significant axes:
@@ -197,6 +278,27 @@ names(res.hcpc$desc.ind)
 # Hi ha individus que estan al centre de gravetat del cluster (para) i els que estan mes allunyats de la resta de clusters, es a dir, els mes propis del cluster en questio i menys dels altres (dist).
 res.hcpc$desc.ind$para
 res.hcpc$desc.ind$dist
+
+#### Characteristic individuals
+para1<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$para[[1]]))
+para2<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$para[[2]]))
+para3<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$para[[3]]))
+# to be completed... as many as cluster you choose
+
+dist1<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$dist[[1]]))
+dist2<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$dist[[2]]))
+dist3<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$dist[[3]]))
+# to be completed... as many as cluster you choose
+
+df$clust<-factor(res.hcpc$data.clust$clust)
+res.pca<-PCA(df[,c("duration","y","clust",vars_con)],quanti.sup=1,quali.sup=2:3,ncp=4) #cluster as variable suplementaria
+
+? #habillage: color the individuals among a categorical variable (give the number/name of the categorical variable)
+plot(res.pca, label="none", invisible="quali", habillage="clust")
+#pintar "para" del cluster 1
+points(res.pca$ind$coord[para1,1], res.pca$ind$coord[para1,2], col="blue", cex=2, pch=16)
+#pintar "dist" del cluster 1
+points(res.pca$ind$coord[dist1,1], res.pca$ind$coord[dist1,2], col="orange", cex=2, pch=16)
 
 ```
 

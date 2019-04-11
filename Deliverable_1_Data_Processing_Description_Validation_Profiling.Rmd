@@ -692,15 +692,15 @@ summary(df$loan)
 summary(res.impf$completeObs$marital)
 summary(res.impf$completeObs$loan)
 
-# Acceptem la imputació:
-df$loan<-res.impf$completeObs[,"marital"]
+# Acceptem la imputacio:
+df$marital<-res.impf$completeObs[,"marital"]
 df$loan<-res.impf$completeObs[,"loan"]
 #summary(df[,vars_dis])
 
 ```
 
 ## Numeric Variables:
-La variable numerica campaign te certs individus que han estat considerats outliers previament. Aqui els imputem mitjaçant la imputacio automatica imputePCA().
+La variable numerica campaign te certs individus que han estat considerats outliers previament. Aqui els imputem mitjancant la imputacio automatica imputePCA().
 ```{r}
 res.imp<-imputePCA(df[,vars_con], ncp=8)
 
@@ -709,7 +709,7 @@ summary(df$campaign)
 
 # Amb dades imputades:
 
-# Acceptem la imputació:
+# Acceptem la imputacio
 df$campaign<-res.imp$completeObs[,"campaign"]
 #summary(df[,vars_con])
 ```
