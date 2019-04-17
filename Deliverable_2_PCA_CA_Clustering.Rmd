@@ -60,7 +60,52 @@ summary(df)
 ```
 
 
-# CA analysis:
+# CORRESPONDENCE ANALYSIS (CA)
+Realitzarem un analisi amb taules de correspondencia i mapes de factors entre la variable numerica target duracio discretitzada en 4 nivells (corregit de l'entrega 1) i diversos factors que hem trobat que tenen una correspondencia significativa.
+
+Primer veiem com la duracio de la trucada no te cap relacio amb el job de l'individu, ja que no podem rebutjar la hipotesi *H0: f.duration no té cap relació amb la variable job* amb el valor p obtingut en el Chi Square test. 
+Com mes aprop surten al grafic les categories d'ambdues variables analitzades, mes relacionades estan. En aquesta comparacio, com hem s'acaba de comentar, no es pot extreure res significatiu, mes enlla que potser les categories job-unemployed i job-self-employed van mes per lliure.
+```{r}
+# H0: f.duration no té cap relació amb variable job
+chisq.test( table( df$job, df$f.duration) )
+# CA - f.duration vs variable job
+res.ca<-CA( table( df$job, df$f.duration ) )
+lines(res.ca$row$coord[,1], res.ca$row$coord[,2], col="darkblue")
+lines(res.ca$col$coord[,1], res.ca$col$coord[,2], col="darkred")
+```
+
+Ara testejarem la mateixa hipotesi i mapa pero amb altres categories factor que sí que obtindrem que tenen una relacio significativa. El primer cas es l'epoca de l'any **f.season** en la qual es realitza la trucada (p valor = 2.506e-07).
+Comparant el profile de la taula de contingencia de proporcions per fila amb el profile marginal de la duracio veiem com hi ha un 28,5% de trucades amb duracions molt curtes a l'estiu respecte un 25% de trucades amb duracions curtes en tot l'any. D'altra banda, hi ha per sobre d'un 27% de trucades amb duracions llargues a la primavera, respecte un 25% de trucades en la mateixa duracio en tot l'any.
+Si comparem el profile de la taula de contingencia de proporcions per columna amb el profile marginal de la f.season veiem com el 42.5% de trucades es realitzen a la primavera, i en canvi més d'un 46% de trucades corresponen a la primavera i a duracions llargues. A més, el 43.7% de trucades es realitzen a l'estiu, i només prop d'un 40% de trucades corresponen a l'estiu i a duracions llargues.
+Aquesta mateixa informacio es pot veure representada en un mapa de factors de dues dimensions. Agafant nomes la primera dimensio ja seria suficient per a representar un 98.9% de la variancia del conjunt de les dades.
+```{r}
+chisq.test( table( df$f.season, df$f.duration) )
+
+#Row/Column profile
+prop.table( table(df$f.season, df$f.duration), 1 ) #1->per files
+#Marginal Row/Column profile
+prop.table( table(df$f.duration)) #1->per files
+
+prop.table( table(df$f.season, df$f.duration), 2 ) #2->per columnes
+prop.table( table(df$f.season)) #2->per columnes
+
+
+res.ca<-CA( table( df$f.season, df$f.duration) )
+attributes(res.ca); res.ca$eig #valors eig no normalitzats!
+mean(res.ca$eig[,1]) #Kaiser: take as many dimensions as eigenvalue > mean of eigenvalues
+#En una taula de correspondencies simples podem tenir màxim tantes 
+#dimensions com categories d'una variable menys 1! 
+#f.season té 3 cateories -> -1 -> 2 dimensions!!
+
+#La inercia total ens indica com de relacionades estan les dues variables, com més pròxim a 0, menys relacionades estan!
+sum(res.ca$eig[,1])
+
+#Coordenades:
+#res.ca$row #files son la f.season!
+#res.ca$col #columnes son la duration!
+
+```
+
 ```{r}
 # Contingency tables - complex:
 names(df)
@@ -120,7 +165,7 @@ sum(res.ca$eig[,1]) #Total inertia = Phi2
 # CA - f.duration vs variable job
 res.ca<-CA( table( df$job, df$f.duration ) )
 res.ca$eig
-mean(res.ca$eig[,1]) #agafem 3 dimensions
+mean(res.ca$eig[,1]) #mirem la mitja per a agafar X dimensions
 
 #Link levels in rows:
 #Com mes aprop surten al grafic les categories d'ambdues variables analitzades, mes relacionades estan. Per exemple, en un cas ben fet sortiria job-unemployed aprop de la categoria de menor duracio (penjen rapidament).
