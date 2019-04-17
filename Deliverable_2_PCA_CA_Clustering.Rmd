@@ -293,7 +293,8 @@ dist3<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$dist[[3]]))
 df$clust<-factor(res.hcpc$data.clust$clust)
 res.pca<-PCA(df[,c("duration","y","clust",vars_con)],quanti.sup=1,quali.sup=2:3,ncp=4) #cluster as variable suplementaria
 
-? #habillage: color the individuals among a categorical variable (give the number/name of the categorical variable)
+?habillage #color the individuals among a categorical variable (give the number/name of the categorical variable)
+
 plot(res.pca, label="none", invisible="quali", habillage="clust")
 #pintar "para" del cluster 1
 points(res.pca$ind$coord[para1,1], res.pca$ind$coord[para1,2], col="blue", cex=2, pch=16)
