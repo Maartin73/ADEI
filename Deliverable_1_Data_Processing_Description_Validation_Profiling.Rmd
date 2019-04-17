@@ -520,6 +520,24 @@ Boxplot(df$nr.employed)
 
 
 ## DISCRETITZACIO DE VARIABLES NUMERIQUES:
+
+### Imputacio de variables numeriques abans de discretitzar-les:
+La variable numerica campaign te certs individus que han estat considerats outliers previament. Aqui els imputem mitjancant la imputacio automatica imputePCA().
+```{r}
+vars_con<-names(df)[c(1, 11:14, 16:20)]
+res.imp<-imputePCA(df[,vars_con], ncp=8)
+
+# Original:
+summary(df$campaign)
+
+# Amb dades imputades:
+summary(res.imp$completeObs[, "campaign"])
+
+# Acceptem la imputacio
+df$campaign<-res.imp$completeObs[, "campaign"]
+#summary(df[,vars_con])
+```
+
 Les variables numeriques originals que corresponen a conceptes quantitatius reals es mantenen com a numeriques, pero tambe s'han de crear factors addicionals com a discretitzacio de cada variable numerica. Les etiquetes adicionals als factors s'afegeixen posterior als grafics per una questio estetica, es redueix la mida de les etiquetes i es poden veure amb mes claredad cada una de les variables. 
 ```{r}
 par(mfrow=c(1,1))
@@ -722,21 +740,6 @@ df$housing<-res.impf$completeObs[,"housing"]
 
 ```
 
-## Numeric Variables:
-La variable numerica campaign te certs individus que han estat considerats outliers previament. Aqui els imputem mitjancant la imputacio automatica imputePCA().
-```{r}
-res.imp<-imputePCA(df[,vars_con], ncp=8)
-
-# Original:
-summary(df$campaign)
-
-# Amb dades imputades:
-summary(res.imp$completeObs[, "campaign"])
-
-# Acceptem la imputacio
-df$campaign<-res.imp$completeObs[, "campaign"]
-#summary(df[,vars_con])
-```
 
 
 ```{r, include=FALSE}
@@ -763,12 +766,12 @@ pos_duration<-which(names(df)=="duration"); pos_duration
 
 condes(df, num.var=pos_duration, proba = 0.05)
 
-# mitjana de la duració per categoria de la duració
+# mitjana de la duracio per categoria de la duracio
 # tapply(df$duration, df$f.duration, mean)
 
-# duració global
+# duracio global
 summary(df$duration) 
-# mitjana de la duració per categoria de la y
+# mitjana de la duracio per categoria de la y
 tapply(df$duration, df$y, mean) 
 
 oneway.test(df$duration~df$y)
