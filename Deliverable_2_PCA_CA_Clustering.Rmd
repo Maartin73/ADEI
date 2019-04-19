@@ -318,15 +318,23 @@ kcla$betweenss/kcla$totss #nomes amb els centres de gravetat estariem obtenint u
 ```
 
 # Hierarchical Clustering (Unsupervised learning)
+En aquest punt ens correspont tractar la classificacio dels clusters de manera jerarquica. La primera de les comandes, comentada ja que requeirex de l'interació de l'usuari en el moment de la seva execució, ens mostra un de jerarquies per poder trobar la divisio més adient. Tant la divisió en 3 clusters com la divisó en 4, ens mostra una distribució bastant agrupada dels diferents individus que conformen el clusters. Ens hem decantat per la divisio en 3 clusters donat que els clusters es podien distinguir amb més claredad i no hi havia tanta superposisio entre ells. A més, amb l'execuió de la segona comanda, amb la opció que enb.clust=-1, que ens sugereix una divisió de clusters, també hem obtingut que 3 seria el nombre mes indicat. 
 ```{r}
+#res.hcpc<-HCPC(res.pca, nb.clust=0, order=TRUE); res.hcpc
+res.hcpc<-HCPC(res.pca, nb.clust=-1, order=TRUE); res.hcpc
+```
 
-#PCA calculat amb 4 significant axes:
-res.pca<-PCA( df[, c("duration", "y", "marital", vars_con) ], quanti.sup=1, quali.sup=2:3, ncp=4 ) 
-
-res.hcpc<-HCPC(res.pca, order=TRUE)
+Amb la comanda attributes podem veure les diferents categories amb nova informació derivadada del clustering.
+```{r}
 attributes(res.hcpc)
 
-summary(res.hcpc$data.clust) #s'inclouen les dades de la mostra i la columna "clust" que indica al nou cluster al qual pertany l'individu
+summary(res.hcpc$data.clust)
+```
+
+
+```{r}
+
+ #s'inclouen les dades de la mostra i la columna "clust" que indica al nou cluster al qual pertany l'individu
 
 attributes(res.hcpc$desc.var) #tenim variables que hem vist previament al profiling pel cluster!
 
