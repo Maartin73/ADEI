@@ -48,11 +48,11 @@ lapply(requiredPackages, require, character.only = TRUE)
 
 # Load data from Deliverable 1:
 ```{r}
-#dirwd<-"D:/Users/Usuari/Documents/ADEIpractica"
-dirwd<-"D:/Documents/GitHub/ADEI"
+dirwd<-"D:/Users/Usuari/Documents/ADEIpractica"
+#dirwd<-"D:/Documents/GitHub/ADEI"
 setwd(dirwd)
 
-#acabar de corregir revisió del delivery 1!!
+#acabar de corregir revisi? del delivery 1!!
 load( paste0(dirwd, "/bank-additional/Bank5000_validated.RData") )
 summary(df)
 ```
@@ -62,7 +62,7 @@ summary(df)
 # CORRESPONDENCE ANALYSIS (CA)
 Realitzarem un analisi amb taules de correspondencia i mapes de factors entre la variable numerica target duracio discretitzada en 4 nivells (corregit de l'entrega 1) i diversos factors que hem trobat que tenen una correspondencia significativa.
 
-Primer veiem com la duracio de la trucada no te cap relacio amb el job de l'individu, ja que no podem rebutjar la hipotesi *H0: f.duration no té cap relació amb la variable job* amb el valor p obtingut en el Chi Square test. 
+Primer veiem com la duracio de la trucada no te cap relacio amb el job de l'individu, ja que no podem rebutjar la hipotesi *H0: f.duration no t? cap relaci? amb la variable job* amb el valor p obtingut en el Chi Square test. 
 Com mes aprop surten al grafic les categories d'ambdues variables analitzades, mes relacionades estan. En aquesta comparacio, com s'acaba de comentar, no es pot extreure res significatiu, mes enlla que potser les categories job-unemployed i job-self-employed van mes per lliure.
 ```{r}
 # H0: f.duration no te cap relacio amb variable job
@@ -75,7 +75,7 @@ lines(res.ca$col$coord[,1], res.ca$col$coord[,2], col="darkred")
 
 Ara testejarem la mateixa hipotesi i mostrarem el mateix mapa de factors pero amb altres categories factor que si que obtindrem que tenen una relacio significativa. El primer cas es l'epoca de l'any **f.season** en la qual es realitza la trucada (p valor = 2.506e-07).
 Comparant el profile de la taula de contingencia de proporcions per fila amb el profile marginal de la duracio veiem com hi ha un 28,5% de trucades amb duracions molt curtes a l'estiu respecte un 25% de trucades amb duracions curtes en tot l'any. D'altra banda, hi ha per sobre d'un 27% de trucades amb duracions llargues a la primavera, respecte un 25% de trucades en la mateixa duracio en tot l'any.
-Si comparem el profile de la taula de contingencia de proporcions per columna amb el profile marginal de la f.season veiem com el 42.5% de trucades es realitzen a la primavera, i en canvi més d'un 46% de trucades corresponen a la primavera i a duracions llargues. A més, el 43.7% de trucades es realitzen a l'estiu, i només prop d'un 40% de trucades corresponen a l'estiu i a duracions llargues.
+Si comparem el profile de la taula de contingencia de proporcions per columna amb el profile marginal de la f.season veiem com el 42.5% de trucades es realitzen a la primavera, i en canvi m?s d'un 46% de trucades corresponen a la primavera i a duracions llargues. A m?s, el 43.7% de trucades es realitzen a l'estiu, i nom?s prop d'un 40% de trucades corresponen a l'estiu i a duracions llargues.
 Aquesta mateixa informacio es pot veure representada en un mapa de factors de dues dimensions. Agafant nomes la primera dimensio ja seria suficient per a representar un 98.9% de la variancia del conjunt de les dades (Kaiser: take as many dimensions as eigenvalue > mean of eigenvalues).
 ```{r}
 chisq.test( table( df$f.season, df$f.duration) )
@@ -92,9 +92,9 @@ prop.table( table(df$f.season)) #2->per columnes
 res.ca<-CA( table( df$f.season, df$f.duration) )
 attributes(res.ca); res.ca$eig #valors eig no normalitzats!
 mean(res.ca$eig[,1]) #Kaiser: take as many dimensions as eigenvalue > mean of eigenvalues
-#En una taula de correspondencies simples podem tenir màxim tantes 
+#En una taula de correspondencies simples podem tenir m?xim tantes 
 #dimensions com categories d'una variable menys 1! 
-#f.season té 3 categories -> -1 -> 2 dimensions!!
+#f.season t? 3 categories -> -1 -> 2 dimensions!!
 
 #La inercia total ens indica com de relacionades estan les dues variables, com mes proxim el valor a 0, menys relacionades estan!
 sum(res.ca$eig[,1])
@@ -108,7 +108,7 @@ sum(res.ca$eig[,1])
 El segon cas en el qual obtenim una relacio significativa (p valor = 1.203e-07) es el valor de l'euribor **f.euribor3m**, el qual es un indicador trimestral.
 Comparant el profile de la taula de contingencia de proporcions per fila amb el profile marginal de la duracio veiem com hi ha un 30.8% de trucades amb duracions molt curtes quan l'euribor te un valor alt, respecte un 25% de trucades amb duracions sense tenir en compte la fluctuacio de l'indicador. De la mateixa manera, quan el valor de l'euribor es baix, hi ha major % de trucades que acaben amb duracions relativament altes.
 Si comparem el profile de la taula de contingencia de proporcions per columna amb el profile marginal de f.euribor3m veiem com el 22.8% de trucades es realitzen amb un euribor molt alt, i en canvi un 28.0% de trucades corresponen a un euribor alt i a duracions molt curtes.
-A més, mirant el mapa de factors podem veure aquesta mateixa informació de manera gráfica. Si ens centrem en la 1a dimensio del grafic (que representa un 89% de la variancia del conjunt de les dades), podem observar com hi ha una tendencia similar en ambdues variables (tot i que les duracions extremadament llargues trenquen una molt bona correlacio del 1r eix). També veiem com les categories f.euribor3m-(4.96,5] i f.duration-[5,101] estan molt relacionades ja que es troben molt pròximes en el mapa de factors; aixi com tambe les categories f.euribor3m-[0.635,1.33] i f.duration-(177,316].
+A m?s, mirant el mapa de factors podem veure aquesta mateixa informaci? de manera gr?fica. Si ens centrem en la 1a dimensio del grafic (que representa un 89% de la variancia del conjunt de les dades), podem observar com hi ha una tendencia similar en ambdues variables (tot i que les duracions extremadament llargues trenquen una molt bona correlacio del 1r eix). Tamb? veiem com les categories f.euribor3m-(4.96,5] i f.duration-[5,101] estan molt relacionades ja que es troben molt pr?ximes en el mapa de factors; aixi com tambe les categories f.euribor3m-[0.635,1.33] i f.duration-(177,316].
 (Kaiser: take as many dimensions as eigenvalue > mean of eigenvalues, el que equival a agafar 1 sola dimensio).
 ```{r}
 chisq.test( table( df$f.euribor3m, df$f.duration) )
@@ -128,9 +128,9 @@ lines(res.ca$col$coord[,1], res.ca$col$coord[,2], col="darkred")
 
 attributes(res.ca); res.ca$eig #valors eig no normalitzats!
 mean(res.ca$eig[,1]) #Kaiser: take as many dimensions as eigenvalue > mean of eigenvalues
-#En una taula de correspondencies simples podem tenir màxim tantes 
+#En una taula de correspondencies simples podem tenir m?xim tantes 
 #dimensions com categories d'una variable menys 1! 
-#f.euribor3m té 4 categories -> -1 -> 3 dimensions!!
+#f.euribor3m t? 4 categories -> -1 -> 3 dimensions!!
 
 #La inercia total ens indica com de relacionades estan les dues variables, com mes proxim el valor a 0, menys relacionades estan!
 sum(res.ca$eig[,1])
@@ -141,13 +141,13 @@ sum(res.ca$eig[,1])
 
 
 # PRINCIPAL COMPONENT ANALYSIS (PCA)
-Primerament realitzem un PCA sobre les variables continues de la nostra mostra de dades, on la variables "duration" ha de ser suplementaria, ja que es tracta de la variable target!
 
-## Eigenvalues and dominant axes
-El summary ens permet veure els 9 diferents eigenvalues obtinguts amb aquest PCA, amb les seves dades corresponents de percentatges de variancia del conjunt de les dades que respresenten. Segons el criteri de Kaiser, que diu que s'han de descartar les dimensions amb valors eig normalitzats per sota d'1, hauriem d'agafar les 3 primeres dimensions per a una bona representacio del conjunt de dades. 
-D'altra banda, per a obtenir una representacio del 80% de la variancia del cojunt de dades hauriem d'agafar les 4 primeres dimensions.
-Per últim, si ens basem en la regla del colze (llegurament subjectiva), i l'apliquem sobre el gràfic dels eigenvalues i %variancies obtingut amb les llibreries *ggplot*, hauriem d'agafar les 3 primeres dimensions.
+## Eigenvalues and dominant axes 
+
+A partir d'aquesta taula podem observar els 9 primers eigenvalues i les 5 primeres dimensions de manera mes extensa. Els valors propis ens mostren la quantitat de varian?a ens proporciona cada component principal. Ens basarem en aquesta informaci? per, atrav?s de les regles de Kaise, Elbow i el 80% de representaci?, decidir quin es el nombre de dimensions m?s adiens per al nostre cas d'estudi.
+
 ```{r}
+names(df)
 vars_con<-names(df)[c(1, 11:14, 16:20)]; vars_con #variables continues
 
 # PCA:
@@ -155,20 +155,35 @@ res.pca<-PCA( df[, vars_con], quanti.sup=2, graph=FALSE) #"duration" com a suple
 
 #nb.dec: number of decimal printed
 #ncp: number of dimensions printed
-summary(res.pca, nb.dec=2, ncp=4, nbind=0)
+summary(res.pca, nb.dec=4, ncp=5, nbind=0)
+```
 
-#GGPLOT: Use modern ggplot facilities per la regla de l'ultim colze:
-#at some point the marginal gain will drop, giving an angle in the graph
+
+Segons el criteri de Kaiser, que diu que s'han de descartar les dimensions amb valors eig normalitzats per sota d'1. En el nostre cas d'estudi ens correspondria agafar 3 primeres dimensions per tal de tenir una bona representacio del conjunt de dades.
+
+Si fosim flexiblem amb la regla de Kaiser, podriem considerar la 4 dimensio, la qual te una varian?a del 0.9656, dins dels seus marges donat que ens presenta una varia?a molt proxima a 1. A mes, la incorporacio d'aquesta nova dimensio ens suposaria un increment de quasi be un 11% en la varian?a acumulada entre totes les dimensions, deixant la varian?a acumulada prop del 81%, un valor m?s significatiu que el 70% que obtenint amb les 3 primeres dimensions.
+
+Tot i aixi, ens mantindrem estrictament dins la regla de Kaiser i direm que segons Kaiser les nostres dades queden representades amb les 3 primeres dimensions.
+```{r}
+kaiser<-summary(res.pca, nb.dec=2, ncp=3, nbind=0); kaiser
+```
+
+D'altra banda, per a obtenir una representacio del 80% de la variancia del conjunt de dades hauriem d'agafar les 4 primeres dimensions.
+```{r}
+eighty<-summary(res.pca, nb.dec=2, ncp=4, nbind=0); eighty
+```
+
+Per ultim, si ens basem en la regla del colze, la qual te una aproximaci? mes objectiva respecte als dos criteris esmentats anteriorment, i l'apliquem sobre el grafic dels eigenvalues i %variancies obtingut amb les llibreries *ggplot*, hauriem d'agafar les 3 primeres dimensions. Seria aix? ja que es en la tercera dimensio que considerem que es en eaquest punt en que obtenir una pendent m?s sua entre els percentatge de varian?a entre dimensions consecutives. 
+```{r}
 fviz_eig(res.pca, addlabels=TRUE)
-
 ```
 
 ## Individuals point of view
-Pintem primer el mapa de factors dels individus de les dues primeres dimensions (70% de la variancia del conjunt de dades) i etiquetem amb el número d'individu els 15 més contributius.
-A continuacio mostrem per a cadascun dels dos primers eixos, les coordenades i el registre complet d'aquests 3 individus més contributius.
+Pintem primer el mapa de factors dels individus de les dues primeres dimensions (70% de la variancia del conjunt de dades) i etiquetem amb el n?mero d'individu els 15 m?s contributius.
+A continuacio mostrem per a cadascun dels dos primers eixos, les coordenades i el registre complet d'aquests 3 individus m?s contributius.
 Es fa exactament el mateix amb els individus mes ben representats (cos2) en les dues primeres dimensions.
 ```{r}
-#només pinta les etiquetes dels 15 individus mes contributius!
+#nom?s pinta les etiquetes dels 15 individus mes contributius!
 plot(res.pca, choix="ind", cex=0.75, col.ind="black", select="contrib 15")
 #3 individus mes contributius al 1r eix:
 contrib<-sort(res.pca$ind$contrib[,1], decreasing=TRUE)[1:3]; contrib
@@ -178,7 +193,7 @@ contrib<-sort(res.pca$ind$contrib[,2], decreasing=TRUE)[1:3]; contrib
 df[c(names(contrib)), ]
 
 
-#només pinta les etiquetes dels 15 individus mes contributius!
+#nom?s pinta les etiquetes dels 15 individus mes contributius!
 plot(res.pca, choix="ind", cex=0.75, col.ind="black", select="cos2 15")
 #3 individus mes ben representats al 1r eix:
 repr<-sort(res.pca$ind$cos2[,1], decreasing=TRUE)[1:3]; repr
@@ -197,8 +212,8 @@ res.pca<-PCA( df[, vars_con], quanti.sup=2, graph=FALSE) #"duration" com a suple
 
 plot.PCA(res.pca, choix = c("var") ) #variables factor map
 
-vars_con2<-c(vars_con[1], vars_con[3], vars_con[5:10]) #eliminem pdays, més simple
-#ara afegim dues variables qualitatives suplementàries!
+vars_con2<-c(vars_con[1], vars_con[3], vars_con[5:10]) #eliminem pdays, m?s simple
+#ara afegim dues variables qualitatives suplement?ries!
 res.pca<-PCA( df[, c("duration", "poutcome", vars_con2) ], quanti.sup=1, quali.sup=2, graph = FALSE ) 
 plot.PCA(res.pca, choix = c("var") )
 
@@ -213,14 +228,14 @@ par(mfrow=c(1,1))
 #veure eixos 3 i 4:
 res.pca<-PCA(df[, vars_con2], quanti.sup=2, axes=3:4)
 
-#Dificil extreure conclusions sobre la duració a partir nomes de les variables numèriques!!
+#Dificil extreure conclusions sobre la duraci? a partir nomes de les variables num?riques!!
 summary(res.pca, nb.dec=2, ncp=4)
 #Kaiser would be 2 dim!
 #over 80% of variance would be 4 dim!
 
 
 
-#-------------nova sessió-----------
+#-------------nova sessi?-----------
 #sense duration que se li afegeix a part ara en aquesta sessio de lab!
 vars_con<-names(df)[c(1, 12:14, 16:20)]; vars_con
 
@@ -233,7 +248,7 @@ plot(res.pca, choix="ind")
 plot(res.pca, choix="ind", cex=0.75) #tamany etiquetes
 
 plot(res.pca, choix="ind", cex=0.75, col.ind="grey80")
-plot(res.pca, choix="ind", cex=0.75, col.ind="grey80", select="contrib 15") #només pinta les etiquetes dels 15 individus mes contributius!
+plot(res.pca, choix="ind", cex=0.75, col.ind="grey80", select="contrib 15") #nom?s pinta les etiquetes dels 15 individus mes contributius!
 
 
 #3 individus mes contributius al 2n eix:
@@ -261,7 +276,7 @@ fviz_contrib(res.pca, choice="var", axes=1:2)+theme_bw()
 summary(res.pca, nb.dec=2, ncp=4, nbelements=9, nbind=0)
 
 #valors v.test >1,96 ens indiquen que la categoria ens aporta alguna cosa!
-#   --> son les que ens podriem quedar en un subconjunt i que fos l'utlitzat a l'hora de representar graficament i triar els eixos (pels deliverables no cal això!).
+#   --> son les que ens podriem quedar en un subconjunt i que fos l'utlitzat a l'hora de representar graficament i triar els eixos (pels deliverables no cal aix?!).
 
 ```
 
@@ -286,7 +301,7 @@ summary(kcla)
 # iter            1   -none- numeric
 # ifault          1   -none- numeric
 
-table(kcla$cluster) #la variable "kcla$cluster" conté cada observació amb el numero de cluster assignat (com una columna mes)
+table(kcla$cluster) #la variable "kcla$cluster" cont? cada observaci? amb el numero de cluster assignat (com una columna mes)
 
 #INTRA-CLUSTER DISTANCES
 kcla$withinss #$withinss: is the within cluster sum of squares. So it results in a vector with a number for each cluster.
@@ -297,7 +312,7 @@ kcla$betweenss #$betweenss: is the between clusters sum of squares. In fact it i
 # Some equalities may help to understand:
 #     $tot.withinss = sum ($withinss)
 #     $totss = $tot.withinss + $betweenss
-kcla$betweenss/kcla$totss #nomes amb els centres de gravetat estariem obtenint una representacio de les dades el 77% (en aquest cas)! es molt bona! (provar amb altres valors de números de clusters)
+kcla$betweenss/kcla$totss #nomes amb els centres de gravetat estariem obtenint una representacio de les dades el 77% (en aquest cas)! es molt bona! (provar amb altres valors de n?meros de clusters)
 
 
 ```
