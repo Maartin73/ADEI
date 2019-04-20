@@ -38,7 +38,7 @@ editor_options:
 # Loading packages:
 ```{r, include=FALSE}
 # Required Packages: to be increased over the course
-requiredPackages <- c("car","knitr","ggplot2","FactoMineR","missMDA","mvoutlier","chemometrics", "factoextra", "ggplot2")
+requiredPackages <- c("car","knitr","ggplot2","FactoMineR","missMDA","mvoutlier","chemometrics", "factoextra")
 missingPackages <- requiredPackages[!(requiredPackages %in% installed.packages()[,"Package"])]
 
 if(length(missingPackages)) install.packages(missingPackages)
@@ -52,7 +52,6 @@ dirwd<-"D:/Users/Usuari/Documents/ADEIpractica"
 #dirwd<-"D:/Documents/GitHub/ADEI"
 setwd(dirwd)
 
-#acabar de corregir revisi? del delivery 1!!
 load( paste0(dirwd, "/bank-additional/Bank5000_validated.RData") )
 summary(df)
 ```
@@ -62,7 +61,7 @@ summary(df)
 # CORRESPONDENCE ANALYSIS (CA)
 Realitzarem un analisi amb taules de correspondencia i mapes de factors entre la variable numerica target duracio discretitzada en 4 nivells (corregit de l'entrega 1) i diversos factors que hem trobat que tenen una correspondencia significativa.
 
-Primer veiem com la duracio de la trucada no te cap relacio amb el job de l'individu, ja que no podem rebutjar la hipotesi *H0: f.duration no t? cap relaci? amb la variable job* amb el valor p obtingut en el Chi Square test. 
+Primer veiem com la duracio de la trucada no te cap relacio amb el job de l'individu, ja que no podem rebutjar la hipotesi *H0: f.duration no te cap relacio amb la variable job* amb el valor p obtingut en el Chi Square test. 
 Com mes aprop surten al grafic les categories d'ambdues variables analitzades, mes relacionades estan. En aquesta comparacio, com s'acaba de comentar, no es pot extreure res significatiu, mes enlla que potser les categories job-unemployed i job-self-employed van mes per lliure.
 ```{r}
 # H0: f.duration no te cap relacio amb variable job
@@ -75,7 +74,7 @@ lines(res.ca$col$coord[,1], res.ca$col$coord[,2], col="darkred")
 
 Ara testejarem la mateixa hipotesi i mostrarem el mateix mapa de factors pero amb altres categories factor que si que obtindrem que tenen una relacio significativa. El primer cas es l'epoca de l'any **f.season** en la qual es realitza la trucada (p valor = 2.506e-07).
 Comparant el profile de la taula de contingencia de proporcions per fila amb el profile marginal de la duracio veiem com hi ha un 28,5% de trucades amb duracions molt curtes a l'estiu respecte un 25% de trucades amb duracions curtes en tot l'any. D'altra banda, hi ha per sobre d'un 27% de trucades amb duracions llargues a la primavera, respecte un 25% de trucades en la mateixa duracio en tot l'any.
-Si comparem el profile de la taula de contingencia de proporcions per columna amb el profile marginal de la f.season veiem com el 42.5% de trucades es realitzen a la primavera, i en canvi m?s d'un 46% de trucades corresponen a la primavera i a duracions llargues. A m?s, el 43.7% de trucades es realitzen a l'estiu, i nom?s prop d'un 40% de trucades corresponen a l'estiu i a duracions llargues.
+Si comparem el profile de la taula de contingencia de proporcions per columna amb el profile marginal de la f.season veiem com el 42.5% de trucades es realitzen a la primavera, i en canvi mes d'un 46% de trucades corresponen a la primavera i a duracions llargues. A mes, el 43.7% de trucades es realitzen a l'estiu, i nomes prop d'un 40% de trucades corresponen a l'estiu i a duracions llargues.
 Aquesta mateixa informacio es pot veure representada en un mapa de factors de dues dimensions. Agafant nomes la primera dimensio ja seria suficient per a representar un 98.9% de la variancia del conjunt de les dades (Kaiser: take as many dimensions as eigenvalue > mean of eigenvalues).
 ```{r}
 chisq.test( table( df$f.season, df$f.duration) )
@@ -94,7 +93,7 @@ attributes(res.ca); res.ca$eig #valors eig no normalitzats!
 mean(res.ca$eig[,1]) #Kaiser: take as many dimensions as eigenvalue > mean of eigenvalues
 #En una taula de correspondencies simples podem tenir m?xim tantes 
 #dimensions com categories d'una variable menys 1! 
-#f.season t? 3 categories -> -1 -> 2 dimensions!!
+#f.season te 3 categories -> -1 -> 2 dimensions!!
 
 #La inercia total ens indica com de relacionades estan les dues variables, com mes proxim el valor a 0, menys relacionades estan!
 sum(res.ca$eig[,1])
@@ -108,7 +107,7 @@ sum(res.ca$eig[,1])
 El segon cas en el qual obtenim una relacio significativa (p valor = 1.203e-07) es el valor de l'euribor **f.euribor3m**, el qual es un indicador trimestral.
 Comparant el profile de la taula de contingencia de proporcions per fila amb el profile marginal de la duracio veiem com hi ha un 30.8% de trucades amb duracions molt curtes quan l'euribor te un valor alt, respecte un 25% de trucades amb duracions sense tenir en compte la fluctuacio de l'indicador. De la mateixa manera, quan el valor de l'euribor es baix, hi ha major % de trucades que acaben amb duracions relativament altes.
 Si comparem el profile de la taula de contingencia de proporcions per columna amb el profile marginal de f.euribor3m veiem com el 22.8% de trucades es realitzen amb un euribor molt alt, i en canvi un 28.0% de trucades corresponen a un euribor alt i a duracions molt curtes.
-A m?s, mirant el mapa de factors podem veure aquesta mateixa informaci? de manera gr?fica. Si ens centrem en la 1a dimensio del grafic (que representa un 89% de la variancia del conjunt de les dades), podem observar com hi ha una tendencia similar en ambdues variables (tot i que les duracions extremadament llargues trenquen una molt bona correlacio del 1r eix). Tamb? veiem com les categories f.euribor3m-(4.96,5] i f.duration-[5,101] estan molt relacionades ja que es troben molt pr?ximes en el mapa de factors; aixi com tambe les categories f.euribor3m-[0.635,1.33] i f.duration-(177,316].
+A mes, mirant el mapa de factors podem veure aquesta mateixa informacio de manera grafica. Si ens centrem en la 1a dimensio del grafic (que representa un 89% de la variancia del conjunt de les dades), podem observar com hi ha una tendencia similar en ambdues variables (tot i que les duracions extremadament llargues trenquen una molt bona correlacio del 1r eix). Tambe veiem com les categories f.euribor3m-(4.96,5] i f.duration-[5,101] estan molt relacionades ja que es troben molt proximes en el mapa de factors; aixi com tambe les categories f.euribor3m-[0.635,1.33] i f.duration-(177,316].
 (Kaiser: take as many dimensions as eigenvalue > mean of eigenvalues, el que equival a agafar 1 sola dimensio).
 ```{r}
 chisq.test( table( df$f.euribor3m, df$f.duration) )
@@ -128,9 +127,9 @@ lines(res.ca$col$coord[,1], res.ca$col$coord[,2], col="darkred")
 
 attributes(res.ca); res.ca$eig #valors eig no normalitzats!
 mean(res.ca$eig[,1]) #Kaiser: take as many dimensions as eigenvalue > mean of eigenvalues
-#En una taula de correspondencies simples podem tenir m?xim tantes 
+#En una taula de correspondencies simples podem tenir maxim tantes 
 #dimensions com categories d'una variable menys 1! 
-#f.euribor3m t? 4 categories -> -1 -> 3 dimensions!!
+#f.euribor3m te 4 categories -> -1 -> 3 dimensions!!
 
 #La inercia total ens indica com de relacionades estan les dues variables, com mes proxim el valor a 0, menys relacionades estan!
 sum(res.ca$eig[,1])
@@ -142,48 +141,33 @@ sum(res.ca$eig[,1])
 
 # PRINCIPAL COMPONENT ANALYSIS (PCA)
 
-## Eigenvalues and dominant axes 
+Primerament realitzem un PCA sobre les variables continues de la nostra mostra de dades, on la variables "duration" ha de ser suplementaria, ja que es tracta de la variable target!
 
-A partir d'aquesta taula podem observar els 9 primers eigenvalues i les 5 primeres dimensions de manera mes extensa. Els valors propis ens mostren la quantitat de varian?a ens proporciona cada component principal. Ens basarem en aquesta informaci? per, atrav?s de les regles de Kaise, Elbow i el 80% de representaci?, decidir quin es el nombre de dimensions m?s adiens per al nostre cas d'estudi.
+## Eigenvalues and dominant axes
 
+El summary ens permet veure els 9 diferents eigenvalues obtinguts amb aquest PCA, amb les seves dades corresponents de percentatges de variancia del conjunt de les dades que respresenten. Segons el criteri de Kaiser, que diu que s'han de descartar les dimensions amb valors eig normalitzats per sota d'1, hauriem d'agafar les 3 primeres dimensions per a una bona representacio del conjunt de dades. 
+Essent flexibles amb el criteri de Kaiser, podriem agafar tambe la quarta dimensio, la qual te una variancia del 0.9656, amb un valor molt proxim a 1. La incorporacio d'aquesta nova dimensio ens donaria una variancia acumulada del 81%, obtenint d'aquesta manera una variancia acumulada per sobre el 80%.
+Per �ltim, si ens basem en la regla del colze (llegurament subjectiva), i l'apliquem sobre el grafic dels eigenvalues i %variancies obtingut amb les llibreries *ggplot*, hauriem d'agafar les 3 primeres dimensions.
 ```{r}
-names(df)
 vars_con<-names(df)[c(1, 11:14, 16:20)]; vars_con #variables continues
+vars_dis<-names(df)[c(2:10, 15, 21, 25, 27:36)] #variables discretes
 
 # PCA:
 res.pca<-PCA( df[, vars_con], quanti.sup=2, graph=FALSE) #"duration" com a suplementaria
-
 #nb.dec: number of decimal printed
 #ncp: number of dimensions printed
-summary(res.pca, nb.dec=4, ncp=5, nbind=0)
-```
-
-
-Segons el criteri de Kaiser, que diu que s'han de descartar les dimensions amb valors eig normalitzats per sota d'1. En el nostre cas d'estudi ens correspondria agafar 3 primeres dimensions per tal de tenir una bona representacio del conjunt de dades.
-
-Si fosim flexiblem amb la regla de Kaiser, podriem considerar la 4 dimensio, la qual te una varian?a del 0.9656, dins dels seus marges donat que ens presenta una varia?a molt proxima a 1. A mes, la incorporacio d'aquesta nova dimensio ens suposaria un increment de quasi be un 11% en la varian?a acumulada entre totes les dimensions, deixant la varian?a acumulada prop del 81%, un valor m?s significatiu que el 70% que obtenint amb les 3 primeres dimensions.
-
-Tot i aixi, ens mantindrem estrictament dins la regla de Kaiser i direm que segons Kaiser les nostres dades queden representades amb les 3 primeres dimensions.
-```{r}
-kaiser<-summary(res.pca, nb.dec=2, ncp=3, nbind=0); kaiser
-```
-
-D'altra banda, per a obtenir una representacio del 80% de la variancia del conjunt de dades hauriem d'agafar les 4 primeres dimensions.
-```{r}
-eighty<-summary(res.pca, nb.dec=2, ncp=4, nbind=0); eighty
-```
-
-Per ultim, si ens basem en la regla del colze, la qual te una aproximaci? mes objectiva respecte als dos criteris esmentats anteriorment, i l'apliquem sobre el grafic dels eigenvalues i %variancies obtingut amb les llibreries *ggplot*, hauriem d'agafar les 3 primeres dimensions. Seria aix? ja que es en la tercera dimensio que considerem que es en eaquest punt en que obtenir una pendent m?s sua entre els percentatge de varian?a entre dimensions consecutives. 
-```{r}
+summary(res.pca, nb.dec=2, ncp=5, nbind=0)
+#GGPLOT: Use modern ggplot facilities per la regla de l'ultim colze:
+#at some point the marginal gain will drop, giving an angle in the graph
 fviz_eig(res.pca, addlabels=TRUE)
 ```
 
 ## Individuals point of view
-Pintem primer el mapa de factors dels individus de les dues primeres dimensions (70% de la variancia del conjunt de dades) i etiquetem amb el n?mero d'individu els 15 m?s contributius.
-A continuacio mostrem per a cadascun dels dos primers eixos, les coordenades i el registre complet d'aquests 3 individus m?s contributius.
+Pintem primer el mapa de factors dels individus de les dues primeres dimensions (70% de la variancia del conjunt de dades) i etiquetem amb el numero d'individu els 15 mes contributius.
+A continuacio mostrem per a cadascun dels dos primers eixos, les coordenades i el registre complet d'aquests 3 individus mes contributius.
 Es fa exactament el mateix amb els individus mes ben representats (cos2) en les dues primeres dimensions.
 ```{r}
-#nom?s pinta les etiquetes dels 15 individus mes contributius!
+#nomes pinta les etiquetes dels 15 individus mes contributius!
 plot(res.pca, choix="ind", cex=0.75, col.ind="black", select="contrib 15")
 #3 individus mes contributius al 1r eix:
 contrib<-sort(res.pca$ind$contrib[,1], decreasing=TRUE)[1:3]; contrib
@@ -193,7 +177,7 @@ contrib<-sort(res.pca$ind$contrib[,2], decreasing=TRUE)[1:3]; contrib
 df[c(names(contrib)), ]
 
 
-#nom?s pinta les etiquetes dels 15 individus mes contributius!
+#nomes pinta les etiquetes dels 15 individus mes contributius!
 plot(res.pca, choix="ind", cex=0.75, col.ind="black", select="cos2 15")
 #3 individus mes ben representats al 1r eix:
 repr<-sort(res.pca$ind$cos2[,1], decreasing=TRUE)[1:3]; repr
@@ -206,86 +190,64 @@ repr<-sort(res.pca$ind$cos2[,2], decreasing=TRUE)[1:3]; repr
 
 ## Interpretation of the PCA
 En el mapa de factors de les variables (2D, primeres dues dimensions) es pot observar en blau la variable "duration" com a suplementaria, la qual surt quasi centrada, el que vol dir que les variables vars_con utilitzades en el PCA no ens ajuden a dir res o predir el valors de la variable target. La variable previous (numero de contactes en campanyes antigues) esta relacionada inversament amb pdays (dies que feia que no es trucava el client per altres campanyes), ja que que com es pot veure en el grafic, ambdues fletxes apunten oposadament. Sembla ser tambe que tots els indicadors socioeconomics (a excepcio una mica de cons.conf.idx) apunten en la mateixa direccio, el que vol dir que estan relacionats entre ells i contribueixen d'una manera similar als eixos.
+Es pot veure el % de contribucio de les variables a les tres primeres dimensions mitjancant una eina de la llibreria *ggplot*, on es veu com basicament els indicadors socioeconomics i les variables "previous", "campaign" i "age" son les variables numeriques que mes han contribuit.
+El summary ens permet veure tambe de forma numerica la contribucio (ctr) de cadascuna de les variables en els 4 primers eixos, aix� com la qualitat de la representacio (cos2) de les mateixes en cadascun dels eixos. Si be s'acaben de descriure les variables mes contributives, les que estan millor representades (cos2 mes proxim a 1) en el primer eix son euribor3m, emp.var.rate i nr.employed; i en el segon eix son pdays, previous i cons.conf.idx.
+Un l'ultim mapa de factors de variables observem els eixos de les dimensions 3 i 4, les quals representen aproximadament un 11% de la variancia de les dades cadascuna.
 ```{r}
 # PCA:
 res.pca<-PCA( df[, vars_con], quanti.sup=2, graph=FALSE) #"duration" com a suplementaria
 
 plot.PCA(res.pca, choix = c("var") ) #variables factor map
 
-vars_con2<-c(vars_con[1], vars_con[3], vars_con[5:10]) #eliminem pdays, m?s simple
-#ara afegim dues variables qualitatives suplement?ries!
-res.pca<-PCA( df[, c("duration", "poutcome", vars_con2) ], quanti.sup=1, quali.sup=2, graph = FALSE ) 
-plot.PCA(res.pca, choix = c("var") )
+#GGPLOT contribution of variables
+#fviz_pca_var(res.pca)
+fviz_contrib(res.pca, choice="var", axes=1:3)+theme_bw()
 
-par(mfrow=c(1,2))
-plot.PCA(res.pca, choix = c("ind") )
-
-res.pca<-PCA( df[, c("duration", "month", vars_con2) ], quanti.sup=1, quali.sup=2, graph = FALSE ) 
-plot.PCA(res.pca, choix = c("ind") )
-par(mfrow=c(1,1))
-
+summary(res.pca, nb.dec=2, ncp=4, nbind=0)
 
 #veure eixos 3 i 4:
-res.pca<-PCA(df[, vars_con2], quanti.sup=2, axes=3:4)
+res.pca<-PCA(df[, vars_con], quanti.sup=2, axes=3:4)
+```
 
-#Dificil extreure conclusions sobre la duraci? a partir nomes de les variables num?riques!!
-summary(res.pca, nb.dec=2, ncp=4)
-#Kaiser would be 2 dim!
-#over 80% of variance would be 4 dim!
+Com que es dificil extreure conclusions a partir nomes de les variables numeriques, en el grafics seguents es pot observar el posicionament de les dues variables suplementaries "f.duration" i "f.euribor3m" en el mapa de factors dels individus. 
+En el cas de f.duration, si es mira al mapa de factors ampliat on nomes es representa aquesta variable, sembla ser que te una tendencia a creixer cap al 2n i 3r quadrant composat per les dues primeres dimensions.
+En el cas de f.euribor3m, de la mateixa manera, tambe es pot trobar un progressio de les dades al llarg del primer eix, ja que el valor de l'euribor3m augmenta amb el valor de la primera dimensio de les dades.
+```{r}
+par(mfrow=c(1,1))
 
-
-
-#-------------nova sessi?-----------
-#sense duration que se li afegeix a part ara en aquesta sessio de lab!
-vars_con<-names(df)[c(1, 12:14, 16:20)]; vars_con
-
-
-
-
-#Poc es pot dir del mapa tambe al veure nomes les variables suplementaries ("ind" used to select the individual or categorical variables)
-plot.PCA(res.pca, choix="ind", invisible="ind")
-plot(res.pca, choix="ind")
-plot(res.pca, choix="ind", cex=0.75) #tamany etiquetes
-
-plot(res.pca, choix="ind", cex=0.75, col.ind="grey80")
-plot(res.pca, choix="ind", cex=0.75, col.ind="grey80", select="contrib 15") #nom?s pinta les etiquetes dels 15 individus mes contributius!
-
-
-#3 individus mes contributius al 2n eix:
-sort(res.pca$ind$contrib[,2], decreasing=TRUE)[1:3]
-
-#3 individus millor representats al 2n eix:
-ll<-sort(res.pca$ind$cos2[,2], decreasing=TRUE)[1:3]; ll
-df["39474",] #registre millor representat
-
-
+#ara afegim dues variables suplementaries!
+res.pca<-PCA( df[, c("f.duration", vars_con) ], quanti.sup=3, quali.sup=1, graph = FALSE ) 
+plot.PCA(res.pca, choix = c("ind") )
 #Unir punts de variables suplementaries en el factor map per a una bona representacio:
 plot.PCA(res.pca, choix="ind", invisible="ind")
-lines(res.pca$quali.sup$coord[1:2, 1:2], col="blue", lwd="2") #target y (2 primeres dim)
-lines(res.pca$quali.sup$coord[3:5, 1:2], col="cyan", lwd="2") #variable marital (2 primeres dim)
+lines(res.pca$quali.sup$coord[1:2, 1:2], col="blue", lwd="2")
+lines(res.pca$quali.sup$coord[2:3, 1:2], col="blue", lwd="2")
+lines(res.pca$quali.sup$coord[3:4, 1:2], col="blue", lwd="2")
+
+res.pca<-PCA( df[, c("f.euribor3m", vars_con) ], quanti.sup=3, quali.sup=1, graph = FALSE ) 
+plot.PCA(res.pca, choix = c("ind") )
+plot.PCA(res.pca, choix="ind", invisible="ind")
+lines(res.pca$quali.sup$coord[1:2, 1:2], col="blue", lwd="2")
+lines(res.pca$quali.sup$coord[2:3, 1:2], col="blue", lwd="2")
+lines(res.pca$quali.sup$coord[3:4, 1:2], col="blue", lwd="2")
+
 
 #Fer el mateix amb la variable duration (factoritzada?) i veure el nuvol de punts i si es pot unir pq segueix alguna progressio!!!
+```
 
-
-#GGPLOT contribution of variables
-fviz_pca_var(res.pca)
-fviz_contrib(res.pca, choice="var", axes=1:3)+theme_bw()
-fviz_contrib(res.pca, choice="var", axes=1:2)+theme_bw()
-
-
-summary(res.pca, nb.dec=2, ncp=4, nbelements=9, nbind=0)
-
+```{r, include=FALSE}
 #valors v.test >1,96 ens indiquen que la categoria ens aporta alguna cosa!
-#   --> son les que ens podriem quedar en un subconjunt i que fos l'utlitzat a l'hora de representar graficament i triar els eixos (pels deliverables no cal aix?!).
-
+#   --> son les que ens podriem quedar en un subconjunt i que fos l'utlitzat a l'hora de representar graficament i triar els eixos (pels deliverables no cal aixi!).
 ```
 
 
+
 # K-Means Classification (Partitioning - Supervised learning)
+TODO
 ```{r}
 
 #fixed number of groups/clusters:
-dclu<-res.pca$ind$coord[,1:4] #only significant axes in order to avoid unnecessary noise
+dclu<-res.pca$ind$coord[,1:4] #only 4 significant axes in order to avoid unnecessary noise
 
 kcla<-kmeans(dclu, 6) #6 clusters in this example
 
@@ -301,7 +263,7 @@ summary(kcla)
 # iter            1   -none- numeric
 # ifault          1   -none- numeric
 
-table(kcla$cluster) #la variable "kcla$cluster" cont? cada observaci? amb el numero de cluster assignat (com una columna mes)
+table(kcla$cluster) #la variable "kcla$cluster" conte cada observacio amb el numero de cluster assignat (com una columna mes)
 
 #INTRA-CLUSTER DISTANCES
 kcla$withinss #$withinss: is the within cluster sum of squares. So it results in a vector with a number for each cluster.
@@ -312,74 +274,129 @@ kcla$betweenss #$betweenss: is the between clusters sum of squares. In fact it i
 # Some equalities may help to understand:
 #     $tot.withinss = sum ($withinss)
 #     $totss = $tot.withinss + $betweenss
-kcla$betweenss/kcla$totss #nomes amb els centres de gravetat estariem obtenint una representacio de les dades el 77% (en aquest cas)! es molt bona! (provar amb altres valors de n?meros de clusters)
-
+kcla$betweenss/kcla$totss #nomes amb els centres de gravetat estariem obtenint una representacio de les dades el 77% (en aquest cas)! es molt bona! (provar amb altres valors de numeros de clusters)
 
 ```
+
+
 
 # Hierarchical Clustering (Unsupervised learning)
-En aquest punt ens correspont tractar la classificacio dels clusters de manera jerarquica. La primera de les comandes, comentada ja que requeirex de l'interació de l'usuari en el moment de la seva execució, ens mostra un de jerarquies per poder trobar la divisio més adient. Tant la divisió en 3 clusters com la divisó en 4, ens mostra una distribució bastant agrupada dels diferents individus que conformen el clusters. Ens hem decantat per la divisio en 3 clusters donat que els clusters es podien distinguir amb més claredad i no hi havia tanta superposisio entre ells. A més, amb l'execuió de la segona comanda, amb la opció que enb.clust=-1, que ens sugereix una divisió de clusters, també hem obtingut que 3 seria el nombre mes indicat. 
-```{r}
-#res.hcpc<-HCPC(res.pca, nb.clust=0, order=TRUE); res.hcpc
-res.hcpc<-HCPC(res.pca, nb.clust=-1, order=TRUE); res.hcpc
-```
+Aquest punt compren la realitzacio d'una clusteritzacio aglomerativa jerarquitzada dels individus. HCPC de la llibreria FactoMineR utilitza les distancies de entre clusters diferents, per tal de minimitzar la inercia inter-cluster.
 
-Amb la comanda attributes podem veure les diferents categories amb nova informació derivadada del clustering.
+La primera de les comandes esta comentada ja que requereix l'interacio de l'usuari per a triar per on tallar l'arbre de clusters que es mostra a l'usuari. Despres d'estar interactuant amb diferents opcions de numero de clusters, s'ha decidit finalment agafar nb.clust = 7, tal i com es pot veure a continuacio. Es mostren els grafics corresponents a l'arbre el qual s'ha tallat a l'altura de 7 clusters, aix� com el mapa de factors de les dues primeres dimensions del PCA.
 ```{r}
+#PCA calculat amb 4 significant axes:
+vars_con<-names(df)[c(1, 12:14, 16:20)]; vars_con
+res.pca<-PCA( df[, c("duration", "y", vars_con) ], quanti.sup=1, quali.sup=2, ncp=4, graph=FALSE )
+
+#res.hcpc<-HCPC(res.pca, order=TRUE)
+
+res.hcpc<-HCPC(res.pca, nb.clust=7, order=TRUE, graph=FALSE); res.hcpc
 attributes(res.hcpc)
 
-summary(res.hcpc$data.clust)
+plot.HCPC(res.hcpc, choice="tree")
+
+plot.HCPC(res.hcpc, choice="map")
+fviz_cluster(res.hcpc)
+```
+
+El guanys (d'1 a 2 clusters, de 2 a 3, de 3 a 4, etc.) d'inercia es poden observar en negre a la figura inferior, on tambe es pot veure la relacio entre altres nivells de tall i els seus guanys. Els valors *within* ens mostren la inercia dins de cada cluster, que si fos un sol cluster (1) seria la total del conjunt de dades, la qual equival a la suma de tots els guanys d'inercies *inert.gain*. Amb la seleccio de 6 clusters que hem agafat estariem obtenint una representacio de les dades del 80.4%, la qual es molt bona! Finalment, tamb� podem veure la distribucio en nombre d'individus en els diferents clusters.
+```{r}
+plot.HCPC(res.hcpc, choice="bar")
+
+res.hcpc$call$t$inert.gain[1:6]
+sum(res.hcpc$call$t$inert.gain)
+
+res.hcpc$call$t$within[1:7]
+
+sum(res.hcpc$call$t$inert.gain[1:6]) / sum(res.hcpc$call$t$inert.gain) * 100 #6 clusters corresponen al 80.4% d'inercia
+
+table(res.hcpc$data.clust$clust) #nombre d'individus en cada cluster
 ```
 
 
+## Sobre les variables categoriques que han estat incloses com a suplementaries
+TODO (i canviar var suplementaries)
 ```{r}
-
- #s'inclouen les dades de la mostra i la columna "clust" que indica al nou cluster al qual pertany l'individu
-
-attributes(res.hcpc$desc.var) #tenim variables que hem vist previament al profiling pel cluster!
-
 # Factors globally related to clustering partition:
 res.hcpc$desc.var$test.chi2
-
-
 # Categories over/under represented in each cluster:
-res.hcpc$desc.var$category
-#----> veiem com hi ha clusters que tenen sobrerepresentacio d'acceptacio del producte financer!
+res.hcpc$desc.var$category #veiem com hi ha clusters que tenen sobrerepresentacio d'acceptacio del producte financer!
+
+```
 
 
+## Sobre les variables quantitatives (numeriques)
+TODO
+```{r}
 # Numeric (quantitative) variables globally related to clustering partition:
 res.hcpc$desc.var$quanti.var
 res.hcpc$desc.var$quanti
+```
 
 
+## Descripcio dels clusters mitjancant individus
+Aqui descrivim els clusters mitjancant els individus, concretament ens centrarem en els individus que estan al centre de gravetat del cluster (para-parangons) i els que estan mes allunyats de la resta de clusters, es a dir, els mes propis del cluster en questio i menys dels altres (dist-especifics). En les seguents grafiques es poden veure representats en blau els parangons i en taronja els individus especifics per a cada cluster de la classificacio.
+```{r}
 # Description of the clusters by individuals:
 names(res.hcpc$desc.ind)
-# Hi ha individus que estan al centre de gravetat del cluster (para) i els que estan mes allunyats de la resta de clusters, es a dir, els mes propis del cluster en questio i menys dels altres (dist).
-res.hcpc$desc.ind$para
-res.hcpc$desc.ind$dist
 
-#### Characteristic individuals
+res.hcpc$desc.ind$para #parangons of each clusters
+res.hcpc$desc.ind$dist #specific individuals
+
+#Characteristic individuals - as many as clusters
 para1<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$para[[1]]))
 para2<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$para[[2]]))
 para3<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$para[[3]]))
-# to be completed... as many as cluster you choose
+para4<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$para[[4]]))
+para5<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$para[[5]]))
+para6<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$para[[6]]))
+para7<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$para[[7]]))
 
 dist1<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$dist[[1]]))
 dist2<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$dist[[2]]))
 dist3<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$dist[[3]]))
-# to be completed... as many as cluster you choose
+dist4<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$dist[[4]]))
+dist5<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$dist[[5]]))
+dist6<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$dist[[6]]))
+dist7<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$dist[[7]]))
 
 df$clust<-factor(res.hcpc$data.clust$clust)
-res.pca<-PCA(df[,c("duration","y","clust",vars_con)],quanti.sup=1,quali.sup=2:3,ncp=4) #cluster as variable suplementaria
 
-?habillage #color the individuals among a categorical variable (give the number/name of the categorical variable)
+res.pca<-PCA(df[,c("duration", "clust", vars_con)], quanti.sup=1,quali.sup=2,ncp=4, graph=FALSE) #cluster as variable suplementaria
 
-plot(res.pca, label="none", invisible="quali", habillage="clust")
+#? habillage
+#color the individuals among a categorical variable (give the number/name of the categorical variable)
+
+plot.PCA(res.pca, label="none", invisible="quali", title="Characteristic  individuals - Cluster 1")
 #pintar "para" del cluster 1
 points(res.pca$ind$coord[para1,1], res.pca$ind$coord[para1,2], col="blue", cex=2, pch=16)
 #pintar "dist" del cluster 1
 points(res.pca$ind$coord[dist1,1], res.pca$ind$coord[dist1,2], col="orange", cex=2, pch=16)
 
-```
+plot.PCA(res.pca, label="none", invisible="quali", title="Characteristic  individuals - Cluster 2")
+points(res.pca$ind$coord[para2,1], res.pca$ind$coord[para2,2], col="blue", cex=2, pch=16)
+points(res.pca$ind$coord[dist2,1], res.pca$ind$coord[dist2,2], col="orange", cex=2, pch=16)
 
+plot.PCA(res.pca, label="none", invisible="quali", title="Characteristic  individuals - Cluster 3")
+points(res.pca$ind$coord[para3,1], res.pca$ind$coord[para3,2], col="blue", cex=2, pch=16)
+points(res.pca$ind$coord[dist3,1], res.pca$ind$coord[dist3,2], col="orange", cex=2, pch=16)
+
+plot.PCA(res.pca, label="none", invisible="quali", title="Characteristic  individuals - Cluster 4")
+points(res.pca$ind$coord[para4,1], res.pca$ind$coord[para4,2], col="blue", cex=2, pch=16)
+points(res.pca$ind$coord[dist4,1], res.pca$ind$coord[dist4,2], col="orange", cex=2, pch=16)
+
+plot.PCA(res.pca, label="none", invisible="quali", title="Characteristic  individuals - Cluster 5")
+points(res.pca$ind$coord[para5,1], res.pca$ind$coord[para5,2], col="blue", cex=2, pch=16)
+points(res.pca$ind$coord[dist5,1], res.pca$ind$coord[dist5,2], col="orange", cex=2, pch=16)
+
+plot.PCA(res.pca, label="none", invisible="quali", title="Characteristic  individuals - Cluster 6")
+points(res.pca$ind$coord[para6,1], res.pca$ind$coord[para6,2], col="blue", cex=2, pch=16)
+points(res.pca$ind$coord[dist6,1], res.pca$ind$coord[dist6,2], col="orange", cex=2, pch=16)
+
+plot.PCA(res.pca, label="none", invisible="quali", title="Characteristic  individuals - Cluster 7")
+points(res.pca$ind$coord[para7,1], res.pca$ind$coord[para7,2], col="blue", cex=2, pch=16)
+points(res.pca$ind$coord[dist7,1], res.pca$ind$coord[dist7,2], col="orange", cex=2, pch=16)
+
+```
 
