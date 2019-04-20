@@ -147,7 +147,7 @@ Primerament realitzem un PCA sobre les variables continues de la nostra mostra d
 
 El summary ens permet veure els 9 diferents eigenvalues obtinguts amb aquest PCA, amb les seves dades corresponents de percentatges de variancia del conjunt de les dades que respresenten. Segons el criteri de Kaiser, que diu que s'han de descartar les dimensions amb valors eig normalitzats per sota d'1, hauriem d'agafar les 3 primeres dimensions per a una bona representacio del conjunt de dades. 
 Essent flexibles amb el criteri de Kaiser, podriem agafar tambe la quarta dimensio, la qual te una variancia del 0.9656, amb un valor molt proxim a 1. La incorporacio d'aquesta nova dimensio ens donaria una variancia acumulada del 81%, obtenint d'aquesta manera una variancia acumulada per sobre el 80%.
-Per �ltim, si ens basem en la regla del colze (llegurament subjectiva), i l'apliquem sobre el grafic dels eigenvalues i %variancies obtingut amb les llibreries *ggplot*, hauriem d'agafar les 3 primeres dimensions.
+Per ?ltim, si ens basem en la regla del colze (llegurament subjectiva), i l'apliquem sobre el grafic dels eigenvalues i %variancies obtingut amb les llibreries *ggplot*, hauriem d'agafar les 3 primeres dimensions.
 ```{r}
 vars_con<-names(df)[c(1, 11:14, 16:20)]; vars_con #variables continues
 vars_dis<-names(df)[c(2:10, 15, 21, 25, 27:36)] #variables discretes
@@ -191,7 +191,7 @@ repr<-sort(res.pca$ind$cos2[,2], decreasing=TRUE)[1:3]; repr
 ## Interpretation of the PCA
 En el mapa de factors de les variables (2D, primeres dues dimensions) es pot observar en blau la variable "duration" com a suplementaria, la qual surt quasi centrada, el que vol dir que les variables vars_con utilitzades en el PCA no ens ajuden a dir res o predir el valors de la variable target. La variable previous (numero de contactes en campanyes antigues) esta relacionada inversament amb pdays (dies que feia que no es trucava el client per altres campanyes), ja que que com es pot veure en el grafic, ambdues fletxes apunten oposadament. Sembla ser tambe que tots els indicadors socioeconomics (a excepcio una mica de cons.conf.idx) apunten en la mateixa direccio, el que vol dir que estan relacionats entre ells i contribueixen d'una manera similar als eixos.
 Es pot veure el % de contribucio de les variables a les tres primeres dimensions mitjancant una eina de la llibreria *ggplot*, on es veu com basicament els indicadors socioeconomics i les variables "previous", "campaign" i "age" son les variables numeriques que mes han contribuit.
-El summary ens permet veure tambe de forma numerica la contribucio (ctr) de cadascuna de les variables en els 4 primers eixos, aix� com la qualitat de la representacio (cos2) de les mateixes en cadascun dels eixos. Si be s'acaben de descriure les variables mes contributives, les que estan millor representades (cos2 mes proxim a 1) en el primer eix son euribor3m, emp.var.rate i nr.employed; i en el segon eix son pdays, previous i cons.conf.idx.
+El summary ens permet veure tambe de forma numerica la contribucio (ctr) de cadascuna de les variables en els 4 primers eixos, aix? com la qualitat de la representacio (cos2) de les mateixes en cadascun dels eixos. Si be s'acaben de descriure les variables mes contributives, les que estan millor representades (cos2 mes proxim a 1) en el primer eix son euribor3m, emp.var.rate i nr.employed; i en el segon eix son pdays, previous i cons.conf.idx.
 Un l'ultim mapa de factors de variables observem els eixos de les dimensions 3 i 4, les quals representen aproximadament un 11% de la variancia de les dades cadascuna.
 ```{r}
 # PCA:
@@ -243,39 +243,44 @@ lines(res.pca$quali.sup$coord[3:4, 1:2], col="blue", lwd="2")
 
 
 # K-Means Classification (Partitioning - Supervised learning)
-TODO
+
+K-means es una de les diverses tecniques de clustering. Com a tota tecnica de clustering, l'objectiu es realitzar subgrups d'observacions amb l'objectiu d'obtenir agrupacions amb caracteristiques similars i que es diferenciin de les carasteriques per les que destaquen els altres grups, es a dir amb una variancia intra-cluster el més minima possible i intentant maximitzar la variacio inter-cluster.
+
+En el nostre cas, em escollit treballar amb 4 dimensions, per tal de reduir soroll innecessary, i 6 clusters.
+
+Del resultats obtingut per kmeans en podem extreure diverses conclusions. En primer lloc la taula de clusters ens mostra cada observació amb el seu nombre de cluster assignaat. Al realitzar un sumari podem veure la distribució de les observacions a través dels diferents clusters. Withinss, corresponent a la inercia intra-cluster, s'obte a traves de la suma de quadrats dins del clúster. Obtenim un valor per acada un dels clusters, com més baix es el nombre obtingut més significativa es la homegeinitat dels clusters. Per altra banda, Betweenss o inercia inter-cluster, es la suma de cuadrats entre clusters, la mitjana de distàncies entre els centres de clústers. La obtencio d'un valor alt ens demostra la heterogeneitat de les agrupacions. 
+
+Tot.withinss correspon a la suma de totes les distancies intra-cluster i totss a la suma de les distancies intra-cluster i inter-cluster. Per acabar, la fraccio obtinguda de betweenss i totss ens mostra que unicament amb els centres de gravetat estem obtenint una representacio del 77% de les dades, una xifra realment bona que ens indica que el nombre de clusters escollit es l'indicat.
+
 ```{r}
+dclu<-res.pca$ind$coord[,1:4]
 
-#fixed number of groups/clusters:
-dclu<-res.pca$ind$coord[,1:4] #only 4 significant axes in order to avoid unnecessary noise
+kcla<-kmeans(dclu, 6);summary(kcla) 
 
-kcla<-kmeans(dclu, 6) #6 clusters in this example
+table(kcla$cluster)
 
-summary(kcla)
-#              Length Class  Mode   
-# cluster      4986   -none- numeric
-# centers        24   -none- numeric
-# totss           1   -none- numeric
-# withinss        6   -none- numeric
-# tot.withinss    1   -none- numeric
-# betweenss       1   -none- numeric
-# size            6   -none- numeric
-# iter            1   -none- numeric
-# ifault          1   -none- numeric
+kcla$withinss 
 
-table(kcla$cluster) #la variable "kcla$cluster" conte cada observacio amb el numero de cluster assignat (com una columna mes)
+kcla$betweenss
 
-#INTRA-CLUSTER DISTANCES
-kcla$withinss #$withinss: is the within cluster sum of squares. So it results in a vector with a number for each cluster.
+kcla$tot.withinss
 
-#INTER-CLUSTER DISTANCES
-kcla$betweenss #$betweenss: is the between clusters sum of squares. In fact it is the mean of distances between cluster centers.
+kcla$totss 
 
-# Some equalities may help to understand:
-#     $tot.withinss = sum ($withinss)
-#     $totss = $tot.withinss + $betweenss
-kcla$betweenss/kcla$totss #nomes amb els centres de gravetat estariem obtenint una representacio de les dades el 77% (en aquest cas)! es molt bona! (provar amb altres valors de numeros de clusters)
+kcla$betweenss/kcla$totss
 
+```
+
+##Eleccio del nombre de clusters
+Ha sigut per mitjà d'aquest algoritme que hem determinat quin es el valor de k més indicat. l'algoritme ens mostra les distancies intra-clusters per a cada un dels valors de k, ens interesa trobar un valor de k on la distancia intra-cluster sigui el menor possible. A mesura que s'incrementa el nombre de k la distancia intra-cluster es veu reduida, no podem agafar el valor amb la distancia mes petita, el mes indicat seria agafar aquell valor de k on la la funcio para de decreixer de manera significativa. Em determinat que aquest valor correspon a k=6. 
+```{r}
+wss <- sum(kmeans(dclu,centers=1)$withinss)
+
+# We take iteration 2 to 15
+for (i in 2:15) wss[i] <- sum(kmeans(dclu,centers=i)$withinss)
+
+# We plot the 15 withinss values. One for each k
+plot(1:15, wss, type="b", xlab="Number of Clusters",ylab="Within groups sum of squares")
 ```
 
 
@@ -283,7 +288,7 @@ kcla$betweenss/kcla$totss #nomes amb els centres de gravetat estariem obtenint u
 # Hierarchical Clustering (Unsupervised learning)
 Aquest punt compren la realitzacio d'una clusteritzacio aglomerativa jerarquitzada dels individus. HCPC de la llibreria FactoMineR utilitza les distancies de entre clusters diferents, per tal de minimitzar la inercia inter-cluster.
 
-La primera de les comandes esta comentada ja que requereix l'interacio de l'usuari per a triar per on tallar l'arbre de clusters que es mostra a l'usuari. Despres d'estar interactuant amb diferents opcions de numero de clusters, s'ha decidit finalment agafar nb.clust = 7, tal i com es pot veure a continuacio. Es mostren els grafics corresponents a l'arbre el qual s'ha tallat a l'altura de 7 clusters, aix� com el mapa de factors de les dues primeres dimensions del PCA.
+La primera de les comandes esta comentada ja que requereix l'interacio de l'usuari per a triar per on tallar l'arbre de clusters que es mostra a l'usuari. Despres d'estar interactuant amb diferents opcions de numero de clusters, s'ha decidit finalment agafar nb.clust = 7, tal i com es pot veure a continuacio. Es mostren els grafics corresponents a l'arbre el qual s'ha tallat a l'altura de 7 clusters, aix? com el mapa de factors de les dues primeres dimensions del PCA.
 ```{r}
 #PCA calculat amb 4 significant axes:
 vars_con<-names(df)[c(1, 12:14, 16:20)]; vars_con
@@ -300,7 +305,7 @@ plot.HCPC(res.hcpc, choice="map")
 fviz_cluster(res.hcpc)
 ```
 
-El guanys (d'1 a 2 clusters, de 2 a 3, de 3 a 4, etc.) d'inercia es poden observar en negre a la figura inferior, on tambe es pot veure la relacio entre altres nivells de tall i els seus guanys. Els valors *within* ens mostren la inercia dins de cada cluster, que si fos un sol cluster (1) seria la total del conjunt de dades, la qual equival a la suma de tots els guanys d'inercies *inert.gain*. Amb la seleccio de 6 clusters que hem agafat estariem obtenint una representacio de les dades del 80.4%, la qual es molt bona! Finalment, tamb� podem veure la distribucio en nombre d'individus en els diferents clusters.
+El guanys (d'1 a 2 clusters, de 2 a 3, de 3 a 4, etc.) d'inercia es poden observar en negre a la figura inferior, on tambe es pot veure la relacio entre altres nivells de tall i els seus guanys. Els valors *within* ens mostren la inercia dins de cada cluster, que si fos un sol cluster (1) seria la total del conjunt de dades, la qual equival a la suma de tots els guanys d'inercies *inert.gain*. Amb la seleccio de 6 clusters que hem agafat estariem obtenint una representacio de les dades del 80.4%, la qual es molt bona! Finalment, tamb? podem veure la distribucio en nombre d'individus en els diferents clusters.
 ```{r}
 plot.HCPC(res.hcpc, choice="bar")
 
