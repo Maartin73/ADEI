@@ -297,18 +297,42 @@ targ<-which(vars == "f.KM")
 catdes(df[,vars],targ)
 
 ```
-##Cluster1
-En aquest cluster podem observar podem apreciar com el nombre de contactes en campanyes previes es troba per sobre de la mitjana total. També podem veure que la edad mitjana dins el cluster es 4 anys menor a la mitjana global i que els valors socio-economics mostren condicions bastant semblants respecte a el conjunt global de dades, a excepcio del euribor que mostra unes condicions mes faborables.
+##Cluster 1
+En aquest cluster podem observar a trevés de les categories que hi ha sobrepoblacio de persones contactades entre Abril i Maig, a través de telefon mobil i engloba bona part dels estudiants de la nostra mostra. També podem veure que del total de persones que acceptem la compra del producte un vora el 33% pertanyen a aquest cluster, una dada bastant significativa que la probabilitat d'exit entre el perfil dels individus com al del cluster es alta.
+
+Per altra banda, podem apreciar com el nombre de contactes en campanyes previes es troba per sobre de la mitjana total. També podem veure que la edad mitjana dins el cluster es 4 anys menor a la mitjana global i que els valors socio-economics mostren condicions bastant semblants respecte a el conjunt global de dades, a excepcio del euribor que mostra unes condicions mes faborables.
 
 La duracio de les trucades i els dies transcorreguts de l'ultim contacte difereixen lleugerament de la mitjana global, en aquest cas pero no ens mostren una diferencia significativa com per poder-los considerar com a factors determinants dins el cluster.
 
+##Cluster 2
+En el segon cluster podem veure que practicament tots els seus individus no havien estat contactats anteriorment i com un 95% dels individus no accepta la compra del producte. Gran part del individus contactats als mesos de juny, juliol i agosta pertanyen a aquest cluster. 
+
+A través de les variables quantitatives no en podem extreure grans conclusions. Els variables socio-economiques es troben en valors molt propers a la mitja, iaixi com les resta de variables quantitatives que ens mostra la taula.  
+
+##Cluster 3
+A través de les categories que caracteritzen aquest cluster podem veure que un 40% de les persones retirades es troben dins el cluster. A més també un 18 per cent de les persones que accepten el producte pertanyen al cluster i dins el cluster el 32% l'accepten. 
+
+Les variables qualitatives ens mostren que, en consonancia amb que bona part de les persones estan retirades, hi ha un increment del 10% den l'edat dels individus. També incrementa lleugerament els dies transcorreguts des de l'ultim contacte i disminueix el nombre de contactes realitzats en la present campanya. 
+
+##Cluster 4
+En el quart cluster podem observar que hi ha sobre poblacio d'individus que havien havien acceptat campanyes previes. El 56% dels individus del cluster han acceptat el producte financer i per sobre del 90% han estat contactats a traves del telefon mobil i tenen credits default(?).
+
+L'edat mitjana del individus del cluster decreix en 4 anys respecte la mitjana global. Podem veure que elnombre de contactes en la presents campanya decreix mentre que el nombre decontactes previs creix lleugerament. 
+
+##Cluster 5
+Aquest cluster es caracteritza per tenir sobre poblacio d'individus que han acceptat productes ofertats previament i d'acceptaco del producte actual. Mes d'un 90% dels individus han estat contactats a traves del telefon mobil. 
+
+En relacio amb les variables quantitatives, es denota un increment d'un punt i mig en el nombre de contactes per campanyes previes, mentre que es veu decrementat el nombre de contactes en aquesta campanya. Podem apreciar que hi ha una gran caiguda de l'euribor. 
+
+##Cluster 6
+En aquest ultim cluster podem veure que mes del 96% dels individus no accepten el producte ofertat i que de mes del 99% dels individus no en tenir referencies respecte al resultats en campanyes anteriors.De les variables quantitatives en podem extreure un increment en els contactes en la present campanya i que els contactes en campanyes previes practicament nul. 
 
 
 
 # Hierarchical Clustering (Unsupervised learning)
 Aquest punt compren la realitzacio d'una clusteritzacio aglomerativa jerarquitzada dels individus. HCPC de la llibreria FactoMineR utilitza les distancies de entre clusters diferents, per tal de minimitzar la inercia inter-cluster.
 
-La primera de les comandes esta comentada ja que requereix l'interacio de l'usuari per a triar per on tallar l'arbre de clusters que es mostra a l'usuari. Despres d'estar interactuant amb diferents opcions de numero de clusters, s'ha decidit finalment agafar nb.clust = 7, tal i com es pot veure a continuacio. Es mostren els grafics corresponents a l'arbre el qual s'ha tallat a l'altura de 7 clusters, aix? com el mapa de factors de les dues primeres dimensions del PCA.
+La primera de les comandes esta comentada ja que requereix l'interacio de l'usuari per a triar per on tallar l'arbre de clusters que es mostra a l'usuari. Despres d'estar interactuant amb diferents opcions de numero de clusters, s'ha decidit finalment agafar nb.clust = 7, tal i com es pot veure a continuacio. Es mostren els grafics corresponents a l'arbre el qual s'ha tallat a l'altura de 7 clusters, aixi com el mapa de factors de les dues primeres dimensions del PCA.
 ```{r}
 #PCA calculat amb 4 significant axes:
 vars_con<-names(df)[c(1, 12:14, 16:20)]; vars_con
@@ -325,7 +349,7 @@ plot.HCPC(res.hcpc, choice="map")
 fviz_cluster(res.hcpc)
 ```
 
-El guanys (d'1 a 2 clusters, de 2 a 3, de 3 a 4, etc.) d'inercia es poden observar en negre a la figura inferior, on tambe es pot veure la relacio entre altres nivells de tall i els seus guanys. Els valors *within* ens mostren la inercia dins de cada cluster, que si fos un sol cluster (1) seria la total del conjunt de dades, la qual equival a la suma de tots els guanys d'inercies *inert.gain*. Amb la seleccio de 6 clusters que hem agafat estariem obtenint una representacio de les dades del 80.4%, la qual es molt bona! Finalment, tamb? podem veure la distribucio en nombre d'individus en els diferents clusters.
+El guanys (d'1 a 2 clusters, de 2 a 3, de 3 a 4, etc.) d'inercia es poden observar en negre a la figura inferior, on tambe es pot veure la relacio entre altres nivells de tall i els seus guanys. Els valors *within* ens mostren la inercia dins de cada cluster, que si fos un sol cluster (1) seria la total del conjunt de dades, la qual equival a la suma de tots els guanys d'inercies *inert.gain*. Amb la seleccio de 6 clusters que hem agafat estariem obtenint una representacio de les dades del 80.4%, la qual es molt bona! Finalment, tambe podem veure la distribucio en nombre d'individus en els diferents clusters.
 ```{r}
 plot.HCPC(res.hcpc, choice="bar")
 
