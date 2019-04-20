@@ -283,6 +283,26 @@ for (i in 2:15) wss[i] <- sum(kmeans(dclu,centers=i)$withinss)
 plot(1:15, wss, type="b", xlab="Number of Clusters",ylab="Within groups sum of squares")
 ```
 
+##Descripcio dels clusters
+```{r}
+numcl<-6
+df$KM<-numcl
+df[names(kcla$cluster),"KM"]<-kcla$cluster
+df$f.KM<-factor(df$KM, labels = c("KM1", "KM2", "KM3", "KM4", "KM5", "KM6"))
+names(df)
+varskm<-names(df[c(1:21)])
+vars<-c(varskm, "f.KM")
+targ<-which(vars == "f.KM")
+
+catdes(df[,vars],targ)
+
+```
+##Cluster1
+En aquest cluster podem observar podem apreciar com el nombre de contactes en campanyes previes es troba per sobre de la mitjana total. També podem veure que la edad mitjana dins el cluster es 4 anys menor a la mitjana global i que els valors socio-economics mostren condicions bastant semblants respecte a el conjunt global de dades, a excepcio del euribor que mostra unes condicions mes faborables.
+
+La duracio de les trucades i els dies transcorreguts de l'ultim contacte difereixen lleugerament de la mitjana global, en aquest cas pero no ens mostren una diferencia significativa com per poder-los considerar com a factors determinants dins el cluster.
+
+
 
 
 # Hierarchical Clustering (Unsupervised learning)
