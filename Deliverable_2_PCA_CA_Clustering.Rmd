@@ -1,6 +1,8 @@
 ---
 output:
-  pdf_document: default
+  pdf_document: 
+    fig_width: 6
+    fig_height: 4
   html_document: default
 editor_options: 
   chunk_output_type: console
@@ -48,8 +50,8 @@ lapply(requiredPackages, require, character.only = TRUE)
 
 # Load data from Deliverable 1:
 ```{r}
-dirwd<-"D:/Users/Usuari/Documents/ADEIpractica"
-#dirwd<-"D:/Documents/GitHub/ADEI"
+#dirwd<-"D:/Users/Usuari/Documents/ADEIpractica"
+dirwd<-"D:/Documents/GitHub/ADEI"
 setwd(dirwd)
 
 load( paste0(dirwd, "/bank-additional/Bank5000_validated.RData") )
@@ -91,11 +93,12 @@ prop.table( table(df$f.season)) #2->per columnes
 res.ca<-CA( table( df$f.season, df$f.duration) )
 attributes(res.ca); res.ca$eig #valors eig no normalitzats!
 mean(res.ca$eig[,1]) #Kaiser: take as many dimensions as eigenvalue > mean of eigenvalues
-#En una taula de correspondencies simples podem tenir m?xim tantes 
+#En una taula de correspondencies simples podem tenir maxim tantes 
 #dimensions com categories d'una variable menys 1! 
 #f.season te 3 categories -> -1 -> 2 dimensions!!
 
-#La inercia total ens indica com de relacionades estan les dues variables, com mes proxim el valor a 0, menys relacionades estan!
+#La inercia total ens indica com de relacionades estan les dues variables, 
+#com mes proxim el valor a 0, menys relacionades estan!
 sum(res.ca$eig[,1])
 
 #Coordenades:
@@ -131,10 +134,12 @@ mean(res.ca$eig[,1]) #Kaiser: take as many dimensions as eigenvalue > mean of ei
 #dimensions com categories d'una variable menys 1! 
 #f.euribor3m te 4 categories -> -1 -> 3 dimensions!!
 
-#La inercia total ens indica com de relacionades estan les dues variables, com mes proxim el valor a 0, menys relacionades estan!
+#La inercia total ens indica com de relacionades estan les dues variables, 
+#com mes proxim el valor a 0, menys relacionades estan!
 sum(res.ca$eig[,1])
 
-#A vegades va be eliminar algunes categories amb pocs individus d'una variable per a poder veure millor les possibles relacions!
+#A vegades va be eliminar algunes categories amb pocs individus d'una variable 
+#per a poder veure millor les possibles relacions!
 ```
 
 
@@ -147,7 +152,7 @@ Primerament realitzem un PCA sobre les variables continues de la nostra mostra d
 
 El summary ens permet veure els 9 diferents eigenvalues obtinguts amb aquest PCA, amb les seves dades corresponents de percentatges de variancia del conjunt de les dades que respresenten. Segons el criteri de Kaiser, que diu que s'han de descartar les dimensions amb valors eig normalitzats per sota d'1, hauriem d'agafar les 3 primeres dimensions per a una bona representacio del conjunt de dades. 
 Essent flexibles amb el criteri de Kaiser, podriem agafar tambe la quarta dimensio, la qual te una variancia del 0.9656, amb un valor molt proxim a 1. La incorporacio d'aquesta nova dimensio ens donaria una variancia acumulada del 81%, obtenint d'aquesta manera una variancia acumulada per sobre el 80%.
-Per ?ltim, si ens basem en la regla del colze (llegurament subjectiva), i l'apliquem sobre el grafic dels eigenvalues i %variancies obtingut amb les llibreries *ggplot*, hauriem d'agafar les 3 primeres dimensions.
+Per ultim, si ens basem en la regla del colze (llegurament subjectiva), i l'apliquem sobre el grafic dels eigenvalues i %variancies obtingut amb les llibreries *ggplot*, hauriem d'agafar les 3 primeres dimensions.
 ```{r}
 vars_con<-names(df)[c(1, 11:14, 16:20)]; vars_con #variables continues
 vars_dis<-names(df)[c(2:10, 15, 21, 25, 27:36)] #variables discretes
@@ -168,22 +173,22 @@ A continuacio mostrem per a cadascun dels dos primers eixos, les coordenades i e
 Es fa exactament el mateix amb els individus mes ben representats (cos2) en les dues primeres dimensions.
 ```{r}
 #nomes pinta les etiquetes dels 15 individus mes contributius!
-plot(res.pca, choix="ind", cex=0.75, col.ind="black", select="contrib 15")
-#3 individus mes contributius al 1r eix:
-contrib<-sort(res.pca$ind$contrib[,1], decreasing=TRUE)[1:3]; contrib
+plot(res.pca, choix="ind", cex=0.75, col.ind="black", select="contrib 15", title="Factor map - 15 individus mes contributius")
+#2 individus mes contributius al 1r eix:
+contrib<-sort(res.pca$ind$contrib[,1], decreasing=TRUE)[1:2]; contrib
 df[c(names(contrib)), ]
-#3 individus mes contributius al 2n eix:
-contrib<-sort(res.pca$ind$contrib[,2], decreasing=TRUE)[1:3]; contrib
+#2 individus mes contributius al 2n eix:
+contrib<-sort(res.pca$ind$contrib[,2], decreasing=TRUE)[1:2]; contrib
 df[c(names(contrib)), ]
 
 
-#nomes pinta les etiquetes dels 15 individus mes contributius!
-plot(res.pca, choix="ind", cex=0.75, col.ind="black", select="cos2 15")
-#3 individus mes ben representats al 1r eix:
-repr<-sort(res.pca$ind$cos2[,1], decreasing=TRUE)[1:3]; repr
+#nomes pinta les etiquetes dels 15 individus mes ben representats!
+plot(res.pca, choix="ind", cex=0.75, col.ind="black", select="cos2 15", title="Factor map - 15 individus mes ben representats")
+#2 individus mes ben representats al 1r eix:
+repr<-sort(res.pca$ind$cos2[,1], decreasing=TRUE)[1:2]; repr
 #df[c(names(repr)), ]
-#3 individus mes ben representats al 2n eix:
-repr<-sort(res.pca$ind$cos2[,2], decreasing=TRUE)[1:3]; repr
+#2 individus mes ben representats al 2n eix:
+repr<-sort(res.pca$ind$cos2[,2], decreasing=TRUE)[1:2]; repr
 #df[c(names(repr)), ]
 
 ```
@@ -191,19 +196,17 @@ repr<-sort(res.pca$ind$cos2[,2], decreasing=TRUE)[1:3]; repr
 ## Interpretation of the PCA
 En el mapa de factors de les variables (2D, primeres dues dimensions) es pot observar en blau la variable "duration" com a suplementaria, la qual surt quasi centrada, el que vol dir que les variables vars_con utilitzades en el PCA no ens ajuden a dir res o predir el valors de la variable target. La variable previous (numero de contactes en campanyes antigues) esta relacionada inversament amb pdays (dies que feia que no es trucava el client per altres campanyes), ja que que com es pot veure en el grafic, ambdues fletxes apunten oposadament. Sembla ser tambe que tots els indicadors socioeconomics (a excepcio una mica de cons.conf.idx) apunten en la mateixa direccio, el que vol dir que estan relacionats entre ells i contribueixen d'una manera similar als eixos.
 Es pot veure el % de contribucio de les variables a les tres primeres dimensions mitjancant una eina de la llibreria *ggplot*, on es veu com basicament els indicadors socioeconomics i les variables "previous", "campaign" i "age" son les variables numeriques que mes han contribuit.
-El summary ens permet veure tambe de forma numerica la contribucio (ctr) de cadascuna de les variables en els 4 primers eixos, aix? com la qualitat de la representacio (cos2) de les mateixes en cadascun dels eixos. Si be s'acaben de descriure les variables mes contributives, les que estan millor representades (cos2 mes proxim a 1) en el primer eix son euribor3m, emp.var.rate i nr.employed; i en el segon eix son pdays, previous i cons.conf.idx.
+El summary ens permet veure tambe de forma numerica la contribucio (ctr) de cadascuna de les variables en els 4 primers eixos, aixi com la qualitat de la representacio (cos2) de les mateixes en cadascun dels eixos. Si be s'acaben de descriure les variables mes contributives, les que estan millor representades (cos2 mes proxim a 1) en el primer eix son euribor3m, emp.var.rate i nr.employed; i en el segon eix son pdays, previous i cons.conf.idx.
 Un l'ultim mapa de factors de variables observem els eixos de les dimensions 3 i 4, les quals representen aproximadament un 11% de la variancia de les dades cadascuna.
 ```{r}
 # PCA:
-res.pca<-PCA( df[, vars_con], quanti.sup=2, graph=FALSE) #"duration" com a suplementaria
-
 plot.PCA(res.pca, choix = c("var") ) #variables factor map
 
 #GGPLOT contribution of variables
 #fviz_pca_var(res.pca)
 fviz_contrib(res.pca, choice="var", axes=1:3)+theme_bw()
 
-summary(res.pca, nb.dec=2, ncp=4, nbind=0)
+summary(res.pca, nb.dec=2, ncp=2, nbind=0)
 
 #veure eixos 3 i 4:
 res.pca<-PCA(df[, vars_con], quanti.sup=2, axes=3:4)
@@ -230,9 +233,6 @@ plot.PCA(res.pca, choix="ind", invisible="ind")
 lines(res.pca$quali.sup$coord[1:2, 1:2], col="blue", lwd="2")
 lines(res.pca$quali.sup$coord[2:3, 1:2], col="blue", lwd="2")
 lines(res.pca$quali.sup$coord[3:4, 1:2], col="blue", lwd="2")
-
-
-#Fer el mateix amb la variable duration (factoritzada?) i veure el nuvol de punts i si es pot unir pq segueix alguna progressio!!!
 ```
 
 ```{r, include=FALSE}
@@ -244,99 +244,71 @@ lines(res.pca$quali.sup$coord[3:4, 1:2], col="blue", lwd="2")
 
 # K-Means Classification (Partitioning - Supervised learning)
 
-K-means es una de les diverses tecniques de clustering. Com a tota tecnica de clustering, l'objectiu es realitzar subgrups d'observacions amb l'objectiu d'obtenir agrupacions amb caracteristiques similars i que es diferenciin de les carasteriques per les que destaquen els altres grups, es a dir amb una variancia intra-cluster el més minima possible i intentant maximitzar la variacio inter-cluster.
+K-means es un algoritme de clustering que te com a objectiu agrupar les observacions en un determinat nombre de grups o clusters els quals comparteixin caracteristiques similars. Dit d'altra manera, agrupa els individus de manera que els que estan dins un mateix cluster tinguin unes distancies euclidianes entre ells mes petties que respecte els individus d'altres clusters. Cal tenir en compte que com que el parametre passat a la crida *kmeans* es el numero de clusters que s'han d'obtenir (i no el conjunt inicial de centres), es seleccionen aleatoriament un conjunt inicial de *k* centres de cluster. Aixo vol dir que aquesta seleccio aleatoria pot tenir gran influencia en el resultat final, el qual sera diferent en cada execucio de l'alogritme. Per tal de reduir soroll de les dades innecessari, treballarem nomes amb les 4 primeres dimensions obtingudes del PCA. 
 
-En el nostre cas, em escollit treballar amb 4 dimensions, per tal de reduir soroll innecessary, i 6 clusters.
-
-Del resultats obtingut per kmeans en podem extreure diverses conclusions. En primer lloc la taula de clusters ens mostra cada observació amb el seu nombre de cluster assignaat. Al realitzar un sumari podem veure la distribució de les observacions a través dels diferents clusters. Withinss, corresponent a la inercia intra-cluster, s'obte a traves de la suma de quadrats dins del clúster. Obtenim un valor per acada un dels clusters, com més baix es el nombre obtingut més significativa es la homegeinitat dels clusters. Per altra banda, Betweenss o inercia inter-cluster, es la suma de cuadrats entre clusters, la mitjana de distàncies entre els centres de clústers. La obtencio d'un valor alt ens demostra la heterogeneitat de les agrupacions. 
-
-Tot.withinss correspon a la suma de totes les distancies intra-cluster i totss a la suma de les distancies intra-cluster i inter-cluster. Per acabar, la fraccio obtinguda de betweenss i totss ens mostra que unicament amb els centres de gravetat estem obtenint una representacio del 77% de les dades, una xifra realment bona que ens indica que el nombre de clusters escollit es l'indicat.
-
+L'objecte retornat per la crida *kmeans* ens permet consultar diferents atributs. L'atribut withinss correspon a la suma del quadrat de les distancies inter-cluster, es a dir, hi ha un valor per a cada cluster. L'atribut betweenss es un sol valor mig que correspon a la suma del quadrat de les distancies inter-cluster. A partir d'aquest valor mig i el total de les distancies totss podem obtenir el nivell de representacio que obtenim nomes amb els centres de gravetat dels clusters sobre el conjunt de les dades.
 ```{r}
+#only 4 significant axes in order to avoid unnecessary noise
 dclu<-res.pca$ind$coord[,1:4]
 
-kcla<-kmeans(dclu, 6);summary(kcla) 
+#fixed number of clusters (a random set of rows are chosen as the initial centers)
+kcla<-kmeans(dclu, 7)
+summary(kcla) 
 
 table(kcla$cluster)
 
-kcla$withinss 
+attributes(kcla)
 
+#INTRA-CLUSTER DISTANCES
+kcla$withinss
+#$withinss: is the within cluster sum of squares. 
+#So it results in a vector with a number for each cluster.
+
+#INTER-CLUSTER DISTANCES
 kcla$betweenss
+#$betweenss: is the between clusters sum of squares. 
+#In fact it is the mean of distances between cluster centers.
 
+# Some equalities may help to understand:
+#     $tot.withinss = sum($withinss)
+#     $totss = $tot.withinss + $betweenss
 kcla$tot.withinss
-
 kcla$totss 
 
 kcla$betweenss/kcla$totss
-
+#nomes amb els centres de gravetat estariem obtenint una representacio de les dades del X%
 ```
 
-##Eleccio del nombre de clusters
-Ha sigut per mitjà d'aquest algoritme que hem determinat quin es el valor de k més indicat. l'algoritme ens mostra les distancies intra-clusters per a cada un dels valors de k, ens interesa trobar un valor de k on la distancia intra-cluster sigui el menor possible. A mesura que s'incrementa el nombre de k la distancia intra-cluster es veu reduida, no podem agafar el valor amb la distancia mes petita, el mes indicat seria agafar aquell valor de k on la la funcio para de decreixer de manera significativa. Em determinat que aquest valor correspon a k=6. 
+Si executem k-means per a diferents valors k podem observar com evolucionen les distancies intra-clusters o el % de representacio obtingut en cada cas. L'execucio d'unes quantes vegades del seguent chunk de codi ens ha ajudat en la seleccio del nombre de clusters k=7.
 ```{r}
-wss <- sum(kmeans(dclu,centers=1)$withinss)
+wss <- sum(kmeans(dclu,1)$withinss) #k=1
+for (i in 2:15) wss[i] <- sum(kmeans(dclu,i)$withinss) #k=2to15
 
-# We take iteration 2 to 15
-for (i in 2:15) wss[i] <- sum(kmeans(dclu,centers=i)$withinss)
+plot(1:15, wss, type="b", xlab="Number of Clusters", ylab="Intra-cluster distances")
 
-# We plot the 15 withinss values. One for each k
-plot(1:15, wss, type="b", xlab="Number of Clusters",ylab="Within groups sum of squares")
-```
 
-##Descripcio dels clusters
-```{r}
-numcl<-6
-df$KM<-numcl
-df[names(kcla$cluster),"KM"]<-kcla$cluster
-df$f.KM<-factor(df$KM, labels = c("KM1", "KM2", "KM3", "KM4", "KM5", "KM6"))
-names(df)
-varskm<-names(df[c(1:21)])
-vars<-c(varskm, "f.KM")
-targ<-which(vars == "f.KM")
+km<-kmeans(dclu,1)
+repr <- km$betweenss/km$totss #k=1
+for (i in 2:15){
+  km<-kmeans(dclu,i)
+  repr[i] <- km$betweenss/km$totss
+}
 
-catdes(df[,vars],targ)
+plot(1:15, repr, type="b", xlab="Number of Clusters", ylab="% de representacio amb els centres de gravetat")
 
 ```
-##Cluster 1
-En aquest cluster podem observar a trevés de les categories que hi ha sobrepoblacio de persones contactades entre Abril i Maig, a través de telefon mobil i engloba bona part dels estudiants de la nostra mostra. També podem veure que del total de persones que acceptem la compra del producte un vora el 33% pertanyen a aquest cluster, una dada bastant significativa que la probabilitat d'exit entre el perfil dels individus com al del cluster es alta.
-
-Per altra banda, podem apreciar com el nombre de contactes en campanyes previes es troba per sobre de la mitjana total. També podem veure que la edad mitjana dins el cluster es 4 anys menor a la mitjana global i que els valors socio-economics mostren condicions bastant semblants respecte a el conjunt global de dades, a excepcio del euribor que mostra unes condicions mes faborables.
-
-La duracio de les trucades i els dies transcorreguts de l'ultim contacte difereixen lleugerament de la mitjana global, en aquest cas pero no ens mostren una diferencia significativa com per poder-los considerar com a factors determinants dins el cluster.
-
-##Cluster 2
-En el segon cluster podem veure que practicament tots els seus individus no havien estat contactats anteriorment i com un 95% dels individus no accepta la compra del producte. Gran part del individus contactats als mesos de juny, juliol i agosta pertanyen a aquest cluster. 
-
-A través de les variables quantitatives no en podem extreure grans conclusions. Els variables socio-economiques es troben en valors molt propers a la mitja, iaixi com les resta de variables quantitatives que ens mostra la taula.  
-
-##Cluster 3
-A través de les categories que caracteritzen aquest cluster podem veure que un 40% de les persones retirades es troben dins el cluster. A més també un 18 per cent de les persones que accepten el producte pertanyen al cluster i dins el cluster el 32% l'accepten. 
-
-Les variables qualitatives ens mostren que, en consonancia amb que bona part de les persones estan retirades, hi ha un increment del 10% den l'edat dels individus. També incrementa lleugerament els dies transcorreguts des de l'ultim contacte i disminueix el nombre de contactes realitzats en la present campanya. 
-
-##Cluster 4
-En el quart cluster podem observar que hi ha sobre poblacio d'individus que havien havien acceptat campanyes previes. El 56% dels individus del cluster han acceptat el producte financer i per sobre del 90% han estat contactats a traves del telefon mobil i tenen credits default(?).
-
-L'edat mitjana del individus del cluster decreix en 4 anys respecte la mitjana global. Podem veure que elnombre de contactes en la presents campanya decreix mentre que el nombre decontactes previs creix lleugerament. 
-
-##Cluster 5
-Aquest cluster es caracteritza per tenir sobre poblacio d'individus que han acceptat productes ofertats previament i d'acceptaco del producte actual. Mes d'un 90% dels individus han estat contactats a traves del telefon mobil. 
-
-En relacio amb les variables quantitatives, es denota un increment d'un punt i mig en el nombre de contactes per campanyes previes, mentre que es veu decrementat el nombre de contactes en aquesta campanya. Podem apreciar que hi ha una gran caiguda de l'euribor. 
-
-##Cluster 6
-En aquest ultim cluster podem veure que mes del 96% dels individus no accepten el producte ofertat i que de mes del 99% dels individus no en tenir referencies respecte al resultats en campanyes anteriors.De les variables quantitatives en podem extreure un increment en els contactes en la present campanya i que els contactes en campanyes previes practicament nul. 
 
 
 
 # Hierarchical Clustering (Unsupervised learning)
+
 Aquest punt compren la realitzacio d'una clusteritzacio aglomerativa jerarquitzada dels individus. HCPC de la llibreria FactoMineR utilitza les distancies de entre clusters diferents, per tal de minimitzar la inercia inter-cluster.
 
-La primera de les comandes esta comentada ja que requereix l'interacio de l'usuari per a triar per on tallar l'arbre de clusters que es mostra a l'usuari. Despres d'estar interactuant amb diferents opcions de numero de clusters, s'ha decidit finalment agafar nb.clust = 7, tal i com es pot veure a continuacio. Es mostren els grafics corresponents a l'arbre el qual s'ha tallat a l'altura de 7 clusters, aixi com el mapa de factors de les dues primeres dimensions del PCA.
+La primera de les comandes HCPC esta comentada ja que requereix l'interacio de l'usuari per a triar per on tallar l'arbre de clusters que es mostra a l'usuari. Despres d'estar interactuant amb diferents opcions de numero de clusters, s'ha decidit finalment agafar nb.clust = 7, tal i com es pot veure a continuacio. Es mostren els grafics corresponents a l'arbre el qual s'ha tallat a l'altura de 7 clusters, aixi com el mapa de factors de les dues primeres dimensions del PCA.
 ```{r}
 #PCA calculat amb 4 significant axes:
 vars_con<-names(df)[c(1, 12:14, 16:20)]; vars_con
-res.pca<-PCA( df[, c("duration", "y", vars_con) ], quanti.sup=1, quali.sup=2, ncp=4, graph=FALSE )
+res.pca<-PCA( df[, c("duration", "y", "loan", "month", "job", "poutcome", "education", "housing", vars_con) ], quanti.sup=1, quali.sup=2:8, ncp=4, graph=FALSE )
 
 #res.hcpc<-HCPC(res.pca, order=TRUE)
 
@@ -358,25 +330,38 @@ sum(res.hcpc$call$t$inert.gain)
 
 res.hcpc$call$t$within[1:7]
 
-sum(res.hcpc$call$t$inert.gain[1:6]) / sum(res.hcpc$call$t$inert.gain) * 100 #6 clusters corresponen al 80.4% d'inercia
+#X clusters corresponen al %? d'inercia
+sum(res.hcpc$call$t$inert.gain[1:6]) / sum(res.hcpc$call$t$inert.gain) * 100
 
 table(res.hcpc$data.clust$clust) #nombre d'individus en cada cluster
 ```
 
 
 ## Sobre les variables categoriques que han estat incloses com a suplementaries
-TODO (i canviar var suplementaries)
+
+Aqui analitzarem la representacio i relacio de les variables categoriques que s'han inclos com a suplementaries en el PCA destinat a la clusteritzacio jerarquica. Aquestes variables han estat les seguents: "y", "loan", "month", "job", "poutcome", "education" i "housing".
+
+En un primer output basat en el *test chi2* veiem rapidament quines d'aquestes variables discretes suplementaries estan significativament (p-value < 0.05) relacionades globalment amb la particio de clusters establerta. Les variables "month" i "poutcome" tenen un p-valor tan baix que R no el pot representar i ens el marca com a 0; de la mateixa manera, les variables "y(target)", "job", "education" i "housing" estan tambe relacionades amb el particionament seleccionat.
+
+En un segon output desglosat per numero de cluster veiem la sobrerepresentacio i infrarepresentacio de diferents categories en els diferents clusters, ajudant aixi a caracteritzar els diferents grups formats. La presentacio de les dades es la mateixa que la mostrada en el catdes pero amb el numero de cluster com a variable fixada, per tant seran interpretades de la mateixa manera descrita en el primer deliverable.
+En una primera **descripcio general**, podem veure com els clusters 1 i 2, i en menor mesura el 3, tenen una sobrerepresentacio d'acceptacio de producte financer. Pel que fa a la resta de clusters, tenen una infrarepresentacio del mateix. El 71% d'acceptacions del producte financer es troben als 3 primers clusters, mentres que el 29% restant es troben als altres 4. Cada cluster a mes, te un lleuger esbiaix en certes catergoreis professionals i d'educacio.
+El **primer cluster** es troba caracteritzat per una immensa sobrerepresentacio dels clients amb acceptacio d'una campanya anterior (poutcome-success es un 86% dins el cluster 1 respecte un 3% global); aixo es tradueix tambe en que el 97% d'individus que havien acceptat anteriorment un producte estan situats en aquest cluster. El **segon cluster** es troba sobrerepresentat pels individus retirats (27% respecte un 4% global), el 41% dels quals pertanyen a aquest cluster. Tamb� trobem que mes de la meitat de trucades realitzades als mesos d'octubre, setembre i desembre son classificades dins del cluster numero 2. A mes a mes, el segon i en especial el **tercer cluster** (59% dels poutcome-failure pertanyen a aquest) es troben forca sobrerepresentats per individus que anteriorment no van acceptar una campanya (pero aquesta si). Tambe inclouen una sobrerepresentacio d'individus housing-yes. Aquest tercer cluster compren a mes una sobrerepresentacio dels mesos d'abril, maig i marc.
+El 99.7% d'individus del **quart cluster** van ser contactats el mes de novembre, el que es tradueix en una immensa sobrerepresentacio en aquest grup, que a mes no va acceptar el producte financer (97.0%).
+El **cinque cluster**, **sise cluster** i **sete cluster** estan formats integrament per individus dels quals no es te informacio d'exit o fracas en contactes de campanyes anteriors. El cinque cluster te una sobrerepresentacio dels mesos agost i maig; mentres que el sise i sete clusters la tenen dels mesos juliol i juny. Aquests dos ultims clusters tenen a mes una sobrerepresentacio housing-no (i infra de housing-yes), essent el sete cluster lleugerament diferent del sise pel fet de contenir tambe una sobrereprentacio de l'agost i una major infrarepresentacio d'acceptacio del producte financer.
 ```{r}
 # Factors globally related to clustering partition:
 res.hcpc$desc.var$test.chi2
 # Categories over/under represented in each cluster:
-res.hcpc$desc.var$category #veiem com hi ha clusters que tenen sobrerepresentacio d'acceptacio del producte financer!
-
+res.hcpc$desc.var$category
 ```
 
 
 ## Sobre les variables quantitatives (numeriques)
-TODO
+
+A continuacio es realitzara una altra descripcio dels diferents clusters formats pero basant-nos en les variables quantitatives (numeriques), les quals han estat utilitzades en el PCA. En el primer output es poden veure les que han estat "p-provades" com a globalment relacionades amb la clusteritzacio, mentres que el detall es pot veure en el segon output.
+
+El **primer cluster** esta caracteritzat per individus (sempre respecte la mitja global) mes contactats en campanyes anteriors (previous) i menys en l'actual (campaign); aixi com individus que han estat contactats molt mes recentment (pdays). La duracio de les trucades en aquest cluster esta 35 segons per sobra la mitja global, aixi com tambe podem veure lleugers esbiaixos en els indicadors socioeconomics (valors baixos de euribor3m, emp.var.rate, nr.employed i cons.conf.idx). El **segon cluster** te una mitjana d'edat 12 anys per sobre la mitjana global, si be tambe una major desvacio estandard dins la categoria; a part d'un esbiaix similar a l'anterior amb els indicadors socioeconomics. El **tercer cluster** es similar al cluster 2 pero amb una mitja d'edat 4 anys per sota de la global; a mes en aquest grup la duracio de les trucades esta per sobra la mitja per 14 segons.
+Els quatre altres clusters contenen nomes individus els quals no han estat contactats abans per cap altra campanya (mitja de pdays=19.0 amb un sd de 0) i els seus indicadors socioeconomics tenen un comportament similar en l'esbiaix. El **quart cluster** pero, a diferencia dels altres tres, no mostra una mitja de 0.0 en la variable "previous", el que fa pensar que aquests individus han estat contactat abans pero no necessariament per a una campanya d'un producte. La duracio en aquest cluster es 30 segons per sota la mitja global. Entre els **cinque cluster** i **sise cluster** la diferencia principal esta en l'edat, que que el cinque agrupa individus per sobre la mitja i el sise per sota. Per ultim, el **sete cluster** destaca per a una mitja de duracio de les trucades extremadament curta (65 segons per sota la mitja global), aixi com per un numero de vegades que l'individu ha estat contactat en l'actual campanya molt per sobre de la mitja global (11.3 respecte 2.5).
 ```{r}
 # Numeric (quantitative) variables globally related to clustering partition:
 res.hcpc$desc.var$quanti.var
@@ -385,6 +370,7 @@ res.hcpc$desc.var$quanti
 
 
 ## Descripcio dels clusters mitjancant individus
+
 Aqui descrivim els clusters mitjancant els individus, concretament ens centrarem en els individus que estan al centre de gravetat del cluster (para-parangons) i els que estan mes allunyats de la resta de clusters, es a dir, els mes propis del cluster en questio i menys dels altres (dist-especifics). En les seguents grafiques es poden veure representats en blau els parangons i en taronja els individus especifics per a cada cluster de la classificacio.
 ```{r}
 # Description of the clusters by individuals:
@@ -412,7 +398,8 @@ dist7<-which(rownames(res.pca$ind$coord)%in%names(res.hcpc$desc.ind$dist[[7]]))
 
 df$clust<-factor(res.hcpc$data.clust$clust)
 
-res.pca<-PCA(df[,c("duration", "clust", vars_con)], quanti.sup=1,quali.sup=2,ncp=4, graph=FALSE) #cluster as variable suplementaria
+#cluster as variable suplementaria
+res.pca<-PCA(df[,c("duration", "clust", vars_con)], quanti.sup=1,quali.sup=2,ncp=4, graph=FALSE)
 
 #? habillage
 #color the individuals among a categorical variable (give the number/name of the categorical variable)
