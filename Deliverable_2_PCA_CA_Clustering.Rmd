@@ -51,6 +51,7 @@ lapply(requiredPackages, require, character.only = TRUE)
 # Load data from Deliverable 1:
 ```{r}
 #dirwd<-"D:/Users/Usuari/Documents/ADEIpractica"
+#dirwd<-"//pax/perfils/1173408.CR/Downloads"
 dirwd<-"D:/Documents/GitHub/ADEI"
 setwd(dirwd)
 
@@ -252,7 +253,7 @@ L'objecte retornat per la crida *kmeans* ens permet consultar diferents atributs
 dclu<-res.pca$ind$coord[,1:4]
 
 #fixed number of clusters (a random set of rows are chosen as the initial centers)
-kcla<-kmeans(dclu, 7)
+kcla<-kmeans(dclu, 4)
 summary(kcla) 
 
 table(kcla$cluster)
@@ -279,7 +280,7 @@ kcla$betweenss/kcla$totss
 #nomes amb els centres de gravetat estariem obtenint una representacio de les dades del X%
 ```
 
-Si executem k-means per a diferents valors k podem observar com evolucionen les distancies intra-clusters o el % de representacio obtingut en cada cas. L'execucio d'unes quantes vegades del seguent chunk de codi ens ha ajudat en la seleccio del nombre de clusters k=7.
+Si executem k-means per a diferents valors k podem observar com evolucionen les distancies intra-clusters o el % de representacio obtingut en cada cas. L'execucio d'unes quantes vegades del seguent chunk de codi ens ha ajudat en la seleccio del nombre de clusters, ja que per la regla de l'ultim colze agafem una k=4.
 ```{r}
 wss <- sum(kmeans(dclu,1)$withinss) #k=1
 for (i in 2:15) wss[i] <- sum(kmeans(dclu,i)$withinss) #k=2to15
@@ -296,6 +297,18 @@ for (i in 2:15){
 
 plot(1:15, repr, type="b", xlab="Number of Clusters", ylab="% de representacio amb els centres de gravetat")
 
+```
+
+## Descripcio dels clusters
+Per a fer Eric!
+```{r}
+kclusters<-as.data.frame(kcla$cluster)
+colnames(kclusters) = c("kcluster")
+dades_cl<-merge(df[,vars_con], kclusters, by=0) #merge by row.names
+dades_cl<-dades_cl[,-1] #eliminem columna row.names (correspon als num de fila anteriors)
+
+dades_cl$kcluster<-as.factor(dades_cl$kcluster)
+catdes(dades_cl, 11) #catdes per kcluster
 ```
 
 
