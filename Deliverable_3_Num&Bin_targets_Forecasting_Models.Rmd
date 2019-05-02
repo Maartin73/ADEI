@@ -1,0 +1,167 @@
+---
+output:
+  pdf_document: 
+    fig_width: 6
+    fig_height: 4
+  html_document: default
+editor_options: 
+  chunk_output_type: console
+---
+
+# Course Practical Assignment - 3rd Deliverable (maig del 2019)
+## *Josep Clotet Ginovart*
+## *Eric Martin Obispo*
+
+# Bank client data
+## Description of input variables:
+
+  1. age (numeric)
+  2. job : type of job (categorical: 'admin', 'blue-collar', 'entrepreneur', 'housemaid', 'management', 'retired', 'self-employed', 'services', 'student', 'technician', 'unemployed', 'unknown')
+  3. marital : marital status (categorical: 'divorced','married','single','unknown'; note: 'divorced' means divorced or widowed)
+  4. education (categorical:'basic.4y', 'basic.6y', 'basic.9y', 'high.school', 'illiterate', 'professional.course', 'university.degree', 'unknown')
+  5. default: has credit in default? (categorical: 'no','yes','unknown')
+  6. housing: has housing loan? (categorical: 'no','yes','unknown')
+  7. loan: has personal loan? (categorical: 'no','yes','unknown')# related with the last contact of the current campaign:
+  8. contact: contact communication type (categorical:'cellular','telephone')
+  9. month: last contact month of year (categorical: 'jan', 'feb', 'mar',..., 'nov', 'dec')
+  10. day_of_week: last contact day of the week (categorical:'mon','tue','wed','thu','fri')
+  11. duration: last contact duration, in seconds (numeric). Important note: this attribute highly affects the output target (e.g., if duration=0 then y='no'). Yet, the duration is not known before a call is performed. Also, after the end of the call y is obviously known. Thus, this input should only be included for benchmark purposes and should be discarded if the intention is to have a realistic predictive model.
+  12. campaign: number of contacts performed during this campaign and for this client (numeric, includes last contact)
+  13. pdays: number of days that passed by after the client was last contacted from a previous campaign (numeric; 999 means client was not previously contacted)
+  14. previous: number of contacts performed before this campaign and for this client (numeric)
+  15. poutcome: outcome of the previous marketing campaign (categorical: 'failure','nonexistent','success')# social and economic context attributes
+  16. emp.var.rate: employment variation rate - quarterly indicator (numeric)
+  17. cons.price.idx: consumer price index - monthly indicator (numeric)
+  18. cons.conf.idx: consumer confidence index - monthly indicator (numeric)
+  19. euribor3m: euribor 3 month rate - daily indicator (numeric)
+  20. nr.employed: number of employees - quarterly indicator (numeric)
+  21. y - has the client subscribed a term deposit? (binary: 'yes','no')
+
+# Loading packages:
+```{r, include=FALSE}
+# Required Packages: to be increased over the course
+requiredPackages <- c("car","knitr","ggplot2","FactoMineR","missMDA","mvoutlier","chemometrics", "factoextra", "MASS")
+missingPackages <- requiredPackages[!(requiredPackages %in% installed.packages()[,"Package"])]
+
+if(length(missingPackages)) install.packages(missingPackages)
+lapply(requiredPackages, require, character.only = TRUE)
+
+```
+
+# Load validated data from Deliverable 1:
+```{r}
+#dirwd<-"D:/Users/Usuari/Documents/ADEIpractica"
+dirwd<-"//pax/perfils/1173408.CR/Downloads/deliverable"
+#dirwd<-"D:/Documents/GitHub/ADEI"
+setwd(dirwd)
+
+load( paste0(dirwd, "/bank-additional/Bank5000_validated.RData") )
+summary(df)
+```
+
+# Explanatory numeric variables
+
+## Initial modelling
+Model lineal inicial agafant totes les variables numeriques aportades. Veiem com aquestes variables en un model lineal nomes ens expliquen el 1.318% de les dades!
+```{r}
+vars_con
+#li treiem la variable target a la llista de variables numeriques explicatives
+vars_exp<-c(vars_con[1], vars_con[3:10]); vars_exp
+
+m1<-lm(duration~., data=df[,vars_con]) #es passa nomes el df amb les continues perque li hem posat un '.' al model que vol dir que les agafi totes, i ara nomes volem variables explciatives numeriques; si especificiquem les variables numeriques explicatives del model i volem que el calculi per tot el df incloent variables categoriques, "data" el passem com =df.
+summary(m1)
+```
+
+## Inferential criteria o Bayesian info criteria
+Utilitzem tests per a detectar i eliminar variables poc explicatives en els models.
+```{r}
+#METODE TESTS FISHER:
+#remove non significant variables, per a saber quines son fem tests de Fisher amb la comanda Anova d'R
+Anova(m1)
+#El test Anova ens diu linia a linia si cada variable es significativa a l'hora d'aportar informacio en el model. Cada fila es refereix a un test de models encaixats del model m1 amb el model m1 sense la variable expressada en la fila.
+#Per tant, si el p-valor es <0.05 podem refutar la H0 que deia que els models eren iguals. La podem refutar amb les variables "age" i indicadors socioeconomics, que vol dir que no ens aporten informacio extra al model.
+#En canvi, per les variables campaign, pdays, previous i emp.var.rate, no podem refutar la H0, el que vol dir que si que ens estan aportant informacio al model i no les podem eliminar. Podriem contemplar tambe "nr.employed" que esta a la frontera del p-valor teoric vs flexibilitat a la practica.
+m2<-lm(duration~campaign+pdays+previous+emp.var.rate, data=df)
+Anova(m2)
+
+#ALTRA METODE AKAIKE:
+#Akaike or BIC: pas a pas, les variables que treient-les obtindriem un AIC mes baix les va eliminant dels models successius. Interessa un coeficient d'Akaike que quan no li treiem cap variable es mantingui igual. Un trade-off entre el fitting del model i la sobre parametritzacio.
+m3<-step(m1)
+
+#METODE BAYESIAN (BIC), millor per a mostres gran, com la nostra:
+#Funciona com l'anterior pero solen sortir models mes simplificats.
+m4<-step(m1, k=log(nrow(df)))
+
+```
+
+Altra forma de procedir recomanable quan hi ha moltes variables, enlloc de comencar amb totes en un model inicial, es utilitzar el condes per a detectar les variables que ens interessen.
+```{r}
+condes(df, 11) #variable target: 11 (duration)
+
+#Agafem com a variables explicatives les $quanti del condes:
+m5<-lm(duration~pdays+euribor3m+nr.employed+campaign, data=df)
+Anova(m5) #pdays sembla que no esta aportant res de nou (p-value=0.32)
+
+m6<-lm(duration~euribor3m+nr.employed+campaign, data=df) #treiem pdays
+Anova(m6) #totes les variables ens aporten informacio nova
+
+#BIC
+m7<-step(m6, k=log(nrow(df)))
+
+vif(m7) #vif per sota de 3 es valid, si tenen un valor per sobre ens esta dient que la variable te redundancies; si dos valors son iguals vol dir que d'aquelles dues variables ens n'em de quedar nomes una! (en el cas de clase, els models m4 i m7 han quedat iguals).
+#Error in vif.default(m7) : model contains fewer than 2 terms ---> provem amb un altre model per a veure-ho
+vif(m4)
+
+```
+
+
+## Transforming variables
+```{r}
+par(mfrow=c(2,2))
+
+plot(m7)
+
+plot(m4)
+#poc podem dir ja que son models lineals molt dolents, representen com hem al voltant d'un 1%
+par(mfrow=c(1,1))
+summary(m4)
+
+#Box-Cox Transformation of Y - log(Y)
+#com veiem el valor de lambda estimat proper a 0, vol dir que hem d'elevar a 0 el target, com que aixo no es pot fer, la transformacio estadistica del nostre target es el logaritme!
+boxcox(m4, data=df)
+boxcox(m7, data=df)
+
+#TRANSFORMACIO LOGARITMICA
+m8<-lm(log(duration)~pdays+euribor3m+nr.employed+campaign, data=df)
+Anova(m8)
+
+#BIC
+m10<-step(m8, k=log(nrow(df)))
+vif(m10) #euribor3m i employed mostren molta colinearitat, ens quedem amb euribor3m
+
+m11<-lm(log(duration)~euribor3m+campaign, data=df)
+vif(m11)
+summary(m11)
+```
+
+```{r}
+#POLINOMIC REGRESSION
+#com hi ha poques variables provem de transformar-les totes amb regressio polinomica
+m20<-lm(log(duration)~poly(euribor3m, 2)+poly(campaign, 2), data=df)
+
+summary(m20) #veiem com amb ambdos termes quadratics (segons) tenen un p-value <0.05 i millor que amb el terme lineal (primer), per tant ja va be que fem aquesta transformacio quadratica.
+Anova(m20)
+
+par(mfrow=c(2,2))
+plot(m20)
+par(mfrow=c(1,1))
+
+```
+
+
+
+
+
+
+
+
