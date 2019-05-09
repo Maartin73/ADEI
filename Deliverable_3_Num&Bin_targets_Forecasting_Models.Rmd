@@ -51,106 +51,111 @@ lapply(requiredPackages, require, character.only = TRUE)
 # Load validated data from Deliverable 1:
 ```{r}
 #dirwd<-"D:/Users/Usuari/Documents/ADEIpractica"
-dirwd<-"//pax/perfils/1173408.CR/Downloads/deliverable"
-#dirwd<-"D:/Documents/GitHub/ADEI"
+#dirwd<-"//pax/perfils/1173408.CR/Downloads/deliverable"
+dirwd<-"D:/Documents/GitHub/ADEI"
 setwd(dirwd)
 
 load( paste0(dirwd, "/bank-additional/Bank5000_validated.RData") )
 summary(df)
 ```
 
-# Explanatory numeric variables
+# Variables numeriques explicatives
+Per tal d'elaborar un model lineal que predigui el valor de la variable numerica target *duration*, primer hem de decidir quines son les variables (columnes) que utilitzarem en la seva cosntruccio. En altres paraules, trobar quines variables ens aproten informacio i precisio al model predictiu, pero sense sobreparametritzar-lo. 
 
-## Initial modelling
-Model lineal inicial agafant totes les variables numeriques aportades. Veiem com aquestes variables en un model lineal nomes ens expliquen el 1.318% de les dades!
+## Model inicial amb totes les variables numeriques
+Una primera (i dolenta) aproximacio podria ser la d'usar un model lineal inicial que tingui en compte totes les variables numeriques aportades. Veiem com aquestes variables en un model lineal nomes ens expliquen l' 1.3% de la variabilitat de l'output *duration* (Multiple R-squared: 0.01309)! El que vol dir que gairebé un 99% d'questa variabilitat de la duracio queda sense explicar, el que vol dir que aquesta primera aproximacio, a part d'estar sobreparametritzada, no prediu gens be.
 ```{r}
 vars_con
 #li treiem la variable target a la llista de variables numeriques explicatives
 vars_exp<-c(vars_con[1], vars_con[3:10]); vars_exp
 
-m1<-lm(duration~., data=df[,vars_con]) #es passa nomes el df amb les continues perque li hem posat un '.' al model que vol dir que les agafi totes, i ara nomes volem variables explciatives numeriques; si especificiquem les variables numeriques explicatives del model i volem que el calculi per tot el df incloent variables categoriques, "data" el passem com =df.
+m1<-lm(duration~., data=df[,vars_con]) #es passa nomes el df amb les variables continues perque li hem posat un '.' al model que vol dir que les agafi totes, i ara nomes volem variables explciatives numeriques; si especificiquem les variables numeriques explicatives del model i volem que el calculi per tot el df incloent variables categoriques, "data" el passem com =df.
 summary(m1)
 ```
 
-## Inferential criteria o Bayesian info criteria
-Utilitzem tests per a detectar i eliminar variables poc explicatives en els models.
+
+## Model inicial amb nomes les variables numeriques rellevants
+Una altra opcio mes adient seria la d'obtenir un model inicial utilitzant nomes les variables numeriques que son rellevants, i a partir d'aqui mirar si es pot reduir la parametritzacio del model i seguir amb un bon ajust predictiu de la variabilitat del nostre output *duration*. Per a trobar les variables rellevants, podem realitzar tests de Fisher mitjancant la comanda Anova d'R, o be utilitzar la comanda condes vista en anteriors entregues.
+
+### Inferential criteria o Bayesian info criteria
+Utilitzem la comanda Anova per a realitzar tests de Fisher i detectar i eliminar variables poc explicatives en els models.
+
+El test Anova ens diu linia a linia si cada variable es significativa a l'hora d'aportar informacio en el model. Cada fila es refereix a un test de models encaixats del model m1 amb el model m1 sense la variable expressada en la fila.Per tant, si el p-valor es <0.05 podem refutar la H0 que deia que els models eren iguals. La podem refutar amb les variables age i indicadors socioeconomics, que vol dir que no ens aporten informacio extra al model. En canvi, per les variables campaign, pdays, previous i emp.var.rate, no podem refutar la H0, el que vol dir que si que ens estan aportant informacio al model i no les podem eliminar. Podriem contemplar tambe quedar-nos amb nr.employed, ja que esta prop de la frontera del p-valor teoric vs la flexibilitat a la practica. El model m2 es el model obtingut amb aquestes variables rellevants.
 ```{r}
 #METODE TESTS FISHER:
 #remove non significant variables, per a saber quines son fem tests de Fisher amb la comanda Anova d'R
 Anova(m1)
-#El test Anova ens diu linia a linia si cada variable es significativa a l'hora d'aportar informacio en el model. Cada fila es refereix a un test de models encaixats del model m1 amb el model m1 sense la variable expressada en la fila.
-#Per tant, si el p-valor es <0.05 podem refutar la H0 que deia que els models eren iguals. La podem refutar amb les variables "age" i indicadors socioeconomics, que vol dir que no ens aporten informacio extra al model.
-#En canvi, per les variables campaign, pdays, previous i emp.var.rate, no podem refutar la H0, el que vol dir que si que ens estan aportant informacio al model i no les podem eliminar. Podriem contemplar tambe "nr.employed" que esta a la frontera del p-valor teoric vs flexibilitat a la practica.
-m2<-lm(duration~campaign+pdays+previous+emp.var.rate, data=df)
+
+m2<-lm(duration~campaign+pdays+previous+emp.var.rate+nr.employed, data=df)
 Anova(m2)
-
-#ALTRA METODE AKAIKE:
-#Akaike or BIC: pas a pas, les variables que treient-les obtindriem un AIC mes baix les va eliminant dels models successius. Interessa un coeficient d'Akaike que quan no li treiem cap variable es mantingui igual. Un trade-off entre el fitting del model i la sobre parametritzacio.
-m3<-step(m1)
-
-#METODE BAYESIAN (BIC), millor per a mostres gran, com la nostra:
-#Funciona com l'anterior pero solen sortir models mes simplificats.
-m4<-step(m1, k=log(nrow(df)))
-
 ```
 
-Altra forma de procedir recomanable quan hi ha moltes variables, enlloc de comencar amb totes en un model inicial, es utilitzar el condes per a detectar les variables que ens interessen.
+Un altre metode pas a pas es el metode Akaike. Va eliminant en models successius les variables que treient-les, obtindriem un AIC mes baix, ja que ens interessa un coeficient d'Akaike que quan no li treiem cap variable es mantingui igual. Un trade-off entre el fitting del model i la sobre parametritzacio. El model m3 *duration ~ campaign + pdays + previous + emp.var.rate + cons.conf.idx + nr.employed* es el model obtingut amb aquest metode.
+```{r}
+#AKAIKE:
+m3<-step(m1)
+```
+
+Hi ha un altre metode anomenat Bayesian, el qual es millor per a mostres grans com la nostra, ja que tot i funcionar com l'anterior, solen sortir models mes simplificats. El model m4 *duration ~ campaign + emp.var.rate + nr.employed* es el model obtingut amb aquest metode.
+```{r}
+#BAYESIAN (BIC):
+m4<-step(m1, k=log(nrow(df)))
+summary(m4)
+```
+
+
+### Condes per a obtenir les variables numeriques rellevants
+Utilitzant la comanda condes vista en anteriors entregues tambe podem trobar les variables que son rellevants pel nostre model. El model que obtenim aixi es el m5, i la comanda Anova ens diu que pdays no esta aportant res de nou (p-value=0.32). La treiem i ens queda el model m6, que correspon a *duration ~ euribor3m + nr.employed + campaign*.
+Si apliquem un metode BIC en aquest model obtenim un model m7 amb nomes un sol parametre aportant informacio que es campaign. Aquest model es massa simple i no ens va be per a treballar, aixi que ens quedem amb el model m4 obtingut anterirment tambe pel metode Bayesian.
 ```{r}
 condes(df, 11) #variable target: 11 (duration)
 
 #Agafem com a variables explicatives les $quanti del condes:
-m5<-lm(duration~pdays+euribor3m+nr.employed+campaign, data=df)
-Anova(m5) #pdays sembla que no esta aportant res de nou (p-value=0.32)
-
-m6<-lm(duration~euribor3m+nr.employed+campaign, data=df) #treiem pdays
-Anova(m6) #totes les variables ens aporten informacio nova
+m5<-lm(duration~pdays+euribor3m+nr.employed+campaign, data=df); Anova(m5)
+m6<-lm(duration~euribor3m+nr.employed+campaign, data=df); Anova(m6) #totes les variables ens aporten informacio nova
 
 #BIC
 m7<-step(m6, k=log(nrow(df)))
+```
 
-vif(m7) #vif per sota de 3 es valid, si tenen un valor per sobre ens esta dient que la variable te redundancies; si dos valors son iguals vol dir que d'aquelles dues variables ens n'em de quedar nomes una! (en el cas de clase, els models m4 i m7 han quedat iguals).
-#Error in vif.default(m7) : model contains fewer than 2 terms ---> provem amb un altre model per a veure-ho
+La comanda vif d'R ens diu les variables utilitzades en el model tenen redundancies. Si el seu valor esta per sota de 3 es valid; i si dos valors son iguals vol dir que d'aquelles dues variables ens n'em de quedar nomes una! En el cas del model m4 ens quedarem amb la variable campaign i nr.employed (triada d'entre les dues amb valor similar).
+```{r}
 vif(m4)
-
+m44<-lm(duration~campaign+nr.employed, data=df); Anova(m44)
 ```
 
 
-## Transforming variables
+## Plots del model m4
 ```{r}
 par(mfrow=c(2,2))
-
-plot(m7)
-
-plot(m4)
-#poc podem dir ja que son models lineals molt dolents, representen com hem al voltant d'un 1%
+plot(m4) #models forca dolents
 par(mfrow=c(1,1))
-summary(m4)
 
-#Box-Cox Transformation of Y - log(Y)
-#com veiem el valor de lambda estimat proper a 0, vol dir que hem d'elevar a 0 el target, com que aixo no es pot fer, la transformacio estadistica del nostre target es el logaritme!
-boxcox(m4, data=df)
-boxcox(m7, data=df)
-
-#TRANSFORMACIO LOGARITMICA
-m8<-lm(log(duration)~pdays+euribor3m+nr.employed+campaign, data=df)
-Anova(m8)
-
-#BIC
-m10<-step(m8, k=log(nrow(df)))
-vif(m10) #euribor3m i employed mostren molta colinearitat, ens quedem amb euribor3m
-
-m11<-lm(log(duration)~euribor3m+campaign, data=df)
-vif(m11)
-summary(m11)
+residualPlots(m4)
+marginalModelPlots(m4)
+influencePlot(m4)
 ```
 
+
+## Transformacio la variable target numerica
+A vegades una transformacio de la variable target numerica pot millorar el model. La comanda Bo-Cox ens mostra com el valor de lambda estimat es proper a 0, vol dir que hem d'elevar a 0 el target, com que aixo no es pot fer, la transformacio estadistica del nostre target sera el logaritme, i la farem a partir del model m5 obtingut anteriorment (aixi donarem marge a possibles reduccions del mateix).
+FALTARIA COMPARAR MODELS ENCAIXATS! altre .rmd!?
 ```{r}
+#Box-Cox
+boxcox(m5, data=df)
+
+#TRANSFORMACIO LOGARITMICA Y(m5) -> logY
+m8<-lm(log(duration)~pdays+euribor3m+nr.employed+campaign, data=df); Anova(m8)
+
+#BIC
+m10<-step(m8, k=log(nrow(df))); vif(m10) #euribor3m i employed mostren molta colinearitat, ens quedem amb euribor3m
+m11<-lm(log(duration)~euribor3m+campaign, data=df); vif(m11)
+summary(m11)
+
 #POLINOMIC REGRESSION
 #com hi ha poques variables provem de transformar-les totes amb regressio polinomica
 m20<-lm(log(duration)~poly(euribor3m, 2)+poly(campaign, 2), data=df)
-
-summary(m20) #veiem com amb ambdos termes quadratics (segons) tenen un p-value <0.05 i millor que amb el terme lineal (primer), per tant ja va be que fem aquesta transformacio quadratica.
-Anova(m20)
+summary(m20); Anova(m20) #veiem com amb ambdos termes quadratics(2) tenen un p-value <0.05. Es millor que el terme lineal(1) en el cas d l'euribor3, podriem fer per tant aquesta transformacio quadratica.
 
 par(mfrow=c(2,2))
 plot(m20)
