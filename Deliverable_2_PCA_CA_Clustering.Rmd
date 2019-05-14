@@ -50,9 +50,9 @@ lapply(requiredPackages, require, character.only = TRUE)
 
 # Load data from Deliverable 1:
 ```{r}
-#dirwd<-"D:/Users/Usuari/Documents/ADEIpractica"
+dirwd<-"D:/Users/Usuari/Documents/ADEIpractica"
 #dirwd<-"//pax/perfils/1173408.CR/Downloads"
-dirwd<-"D:/Documents/GitHub/ADEI"
+#dirwd<-"D:/Documents/GitHub/ADEI"
 setwd(dirwd)
 
 load( paste0(dirwd, "/bank-additional/Bank5000_validated.RData") )
@@ -311,7 +311,15 @@ dades_cl$kcluster<-as.factor(dades_cl$kcluster)
 catdes(dades_cl, 11) #catdes per kcluster
 ```
 
+Descripcio dels clusters:
 
+En el primer cluster podem observar com les mostres que l'integren es trobaven en un situacio economica poc favorable, els factors socio economics sobrepassen els valors mitjans en perjudici de la poblacio. A més, l'edat es troba per sota de la mitjana global, la mitjana de contactes anteriors tambe es superior i el nombre de contactes en la present campanya es troba lleugerament per sobre.
+
+Per al segon cluster, podem observar com els contactes en la present campanya es troba més de 8 punts per sobre de la mitjana global. En relació als factors socio economics no en podem treure conclusions clares, l'index de preus al consumidor i el nombre de empleats es troben per sobre de la mitjana mentre que l'euribor i la variança no son favorables. El nombre de dies transcorreguts des de l'ultim contacte incrementa lleugerament i els contactes previs decauen de manera mes drastica.
+
+Com a caracteristica principal del tercer cluster podem destacar que els contactes en la present campanya augmenten en 0.3 punts respecte a la mitjana global. Altres caracteristiques amb les quals descriure el cluster poden ser el lleuger increment en la duracio de les trucades i una lleugera baixada dels contactes en la present campanya. El valors oferts pels factors socio-economics no ens mostren una tendencia clara de la situació socio-economica dels integrants del cluster.
+
+Per acabar, en el quart cluster podem observar com l'edat es troba 7 anys per sobre de la mitjana global i els valors socio-economics ofereixen condicions menys favorables que les que ofereix la mitjana global. El dies transcurreguts des del ultim contacte augmenten lleugerament, mentre que els contactes en la present campanya i el nombre de contactes previs presenten valors inferiors respecte la mitjana global. 
 
 # Hierarchical Clustering (Unsupervised learning)
 
@@ -358,7 +366,7 @@ En un primer output basat en el *test chi2* veiem rapidament quines d'aquestes v
 
 En un segon output desglosat per numero de cluster veiem la sobrerepresentacio i infrarepresentacio de diferents categories en els diferents clusters, ajudant aixi a caracteritzar els diferents grups formats. La presentacio de les dades es la mateixa que la mostrada en el catdes pero amb el numero de cluster com a variable fixada, per tant seran interpretades de la mateixa manera descrita en el primer deliverable.
 En una primera **descripcio general**, podem veure com els clusters 1 i 2, i en menor mesura el 3, tenen una sobrerepresentacio d'acceptacio de producte financer. Pel que fa a la resta de clusters, tenen una infrarepresentacio del mateix. El 71% d'acceptacions del producte financer es troben als 3 primers clusters, mentres que el 29% restant es troben als altres 4. Cada cluster a mes, te un lleuger esbiaix en certes catergoreis professionals i d'educacio.
-El **primer cluster** es troba caracteritzat per una immensa sobrerepresentacio dels clients amb acceptacio d'una campanya anterior (poutcome-success es un 86% dins el cluster 1 respecte un 3% global); aixo es tradueix tambe en que el 97% d'individus que havien acceptat anteriorment un producte estan situats en aquest cluster. El **segon cluster** es troba sobrerepresentat pels individus retirats (27% respecte un 4% global), el 41% dels quals pertanyen a aquest cluster. Tamb� trobem que mes de la meitat de trucades realitzades als mesos d'octubre, setembre i desembre son classificades dins del cluster numero 2. A mes a mes, el segon i en especial el **tercer cluster** (59% dels poutcome-failure pertanyen a aquest) es troben forca sobrerepresentats per individus que anteriorment no van acceptar una campanya (pero aquesta si). Tambe inclouen una sobrerepresentacio d'individus housing-yes. Aquest tercer cluster compren a mes una sobrerepresentacio dels mesos d'abril, maig i marc.
+El **primer cluster** es troba caracteritzat per una immensa sobrerepresentacio dels clients amb acceptacio d'una campanya anterior (poutcome-success es un 86% dins el cluster 1 respecte un 3% global); aixo es tradueix tambe en que el 97% d'individus que havien acceptat anteriorment un producte estan situats en aquest cluster. El **segon cluster** es troba sobrerepresentat pels individus retirats (27% respecte un 4% global), el 41% dels quals pertanyen a aquest cluster. Tamb? trobem que mes de la meitat de trucades realitzades als mesos d'octubre, setembre i desembre son classificades dins del cluster numero 2. A mes a mes, el segon i en especial el **tercer cluster** (59% dels poutcome-failure pertanyen a aquest) es troben forca sobrerepresentats per individus que anteriorment no van acceptar una campanya (pero aquesta si). Tambe inclouen una sobrerepresentacio d'individus housing-yes. Aquest tercer cluster compren a mes una sobrerepresentacio dels mesos d'abril, maig i marc.
 El 99.7% d'individus del **quart cluster** van ser contactats el mes de novembre, el que es tradueix en una immensa sobrerepresentacio en aquest grup, que a mes no va acceptar el producte financer (97.0%).
 El **cinque cluster**, **sise cluster** i **sete cluster** estan formats integrament per individus dels quals no es te informacio d'exit o fracas en contactes de campanyes anteriors. El cinque cluster te una sobrerepresentacio dels mesos agost i maig; mentres que el sise i sete clusters la tenen dels mesos juliol i juny. Aquests dos ultims clusters tenen a mes una sobrerepresentacio housing-no (i infra de housing-yes), essent el sete cluster lleugerament diferent del sise pel fet de contenir tambe una sobrereprentacio de l'agost i una major infrarepresentacio d'acceptacio del producte financer.
 ```{r}
