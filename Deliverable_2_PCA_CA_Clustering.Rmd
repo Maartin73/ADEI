@@ -50,9 +50,9 @@ lapply(requiredPackages, require, character.only = TRUE)
 
 # Load data from Deliverable 1:
 ```{r}
-dirwd<-"D:/Users/Usuari/Documents/ADEIpractica"
+#dirwd<-"D:/Users/Usuari/Documents/ADEIpractica"
 #dirwd<-"//pax/perfils/1173408.CR/Downloads"
-#dirwd<-"D:/Documents/GitHub/ADEI"
+dirwd<-"D:/Documents/GitHub/ADEI"
 setwd(dirwd)
 
 load( paste0(dirwd, "/bank-additional/Bank5000_validated.RData") )
@@ -300,7 +300,10 @@ plot(1:15, repr, type="b", xlab="Number of Clusters", ylab="% de representacio a
 ```
 
 ## Descripcio dels clusters
-Per a fer Eric!
+En el **primer cluster** podem observar com les mostres que l'integren es trobaven en un situacio economica poc favorable, els factors socio economics sobrepassen els valors mitjans en perjudici de la poblacio. A més, l'edat es troba per sota de la mitjana global, la mitjana de contactes anteriors tambe es superior i el nombre de contactes en la present campanya es troba lleugerament per sobre.
+Per al **segon cluster**, podem observar com els contactes en la present campanya es troba més de 8 punts per sobre de la mitjana global. En relació als factors socio economics no en podem treure conclusions clares, l'index de preus al consumidor i el nombre de empleats es troben per sobre de la mitjana mentre que l'euribor i la variança no son favorables. El nombre de dies transcorreguts des de l'ultim contacte incrementa lleugerament i els contactes previs decauen de manera mes drastica.
+Com a caracteristica principal del **tercer cluster** podem destacar que els contactes en la present campanya augmenten en 0.3 punts respecte a la mitjana global. Altres caracteristiques amb les quals descriure el cluster poden ser el lleuger increment en la duracio de les trucades i una lleugera baixada dels contactes en la present campanya. El valors oferts pels factors socio-economics no ens mostren una tendencia clara de la situació socio-economica dels integrants del cluster.
+Per acabar, en el ***quart cluster** podem observar com l'edat es troba 7 anys per sobre de la mitjana global i els valors socio-economics ofereixen condicions menys favorables que les que ofereix la mitjana global. El dies transcurreguts des del ultim contacte augmenten lleugerament, mentre que els contactes en la present campanya i el nombre de contactes previs presenten valors inferiors respecte la mitjana global. 
 ```{r}
 kclusters<-as.data.frame(kcla$cluster)
 colnames(kclusters) = c("kcluster")
@@ -311,15 +314,6 @@ dades_cl$kcluster<-as.factor(dades_cl$kcluster)
 catdes(dades_cl, 11) #catdes per kcluster
 ```
 
-Descripcio dels clusters:
-
-En el primer cluster podem observar com les mostres que l'integren es trobaven en un situacio economica poc favorable, els factors socio economics sobrepassen els valors mitjans en perjudici de la poblacio. A més, l'edat es troba per sota de la mitjana global, la mitjana de contactes anteriors tambe es superior i el nombre de contactes en la present campanya es troba lleugerament per sobre.
-
-Per al segon cluster, podem observar com els contactes en la present campanya es troba més de 8 punts per sobre de la mitjana global. En relació als factors socio economics no en podem treure conclusions clares, l'index de preus al consumidor i el nombre de empleats es troben per sobre de la mitjana mentre que l'euribor i la variança no son favorables. El nombre de dies transcorreguts des de l'ultim contacte incrementa lleugerament i els contactes previs decauen de manera mes drastica.
-
-Com a caracteristica principal del tercer cluster podem destacar que els contactes en la present campanya augmenten en 0.3 punts respecte a la mitjana global. Altres caracteristiques amb les quals descriure el cluster poden ser el lleuger increment en la duracio de les trucades i una lleugera baixada dels contactes en la present campanya. El valors oferts pels factors socio-economics no ens mostren una tendencia clara de la situació socio-economica dels integrants del cluster.
-
-Per acabar, en el quart cluster podem observar com l'edat es troba 7 anys per sobre de la mitjana global i els valors socio-economics ofereixen condicions menys favorables que les que ofereix la mitjana global. El dies transcurreguts des del ultim contacte augmenten lleugerament, mentre que els contactes en la present campanya i el nombre de contactes previs presenten valors inferiors respecte la mitjana global. 
 
 # Hierarchical Clustering (Unsupervised learning)
 
