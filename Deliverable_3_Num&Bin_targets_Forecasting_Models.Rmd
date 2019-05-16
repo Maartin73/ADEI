@@ -40,7 +40,7 @@ editor_options:
 # Loading packages:
 ```{r, include=FALSE}
 # Required Packages: to be increased over the course
-requiredPackages <- c("car","knitr","ggplot2","FactoMineR","missMDA","mvoutlier","chemometrics", "factoextra", "MASS")
+requiredPackages <- c("car","knitr","ggplot2","FactoMineR","missMDA","mvoutlier","chemometrics", "factoextra", "MASS", "effects")
 missingPackages <- requiredPackages[!(requiredPackages %in% installed.packages()[,"Package"])]
 
 if(length(missingPackages)) install.packages(missingPackages)
@@ -164,9 +164,123 @@ par(mfrow=c(1,1))
 ```
 
 
+# Variables discretes explicatives
+Mitjancant la comanda condes intentarem trobar variables discretes que estiguin relacionades amb la variable target numerica duration. D'aquesta manera sabrem quines variables discretes podem utilitzar en el model predictiu per a que ens aportin informacio. 
+A partir del millor model anterior de variables continues, hem d'obtenir un nou model afegint les variables discretes i factoritzades (no a partir d'una que ja estava al model). En el nostre cas agafem campaign i nr.employed com a variabels continues, i afegim f.cons.conf.idx+f.cons.price.idx+month+f.euribor3m+poutcome com a variables discretes.
+```{r}
+condes(df[, c("duration", vars_dis)], 1, proba=0.01)
+
+#campaign+nr.employed son continues, del millor model anterior amb vairables continues
+m60<-lm(log(duration)~campaign+nr.employed+f.cons.conf.idx+f.cons.price.idx+month+f.euribor3m+poutcome, data=df)
+summary(m60)
+Anova(m60)
+```
+
+Si el condes anterior ens ha donat com a variables factor significatives algunes que ja teniem en el model com a continues, hem de triar o una o altra versio. Si tenim dubtes entre agafar una variable com a continua o factoritzada, hem de fer el següent:
+Veiem com en ambdues variables obtenim que es millor usar la seva versio numerica (no factoritzada).
+```{r}
+#per campaign, mateix model pero amb f.campaign enlloc de campaign:
+maux<-lm(log(duration)~f.campaign+nr.employed+f.cons.conf.idx+f.cons.price.idx+month+f.euribor3m+poutcome, data=df)
+
+#com que m60 i maux no son anidats, no els modem comparar amb un test de Fisher --> BIC
+BIC(m60, maux) #choose option with minimum BIC -> better
+#      df      BIC
+# m60  24 13143.82  --> millor model amb campaign com a numerica
+# maux 25 13199.11
+
+maux<-lm(log(duration)~campaign+f.nr.employed+f.cons.conf.idx+f.cons.price.idx+month+f.euribor3m+poutcome, data=df)
+BIC(m60, maux)
+#      df      BIC
+# m60  24 13143.82  --> millor model amb nr.employed com a numerica
+# maux 25 13151.61
+
+#si haguessim hagut de fer el mateix amb pdays, ojo!!!! pq la continua ha estat majoritariament imputada, per tant en aquest cas, tot i el test, hauriem d'agafar la factoritzada!
+```
+
+Mirem si podem simplificar el model eliminant variables poc significatives mitjancant la comanda step i veiem com ens podem quedar amb les variables numeriques nr.employed i campaign, i la variable factor f.cons.price.idx.
+Si ho fem mitjancant la comanda Anova, veiem com ens surt el mateix resultat pero agafant tambe la variable discreta poutcome. Aixi doncs tambe li farem cas i aquest model sera el m62, que explica el 5% (R^2=0.04959) de la variabilitat de l'output del logaritme de *duration*.
+```{r}
+m61<-step(m60, k=log(nrow(df)))
+
+Anova(m60)
+m62<-lm(log(duration)~campaign+nr.employed+f.cons.price.idx+poutcome, data=df); summary(m62)
+```
+
+
+```{r}
+summary(df[, c("campaign", "nr.employed", "f.cons.price.idx", "poutcome")])
+model.matrix(m62)
+```
+
+
+# Interactions
+Partint del model anterior, li afegim interaccions 2 a 2 entre totes les seves variables, simplifiquem i veiem com hi ha dues interaccions significatives: campaign:nr.employed i campaign:f.cons.price.idx. Nomes podem tenir en compte en el nostre model pero, interaccions entre factors o entre factor i variable numerica, aixi que amb el tests d'Anova mirarem manualment quines interaccions valides ens quedem, el que ens porta a un model m73.
+```{r}
+#interaccio entre 2 variables:
+m70<-lm(log(duration)~(campaign+nr.employed+f.cons.price.idx+poutcome)^2, data=df)
+summary(m70);coef(m70)
+m71<-step(m70, k=log(nrow(df))); Anova(m71) #el criteri Anova(fisher) reafirma el step(BIC) en aquest cas :)!
+# log(duration) ~ campaign + nr.employed + f.cons.price.idx + campaign:nr.employed + campaign:f.cons.price.idx
+# 
+#                             Df Sum of Sq    RSS     AIC
+# <none>                                   3907.1 -1130.7
+# - campaign:nr.employed       1    13.192 3920.3 -1122.4
+# - campaign:f.cons.price.idx  3    30.057 3937.1 -1118.0
+anova(m71, m70) #Pr(>F) = 0.03967 *  --> els models no son equivalents
+
+
+Anova(m70)
+#                              Sum Sq   Df  F value    Pr(>F)    
+# campaign                      139.1    1 177.5733 < 2.2e-16 ***
+# nr.employed                     4.9    1   6.2304  0.012590 *  
+# f.cons.price.idx               31.3    3  13.3261 1.162e-08 ***
+# poutcome                        8.9    2   5.7067  0.003345 ** 
+# campaign:nr.employed            7.7    1   9.8365  0.001721 **  --> entre dos numeriques
+# campaign:f.cons.price.idx      25.3    3  10.7841 4.635e-07 *** --> entre numerica i factor --> agafem
+# campaign:poutcome               0.2    2   0.1354  0.873389     --> entre numerica i factor
+# nr.employed:f.cons.price.idx    5.8    3   2.4861  0.058763 .   --> entre numerica i factor
+# nr.employed:poutcome            1.8    2   1.1741  0.309191     --> entre numerica i factor
+# f.cons.price.idx:poutcome       7.9    6   1.6823  0.121019     --> entre factors --> agafem aquest per l'entrega
+
+m73<-lm(log(duration)~campaign+nr.employed+f.cons.price.idx+poutcome+campaign:f.cons.price.idx+f.cons.price.idx:poutcome, data=df)
+anova(m73, m70) #Pr(>F) = 0.003286 **  --> els models no son equivalents
+
+```
+
+## Interaction between a couple of factors
+```{r}
+#f.cons.price.idx:poutcome
+m80<-lm(log(duration)~f.cons.price.idx+poutcome, data=df); summary(m80)
+
+scatterplot(log(duration)~f.cons.price.idx|poutcome, data=df)
+
+```
+
+## Interaction between factor and covariate
+```{r}
+#campaign|f.cons.price
+
+#model petit sense interaccions
+m85<-lm(log(duration)~campaign+f.cons.price.idx, data=df); summary(m85)
+scatterplot(log(duration)~campaign|f.cons.price.idx, data=df) #Suport visual
+plot(allEffects(m85)) #effects library
+
+#model gran amb interaccions: 3 parametres-> campaign, f.cons.price.idx, campaign:f.cons.price.idx
+m855<-lm(log(duration)~campaign*f.cons.price.idx, data=df); summary(m855) 
+#are interactions significant?
+anova(m85, m855) #Pr(>F)  5.152e-05 ***  --> H0 rejected --> m855 X*A 
+plot(allEffects(m855))
 
 
 
+#campaign|poutcome --> segons el test anterior, la interaccio no ha sortit gaire significativa, pero s'interpreta millor visualment
+m86<-lm(log(duration)~campaign+poutcome, data=df); summary(m85)
+scatterplot(log(duration)~campaign|poutcome, data=df)
+plot(allEffects(m86))
+
+m866<-lm(log(duration)~campaign*poutcome, data=df); summary(m866) 
+anova(m86, m866) #Pr(>F)  0.1435  --> H0 accepted --> els models son iguals, per tant no cal el model gran amb interaccions 
+```
 
 
 
