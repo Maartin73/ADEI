@@ -50,9 +50,9 @@ lapply(requiredPackages, require, character.only = TRUE)
 
 # Load validated data from Deliverable 1:
 ```{r}
-#dirwd<-"D:/Users/Usuari/Documents/ADEIpractica"
+dirwd<-"D:/Users/Usuari/Documents/ADEIpractica"
 #dirwd<-"//pax/perfils/1173408.CR/Downloads/deliverable"
-dirwd<-"D:/Documents/GitHub/ADEI"
+#dirwd<-"D:/Documents/GitHub/ADEI"
 setwd(dirwd)
 
 load( paste0(dirwd, "/bank-additional/Bank5000_validated.RData") )
@@ -60,16 +60,16 @@ summary(df)
 ```
 
 # Variables numeriques explicatives
-Per tal d'elaborar un model lineal que predigui el valor de la variable numerica target *duration*, primer hem de decidir quines son les variables (columnes) que utilitzarem en la seva cosntruccio. En altres paraules, trobar quines variables ens aproten informacio i precisio al model predictiu, pero sense sobreparametritzar-lo. 
+Per tal d'elaborar un model lineal que predigui el valor de la variable numerica target *duration*, primer hem de decidir quines son les variables (columnes) que utilitzarem en la seva construccio. En altres paraules, trobar quines variables ens aproten informacio i precisio al model predictiu, pero sense sobreparametritzar-lo. 
 
 ## Model inicial amb totes les variables numeriques
-Una primera (i dolenta) aproximacio podria ser la d'usar un model lineal inicial que tingui en compte totes les variables numeriques aportades. Veiem com aquestes variables en un model lineal nomes ens expliquen l' 1.3% de la variabilitat de l'output *duration* (Multiple R-squared: 0.01309)! El que vol dir que gaireb� un 99% d'questa variabilitat de la duracio queda sense explicar, el que vol dir que aquesta primera aproximacio, a part d'estar sobreparametritzada, no prediu gens be.
+Una primera (i dolenta) aproximacio podria ser la d'usar un model lineal inicial que tingui en compte totes les variables numeriques aportades. Veiem com aquestes variables en un model lineal nomes ens expliquen l' 1.3% de la variabilitat de l'output *duration* (Multiple R-squared: 0.01309)! El que vol dir que gairebe un 99% d'questa variabilitat de la duracio queda sense explicar, el que vol dir que aquesta primera aproximacio, a part d'estar sobreparametritzada, no prediu gens be.
 ```{r}
 vars_con
 #li treiem la variable target a la llista de variables numeriques explicatives
 vars_exp<-c(vars_con[1], vars_con[3:10]); vars_exp
 
-m1<-lm(duration~., data=df[,vars_con]) #es passa nomes el df amb les variables continues perque li hem posat un '.' al model que vol dir que les agafi totes, i ara nomes volem variables explciatives numeriques; si especificiquem les variables numeriques explicatives del model i volem que el calculi per tot el df incloent variables categoriques, "data" el passem com =df.
+m1<-lm(duration~., data=df[,vars_con]) #es passa nomes el df amb les variables continues perque li hem posat un '.' al model que vol dir que les agafi totes, i ara nomes volem variables explicatives numeriques; si especificiquem les variables numeriques explicatives del model i volem que el calculi per tot el df incloent variables categoriques, "data" el passem com =df.
 summary(m1)
 ```
 
@@ -130,11 +130,42 @@ m44<-lm(duration~campaign+nr.employed, data=df); Anova(m44)
 par(mfrow=c(2,2))
 plot(m4) #models forca dolents
 par(mfrow=c(1,1))
-
-residualPlots(m4)
-marginalModelPlots(m4)
-influencePlot(m4)
 ```
+###Residual vs fitted
+En aquesta grafica podem veure els valors dels residus en l'eix Y i els valors ajustats en l'eix X. El nuvols de punts s'hauria de trobar encaixat dins un marge delimitat per dues linies paral.leles reconeixibles a la vista, fet que no podem veure en el nostre grafic i ens indica la incorrectesa del model. A mes, tambe podem apreciar com els residus no es troben distribuits de manera aleatoria, sino que es concentren en la part central de la grafica de manera molt significativa.
+
+###Normal Q-Q
+Aquesta grafica es mostra els residus envers als seus valors esperats en el suposit d'una distribucio normal. Podem refutar que els residus segueixen una distribucio normal donat que es dispersen significativament de la recta de punts. Podem interpretar com els valors situats al marge superior dret podrien tractar-se d'outliers. Tambe podem identificar una corva ascendent, fet que ens indica que ens trobem davant una distribucio amb asimetria a l'esquerra.
+
+###Scale-Location
+L'objectiu d'aquesta grafica es veure un nuvol de punts distribuits de manera aleatoria sobre la linea horitzontal, per tal de poder demostra-ne homocedasticitat. Es pot apreciar a claredad que el factor anterior no es compleix i que, de nou, els punts es concentren en la part central de l'eix de les x i, en aquest punt, s'extenen a llarg de l'eix de les y, mentre que en els extrems podem observar menor quantita de punts i lleugerament més centrats sobre la recta en el cas de l'extrem esquerra.
+
+###Residual vs leverage
+Aquesta grafica ens ajuda a identificar "influent data" en els nostres residus basant-se en la distancia de Cook. Les observacions influents es troben en el marge superior dret o en el marge inferior dret. En la nostra grafica podem apreciar com la major concentracio de punts es troba al marge esquerre, per tant no podem extreure grans conclusions en relacio al comportament dels outliers en el nostre model.
+
+```{r}
+residualPlots(m4)
+
+marginalModelPlots(m4)
+
+influencePlot(m4)
+Boxplot(cooks.distance(m4))
+```
+
+###ResidualPlots
+Aquesta comanda ens mostra els residus contra cada terme del model i els valors ajustats. També calcula una prova de curvatura per cadascuna de les gràfiques afegint un terme quadràtic i provant el quadràtic com a zero. Per als models lineals, es tracta de la prova de Tukey per a la no additivitat en representar els valors ajustats.
+
+En les grafiques que enfronten els residus i una de les variables podem veure com en cap d'elles podem indentificar un patro que ens sugereixi un canvi en el nostre model. Un exemple podria ser un corva que ens indiques que aquella variable milloria el model si s'eleves al cuadrat.
+
+###marginalModelPlots
+De la mateixa manera que en la comanda anterior, obtenim un conjunt de grafics que enfronten els residus amb cada terme utilitzat en el model i els valors ajustats. El cas de que la funcio de de les variables, identificada com a Data, i la dels valors predits, identificada com a Model, siguessin similars ens estaria indicats que el model s'ajusta correstament per aquella variable. Podem veure com la funcio Data difereix dels valors predits en cada una de les grafiques. Com hem vist a partir de les diferents grafiques anteriors, ens indica que el model escollit no es l'apropiat. 
+
+###influencePlot
+Aquesta comanda crea un grafic de bombolles amb el valor dels residus "studentitzats", on el diametre de les bombolles mante una relació proporcional a la seva distancia de Cook, expresa en forma de boxplot en la seguent comanda. D'aquesta manera i através de la taula que s'ens mostra com a output podem indetificar com les mostres 8993, 9206 i 18712 son les que mes condicionen el model.
+
+Les linies vertical estan dibuixades en 2 i 3 vegades el valor mitja dels "hat values" i les linies verticals es troben als punts 2, 0 i -2 de la escala de residus "studentitzats". 
+
+
 
 
 ## Transformacio la variable target numerica
@@ -176,7 +207,7 @@ summary(m60)
 Anova(m60)
 ```
 
-Si el condes anterior ens ha donat com a variables factor significatives algunes que ja teniem en el model com a continues, hem de triar o una o altra versio. Si tenim dubtes entre agafar una variable com a continua o factoritzada, hem de fer el seg�ent:
+Si el condes anterior ens ha donat com a variables factor significatives algunes que ja teniem en el model com a continues, hem de triar o una o altra versio. Si tenim dubtes entre agafar una variable com a continua o factoritzada, hem de fer el seg?ent:
 Veiem com en ambdues variables obtenim que es millor usar la seva versio numerica (no factoritzada).
 ```{r}
 #per campaign, mateix model pero amb f.campaign enlloc de campaign:
