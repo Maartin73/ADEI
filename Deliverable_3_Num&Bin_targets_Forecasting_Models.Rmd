@@ -169,8 +169,7 @@ Les linies vertical estan dibuixades en 2 i 3 vegades el valor mitja dels "hat v
 
 
 ## Transformacio la variable target numerica
-A vegades una transformacio de la variable target numerica pot millorar el model. La comanda Bo-Cox ens mostra com el valor de lambda estimat es proper a 0, vol dir que hem d'elevar a 0 el target, com que aixo no es pot fer, la transformacio estadistica del nostre target sera el logaritme, i la farem a partir del model m5 obtingut anteriorment (aixi donarem marge a possibles reduccions del mateix).
-FALTARIA COMPARAR MODELS ENCAIXATS! altre .rmd!?
+A vegades una transformacio de la variable target numerica pot millorar el model. La comanda Bo-Cox ens mostra com el valor de lambda estimat es proper a 0, vol dir que hem d'elevar a 0 el target, com que aixo no es pot fer i amb les grafiques anteriors no em pogut indetificar cap patro que ens induis a elevar alguna de les variables, la transformacio estadistica del nostre target sera el logaritme, i la farem a partir del model m5 obtingut anteriorment (aixi donarem marge a possibles reduccions del mateix).
 ```{r}
 #Box-Cox
 boxcox(m5, data=df)
@@ -193,6 +192,21 @@ plot(m20)
 par(mfrow=c(1,1))
 
 ```
+
+A través de la grafica Normal Q-Q, podem observa com el nou model s'ajusta molt més que l'anterior a una distribució normal i en podem identificar unes cues amb tendencia inferior respecte a la linia de la normal. 
+
+Per altra banda, també podem observar com en "Residuals vs Leverage" la majoria del punts es concentra a la part esquerra de la grafica, ens indica que no tenim grans quantitas de valors influents. Tot i aixi podriem considerar les observacions 15581, 10038 i 3371 com a valor inclosos dins aquesta categoria.
+
+TREURE INFLUENT DATA??
+
+###Comparacio dels dos models
+```{r}
+
+plot(df, fitted.values(m4), col="black", pch=19, main="Dataset C")
+lines(residuals(m4), fitted.values(m4), col="red", lwd=2, lty=2)
+lines(df, fitted.values(m20), col="green", lwd=2, lty=2)
+```
+
 
 
 # Variables discretes explicatives
