@@ -344,13 +344,3 @@ m866<-lm(log(duration)~campaign*poutcome, data=df); summary(m866)
 anova(m86, m866) #Pr(>F)  0.1435  --> H0 accepted --> els models son iguals, per tant no cal el model gran amb interaccions 
 ```
 
-# Explanatory numeric variables
-
-
-
-## Initial modelling
-```{r}
-
-
-```
-
