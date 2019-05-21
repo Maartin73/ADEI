@@ -50,6 +50,7 @@ lapply(requiredPackages, require, character.only = TRUE)
 
 # Load validated data from Deliverable 1:
 ```{r}
+#invisible() prevent hte output in console of the function
 dirwd<-"D:/Users/Usuari/Documents/ADEIpractica"
 #dirwd<-"//pax/perfils/1173408.CR/Downloads/deliverable"
 #dirwd<-"D:/Documents/GitHub/ADEI"
@@ -64,19 +65,104 @@ summary(df)
 set.seed(69)
 sam<-sample(1:nrow(df), 0.75*nrow(df)) #random sample without replacement
 
-dfw<-df[sam,] #work
-dft<-df[-sam,] #test
+dfw<-df[sam,] #work75%
+dft<-df[-sam,] #test25%
+```
 
+# Variables numeriques explicatives
+
+## Target binari **y**
+Per tal d'elaborar un model lineal que predigui el valor de la variable binaria target *y*, primer hem de decidir quines son les variables (columnes) que utilitzarem en la seva construccio. En altres paraules, trobar quines variables ens aproten informacio i precisio al model predictiu, pero sense sobreparametritzar-lo. 
+```{r}
 #numeric variables
 catdes( dfw[,c("y", vars_con)], 1)
 
 #glm amb les variables continues significatives
-gm1<-glm(y~nr.employed+euribor3m+emp.var.rate+pdays+previous+cons.price.idx+cons.conf.idx+campaign, family=binomial, data=dfw)
-summary(gm1)
+gm1<-glm(y~nr.employed+euribor3m+emp.var.rate+pdays+previous+cons.price.idx+cons.conf.idx+campaign, family=binomial, data=dfw); summary(gm1)
+
+Anova(gm1)
+vif(gm1) #check colinear variables
+
+#our strategy: remove 2 colinear variables and campagin
+gm2<-glm(y~emp.var.rate+pdays+previous+cons.price.idx+cons.conf.idx, family=binomial, data=dfw); summary(gm2)
+vif(gm2)
+
+marginalModelPlots(gm2) #some missfit data vs model
 
 ```
 
-# Variables numeriques explicatives
+
+## Transforming variables
+No veiem cap patro en els marginal plots que ens pugui ajudar a l'hora de seleccionar una transformacio de variable en el model.
+```{r}
+#gm3<-glm(y~emp.var.rate+pdays+poly(previous, 2)+cons.price.idx+cons.conf.idx, family=binomial, data=dfw); summary(gm3)
+#Anova(gm3)
+#marginalModelPlots(gm3) 
+
+```
+
+
+## Adding factors
+A partir del millor model en aquest punt, comprovem per a cada variable numerica si es millor la seva utilitzacio com a factor o com a numerica. Ens quedem doncs amb un model gm2f, el qual te les variables pdays i f.cons.conf.idx com a factors i la resta com a numeriques.
+```{r}
+#amb pdays, ojo!!!! pq la continua ha estat majoritariament imputada, per tant en aquest cas, no fem cas del test, agafem la factoritzada!
+gm2<-glm(y~emp.var.rate+f.pdays+previous+cons.price.idx+cons.conf.idx, family=binomial, data=dfw)
+
+#f.emp.var.rate or emp.var.rate?
+gm2f<-glm(y~f.emp.var.rate+f.pdays+previous+cons.price.idx+cons.conf.idx, family=binomial, data=dfw)
+BIC(gm2, gm2f) #f.emp.var.rate dona pitjor (mes baix) BIC, per tant ens quedem amb la variable numerica
+
+gm2f<-glm(y~emp.var.rate+f.pdays+f.previous+cons.price.idx+cons.conf.idx, family=binomial, data=dfw)
+BIC(gm2, gm2f) #previous com a numerica
+
+gm2f<-glm(y~emp.var.rate+f.pdays+previous+f.cons.price.idx+cons.conf.idx, family=binomial, data=dfw)
+BIC(gm2, gm2f) #cons.price.idx com a numerica
+
+gm2f<-glm(y~emp.var.rate+f.pdays+previous+cons.price.idx+f.cons.conf.idx, family=binomial, data=dfw)
+BIC(gm2, gm2f) #f.cons.conf.idx com a factor
+
+```
+
+# Variables discretes explicatives
+Ara afegirem les variables discretes explicatives que siguin significatives, ho farem a partir de les que ens indiqui el catdes, sempre sense repetir una variable si ja esta represetnada com a numerica. Mirem les colinearitats i eliminem les variables que en tinguin, per a continuaci� simplifcar el model amb la comanda step. Veiem com finalment el model gm44 es un model sense colinearitats, on tots els efectes de les variables explicatives son significatius.
+```{r}
+#discrete variables
+catdes( dfw[,c("y", vars_dis)], 1)
+
+#assumim gm2f el millor model en aquest punt i li afegim les significatives (entre month i f.season triem la primera):
+gm4<-glm(y~emp.var.rate+f.pdays+previous+cons.price.idx+f.cons.conf.idx+f.nr.employed+poutcome+f.euribor3m+contact+default+f.age+education+month+marital+f.campaign, family=binomial, data=dfw); summary(gm4)
+
+vif(gm4) #valor de colinearitat en la 2a columna (eliminem fins a obtenir tots els valors <3)
+gm4<-glm(y~previous+cons.price.idx+f.cons.conf.idx+poutcome+f.euribor3m+contact+default+f.age+education+month+marital+f.campaign, family=binomial, data=dfw); summary(gm4); vif(gm4); Anova(gm4)
+
+gm44<-step(gm4, k=log(nrow(dfw))); vif(gm44); summary(gm44)
+
+
+#provem si f.season va millor que la variable month
+gm44season<-glm(y~f.cons.conf.idx+poutcome+f.euribor3m+f.season, family=binomial, data=dfw)
+
+
+#equivalent al test de Fisher pero per al target factor (binari):
+anova(gm44, gm44season, test="Chisq") #Pr(>Chi) < 2.2e-1 -> no son equivalents, per tant el model mes gran (amb month que te mes categories) hauria de ser millor
+
+#podriem crear una nova variable a partir de months que sigui months bons i dolents, podria simplificar el model!!
+
+```
+
+## Interactions
+```{r}
+
+```
+
+## Diagnostics
+```{r}
+residualPlot(gm44)
+influencePlot(gm44, id.n=0)
+
+```
+
+
+## Target numeric **duration**
 Per tal d'elaborar un model lineal que predigui el valor de la variable numerica target *duration*, primer hem de decidir quines son les variables (columnes) que utilitzarem en la seva construccio. En altres paraules, trobar quines variables ens aproten informacio i precisio al model predictiu, pero sense sobreparametritzar-lo. 
 
 ## Model inicial amb totes les variables numeriques
@@ -210,9 +296,9 @@ par(mfrow=c(1,1))
 
 ```
 
-A través de la grafica Normal Q-Q, podem observa com el nou model s'ajusta molt més que l'anterior a una distribució normal i en podem identificar unes cues amb tendencia inferior respecte a la linia de la normal. 
+A traves de la grafica Normal Q-Q, podem observa com el nou model s'ajusta molt mes que l'anterior a una distribucio normal i en podem identificar unes cues amb tendencia inferior respecte a la linia de la normal. 
 
-Per altra banda, també podem observar com en "Residuals vs Leverage" la majoria del punts es concentra a la part esquerra de la grafica, ens indica que no tenim grans quantitas de valors influents. Tot i aixi podriem considerar les observacions 15581, 10038 i 3371 com a valor inclosos dins aquesta categoria.
+Per altra banda, tambe podem observar com en "Residuals vs Leverage" la majoria del punts es concentra a la part esquerra de la grafica, ens indica que no tenim grans quantitas de valors influents. Tot i aixi podriem considerar les observacions 15581, 10038 i 3371 com a valor inclosos dins aquesta categoria.
 
 TREURE INFLUENT DATA??
 
@@ -238,7 +324,7 @@ summary(m60)
 Anova(m60)
 ```
 
-Si el condes anterior ens ha donat com a variables factor significatives algunes que ja teniem en el model com a continues, hem de triar o una o altra versio. Si tenim dubtes entre agafar una variable com a continua o factoritzada, hem de fer el seg?ent:
+Si el condes anterior ens ha donat com a variables factor significatives algunes que ja teniem en el model com a continues, hem de triar o una o altra versio. Si tenim dubtes entre agafar una variable com a continua o factoritzada, hem de fer el seguent:
 Veiem com en ambdues variables obtenim que es millor usar la seva versio numerica (no factoritzada).
 ```{r}
 #per campaign, mateix model pero amb f.campaign enlloc de campaign:
