@@ -59,6 +59,23 @@ load( paste0(dirwd, "/bank-additional/Bank5000_validated.RData") )
 summary(df)
 ```
 
+# Work and test samples division
+```{r}
+set.seed(69)
+sam<-sample(1:nrow(df), 0.75*nrow(df)) #random sample without replacement
+
+dfw<-df[sam,] #work
+dft<-df[-sam,] #test
+
+#numeric variables
+catdes( dfw[,c("y", vars_con)], 1)
+
+#glm amb les variables continues significatives
+gm1<-glm(y~nr.employed+euribor3m+emp.var.rate+pdays+previous+cons.price.idx+cons.conf.idx+campaign, family=binomial, data=dfw)
+summary(gm1)
+
+```
+
 # Variables numeriques explicatives
 Per tal d'elaborar un model lineal que predigui el valor de la variable numerica target *duration*, primer hem de decidir quines son les variables (columnes) que utilitzarem en la seva construccio. En altres paraules, trobar quines variables ens aproten informacio i precisio al model predictiu, pero sense sobreparametritzar-lo. 
 
@@ -327,5 +344,13 @@ m866<-lm(log(duration)~campaign*poutcome, data=df); summary(m866)
 anova(m86, m866) #Pr(>F)  0.1435  --> H0 accepted --> els models son iguals, per tant no cal el model gran amb interaccions 
 ```
 
+# Explanatory numeric variables
 
+
+
+## Initial modelling
+```{r}
+
+
+```
 
