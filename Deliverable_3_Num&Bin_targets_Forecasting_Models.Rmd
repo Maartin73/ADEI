@@ -40,7 +40,7 @@ editor_options:
 # Loading packages:
 ```{r, include=FALSE}
 # Required Packages: to be increased over the course
-requiredPackages <- c("car","knitr","ggplot2","FactoMineR","missMDA","mvoutlier","chemometrics", "factoextra", "MASS", "effects")
+requiredPackages <- c("car","knitr","ggplot2","FactoMineR","missMDA","mvoutlier","chemometrics", "factoextra", "MASS", "effects", "ROCR")
 missingPackages <- requiredPackages[!(requiredPackages %in% installed.packages()[,"Package"])]
 
 if(length(missingPackages)) install.packages(missingPackages)
@@ -193,14 +193,61 @@ Anova(gmint42, test="LR"); #f.euribor3m:f.cons.conf.idx valuos
 gmint<-glm(y~f.cons.conf.idx+poutcome+f.euribor3m+month+poutcome:f.euribor3m+month:f.euribor3m+f.euribor3m:f.cons.conf.idx, family=binomial, data=dfw)
 ```
 
-
-
-## Diagnostics
+Un cop incorporades les interaccions fem la comparacio amb el model anterior. Veiem que el model sense interaccions es millor, aixi que ens mantindrem treballant amb el model gm44.
 ```{r}
-residualPlot(gm44)
-influencePlot(gm44, id.n=0)
-
+BIC(gmint, gm44);
 ```
+
+#Validacio del model
+```{r}
+Boxplot(rstudent(gm44))
+abline(h=c(2,-2), col="red", lwd=2)
+out<-which(rstudent(gm44)>=2 | rstudent(gm44)<=-2); length(out)
+
+inf<-Boxplot(cooks.distance(gm44))
+llinf<-which(abs(cooks.distance(gm44))>3); length(llinf) #limit correcte?
+
+influencePlot(gm44)
+
+#model final
+mfinal<-glm(y~f.cons.conf.idx+poutcome+f.euribor3m+month, family=binomial, data = dfw)
+```
+
+#Prediccio
+```{r}
+pred<-predict(mfinal, type="response", newdata=dft)
+predn<-as.numeric(pred)
+summary(df$y)
+
+pred.y <- factor(ifelse(predn<0.5, 0, 1), labels=c("pred.y-no", "pred.y-yes"))
+
+table<-table(pred.y, dft$y); table
+```
+Considerant un threshold de 0,5 (equitatiu per als dos valors possibles de sortida) obtinim uns resultats bastant pobres. Anem a trobar un millor valor a traves de les corves ROC.
+```{r}
+dadesroc<-prediction(predict(mfinal,type="response"),dfw$y)
+par(mfrow=c(1,2))
+plot(performance(dadesroc,"err"));
+plot(performance(dadesroc,"tpr","fpr"))
+abline(0,1,lty=2)
+```
+En el grafic de la dretapodem veure com la curvasita molt de concidir amb el marge superior esquerra, aixo ens indica una baixa capacitat predictiva del model. Amb el grafic de l'esquerra podem veure que els valor del threshold que tindran una menor "error rate" es trobarien entre 0,5 i 0.6. Anteriorment ja hem testejat la capicitat predictiva per un valor de 0.5 en threshold, ara provem amb 0.6 per veure si podem obtenir certa millora. 
+```{r}
+pred2<-predict(mfinal, type="response", newdata=dft)
+pred2n<-as.numeric(pred2)
+summary(df$y)
+
+pred2.y <- factor(ifelse(pred2n<0.6, 0, 1), labels=c("pred2.y-no", "pred2.y-yes"))
+
+table2<-table(pred2.y, dft$y); table
+```
+Els resultats obtiniguts son igual de pobres en els dos casos, ens quedarem amb aquell threshold que ens ofereixi una taxa d'error menor.
+```{r}
+err05<-100*sum(diag(table))/sum(table)
+err06<-100*sum(diag(table2))/sum(table2)
+```
+
+
 
 
 ## Target numeric **duration**
