@@ -231,7 +231,7 @@ plot(performance(dadesroc,"err"));
 plot(performance(dadesroc,"tpr","fpr"))
 abline(0,1,lty=2)
 ```
-En el grafic de la dretapodem veure com la curvasita molt de concidir amb el marge superior esquerra, aixo ens indica una baixa capacitat predictiva del model. Amb el grafic de l'esquerra podem veure que els valor del threshold que tindran una menor "error rate" es trobarien entre 0,5 i 0.6. Anteriorment ja hem testejat la capicitat predictiva per un valor de 0.5 en threshold, ara provem amb 0.6 per veure si podem obtenir certa millora. 
+En el grafic de la dreta podem veure com la curva dista molt de concidir amb el marge superior esquerra, aixo ens indica una baixa capacitat predictiva del model. Amb el grafic de l'esquerra podem veure que els valor del threshold que tindran una menor "error rate" es trobarien entre 0,5 i 0.6. Anteriorment ja hem testejat la capicitat predictiva per un valor de 0.5 en threshold, ara provem amb 0.6 per veure si podem obtenir certa millora. 
 ```{r}
 pred2<-predict(mfinal, type="response", newdata=dft)
 pred2n<-as.numeric(pred2)
@@ -243,10 +243,10 @@ table2<-table(pred2.y, dft$y); table
 ```
 Els resultats obtiniguts son igual de pobres en els dos casos, ens quedarem amb aquell threshold que ens ofereixi una taxa d'error menor.
 ```{r}
-err05<-100*sum(diag(table))/sum(table)
-err06<-100*sum(diag(table2))/sum(table2)
+err05<-100*sum(diag(table))/sum(table); err05
+err06<-100*sum(diag(table2))/sum(table2); err06
 ```
-
+El threshold de 0.5 ofereix una taxa d'encert llegerament millor. Aixi doncs, ens quedarem amb aquest threshold per a realitzar les prediccions. 
 
 
 
