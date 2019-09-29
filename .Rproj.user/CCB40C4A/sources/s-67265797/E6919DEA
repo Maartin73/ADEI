@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1552667243499.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "E6919DEA",
+    "lastKnownWriteTime" : 1552746025,
+    "last_content_update" : 1552746213572,
+    "path" : "~/GitHub/ADEI/Deliverable_1_Data_Processing_Description_Validation_Profiling.Rmd",
+    "project_path" : "Deliverable_1_Data_Processing_Description_Validation_Profiling.Rmd",
+    "properties" : {
+        "chunk_output_type" : "console",
+        "cursorPosition" : "57,1",
+        "scrollLine" : "41"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
